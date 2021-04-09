@@ -1,0 +1,413 @@
+{
+  "columns": [
+    [
+      {
+        "elements": [
+          {
+            "name": "pit"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "doublewrench"
+          }
+        ]
+      },
+      {
+        "elements": []
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor2right"
+          }
+        ]
+      },
+      {
+        "elements": []
+      },
+      {
+        "elements": []
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor2right"
+          }
+        ]
+      },
+      {
+        "elements": []
+      },
+      {
+        "elements": []
+      },
+      {
+        "elements": []
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor2right"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "pit"
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "elements": [
+          {
+            "name": "conveyor2down"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor2downmergefromright"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor2down"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor2downmergefromleft"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor2down"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor2down"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor2downmergefromleft"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor2down"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor2down"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor2down"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor2downmergefromleft"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor2down"
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "elements": []
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor2left"
+          }
+        ]
+      },
+      {
+        "elements": []
+      },
+      {
+        "elements": [
+          {
+            "name": "oil"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "oil"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "oil"
+          }
+        ]
+      },
+      {
+        "elements": []
+      },
+      {
+        "elements": [
+          {
+            "name": "chopshop"
+          }
+        ]
+      },
+      {
+        "elements": []
+      },
+      {
+        "elements": [
+          {
+            "name": "phasepit",
+            "metadata": [
+              {
+                "key": "phases",
+                "value": [
+                  1,
+                  4
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "elements": []
+      },
+      {
+        "elements": [
+          {
+            "name": "oil"
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "elements": [
+          {
+            "name": "chopshop"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor2left"
+          }
+        ]
+      },
+      {
+        "elements": []
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor1downfromright"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor1down"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor1up"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor1down"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor2down"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor2down"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor2down"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor2rightfromup"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "oil"
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "elements": []
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor2left"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "phasepit",
+            "metadata": [
+              {
+                "key": "phases",
+                "value": [
+                  2,
+                  4
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor1left"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "doublewrench"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "wallleft"
+          },
+          {
+            "name": "presserright",
+            "metadata": [
+              {
+                "key": "phases",
+                "value": [
+                  2,
+                  4
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "walldown"
+          },
+          {
+            "name": "presserup",
+            "metadata": [
+              {
+                "key": "phases",
+                "value": [
+                  1,
+                  3,
+                  5
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "elements": []
+      },
+      {
+        "elements": []
+      },
+      {
+        "elements": []
+      },
+      {
+        "elements": [
+          {
+            "name": "conveyor1right"
+          }
+        ]
+      },
+      {
+        "elements": [
+          {
+            "name": "oil"
+          }
+        ]
+      }
+    ]
+  ]
+}

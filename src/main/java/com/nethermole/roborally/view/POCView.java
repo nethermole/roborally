@@ -1,11 +1,10 @@
 package com.nethermole.roborally.view;
 
 import com.nethermole.roborally.Gamemaster;
-import com.nethermole.roborally.game.Board;
-import com.nethermole.roborally.game.Direction;
 import com.nethermole.roborally.game.Game;
-import com.nethermole.roborally.game.Player;
-import com.nethermole.roborally.game.Robot;
+import com.nethermole.roborally.game.board.Board;
+import com.nethermole.roborally.game.board.Direction;
+import com.nethermole.roborally.game.player.Player;
 import lombok.Setter;
 
 import javax.swing.JFrame;
@@ -19,7 +18,7 @@ public class POCView extends AbstractView implements Runnable{
     private static int windowHeight = 1500;
     private static int topOffset = 50;
     private static int sideOffset = 50;
-    private static int gridSize = 150;
+    private static int gridSize = 100;
 
     JFrame jFrame;
     DrawingPanel drawingPanel;
@@ -35,14 +34,16 @@ public class POCView extends AbstractView implements Runnable{
         return gamemaster.getGame();
     }
 
-    public void startViewing() {
+    public void startViewing(){
         initializeView();
         running=true;
         while(running){
-            if (System.currentTimeMillis() % 100 == 0) {
-                drawingPanel.setGridSize(gridSize);
-                drawingPanel.repaint();
-            }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e){}
+
+            drawingPanel.setGridSize(gridSize);
+            drawingPanel.repaint();
         }
     }
 
@@ -87,7 +88,7 @@ public class POCView extends AbstractView implements Runnable{
 
             drawGrid(graphics);
             for(Player player : gamemaster.getPlayers()){
-                drawRobot(graphics, Color.BLACK, player.getRobot());
+                drawRobot(graphics, Color.BLACK, player);
             }
         }
 
@@ -106,29 +107,33 @@ public class POCView extends AbstractView implements Runnable{
             }
         }
 
-        private void drawRobot(Graphics graphics, Color color, Robot robot) {
+        private void drawRobot(Graphics graphics, Color color, Player player) {
             graphics.setColor(color);
-            int x = robot.getLocation().getX() * gridSize;
-            int y = robot.getLocation().getY() * gridSize;
+            if(player.hasPosition()) {
+                int x = player.getPosition().getX() * gridSize;
+                int y = player.getPosition().getY() * gridSize;
 
-            graphics.drawRect(x, y, gridSize, gridSize);
-            if (robot.getFacing() == Direction.UP) {
-                graphics.drawLine(x + (gridSize / 2), y, x + (gridSize / 2), y + gridSize);
-                graphics.drawLine(x + (gridSize / 2), y, x, y + (gridSize / 2));
-                graphics.drawLine(x + (gridSize / 2), y, x + gridSize, y + (gridSize / 2));
-            } else if (robot.getFacing() == Direction.RIGHT) {
-                graphics.drawLine(x, y + (gridSize / 2), x + gridSize, y + (gridSize / 2));
-                graphics.drawLine(x + gridSize, y + (gridSize / 2), x + (gridSize / 2), y);
-                graphics.drawLine(x + gridSize, y + (gridSize / 2), x + (gridSize / 2), y + gridSize);
-            } else if (robot.getFacing() == Direction.DOWN) {
-                graphics.drawLine(x + (gridSize / 2), y, x + (gridSize / 2), y + gridSize);
-                graphics.drawLine(x + (gridSize / 2), y + gridSize, x, y + (gridSize / 2));
-                graphics.drawLine(x + (gridSize / 2), y + gridSize, x + gridSize, y + (gridSize / 2));
-            } else if (robot.getFacing() == Direction.LEFT) {
-                graphics.drawLine(x, y + (gridSize / 2), x + gridSize, y + (gridSize / 2));
-                graphics.drawLine(x, y + (gridSize / 2), x + (gridSize / 2), y);
-                graphics.drawLine(x, y + (gridSize / 2), x + (gridSize / 2), y + gridSize);
+                graphics.drawRect(x, y, gridSize, gridSize);
+                if (player.getFacing() == Direction.UP) {
+                    graphics.drawLine(x + (gridSize / 2), y, x + (gridSize / 2), y + gridSize);
+                    graphics.drawLine(x + (gridSize / 2), y, x, y + (gridSize / 2));
+                    graphics.drawLine(x + (gridSize / 2), y, x + gridSize, y + (gridSize / 2));
+                } else if (player.getFacing() == Direction.RIGHT) {
+                    graphics.drawLine(x, y + (gridSize / 2), x + gridSize, y + (gridSize / 2));
+                    graphics.drawLine(x + gridSize, y + (gridSize / 2), x + (gridSize / 2), y);
+                    graphics.drawLine(x + gridSize, y + (gridSize / 2), x + (gridSize / 2), y + gridSize);
+                } else if (player.getFacing() == Direction.DOWN) {
+                    graphics.drawLine(x + (gridSize / 2), y, x + (gridSize / 2), y + gridSize);
+                    graphics.drawLine(x + (gridSize / 2), y + gridSize, x, y + (gridSize / 2));
+                    graphics.drawLine(x + (gridSize / 2), y + gridSize, x + gridSize, y + (gridSize / 2));
+                } else if (player.getFacing() == Direction.LEFT) {
+                    graphics.drawLine(x, y + (gridSize / 2), x + gridSize, y + (gridSize / 2));
+                    graphics.drawLine(x, y + (gridSize / 2), x + (gridSize / 2), y);
+                    graphics.drawLine(x, y + (gridSize / 2), x + (gridSize / 2), y + gridSize);
+                }
             }
+
+            graphics.drawChars(player.getFacing().toString().toCharArray(), 0, player.getFacing().toString().length(), 100, 100);
         }
 
         public DrawingPanel(Gamemaster gamemaster, int gridSize){

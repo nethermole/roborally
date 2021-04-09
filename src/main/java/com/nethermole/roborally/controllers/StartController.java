@@ -1,8 +1,8 @@
 package com.nethermole.roborally.controllers;
 
 import com.nethermole.roborally.Gamemaster;
-import com.nethermole.roborally.game.HumanPlayer;
-import com.nethermole.roborally.game.Player;
+import com.nethermole.roborally.game.player.HumanPlayer;
+import com.nethermole.roborally.game.player.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,9 +19,12 @@ public class StartController {
 
     @PostMapping("/start")
     public void startGame(){
-        List<Player> players = new ArrayList();
-        players.add(new HumanPlayer(0));
-        gamemaster.startGame(new HashMap<>(), players);
+        if(gamemaster.getGame() == null) {
+            List<Player> players = new ArrayList();
+            players.add(new HumanPlayer(0));
+            gamemaster.startGame(new HashMap<>(), players);
+            System.out.println("started");
+        }
     }
 
 }
