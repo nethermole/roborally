@@ -17,25 +17,35 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
-public class Gamemaster {
+public class GameLogistics {
 
     @Getter
     private Game game;
 
-    @Getter
-    private List<Player> players;
+    @Getter //todo remove getter when unity view is functional
+    private Map<Integer, Player> players;
     private List<AbstractView> viewers;
     private GameEventLogger gameEventLogger;
 
-    public void startGame(HashMap<Element, Coordinate> elements, List<Player> players){
+    public boolean isGameAlreadyStarted(){
+        return (game != null);
+    }
+
+    public void startGame(Map<Integer, Player> players){
         this.players = players;
         this.gameEventLogger = new GameEventLogger();
-        game = new Game(elements, players, 8,8, gameEventLogger);
-        POCView pocView = POCView.startPOCView(this);
+        game = new Game(new ArrayList<>(players.values()), 8,8, gameEventLogger);
+
+        //constructBoard(boardElements, boardHeight, boardWidth, startLocation, gameEventLogger);
+        game.constructBoard("Empty");        //boardconstructor needs to be broken out into separate class
+        game.distributeCards();
+
+        //POCView pocView = POCView.startPOCView(this);
         viewers = new ArrayList<>();
-        viewers.add(pocView);
+        //viewers.add(pocView);
     }
 
     public void stopGame(){
@@ -45,6 +55,7 @@ public class Gamemaster {
         game = null;
     }
 
+    //todo remove once unity view is functional
     public Board getBoard() throws GameNotStartedException {
         if(game == null){
             throw new GameNotStartedException();

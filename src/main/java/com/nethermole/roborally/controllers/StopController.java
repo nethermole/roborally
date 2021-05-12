@@ -1,6 +1,6 @@
 package com.nethermole.roborally.controllers;
 
-import com.nethermole.roborally.Gamemaster;
+import com.nethermole.roborally.GameLogistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class StopController {
 
     @Autowired
-    Gamemaster gamemaster;
+    GameLogistics gameLogistics;
 
     @PutMapping("stop")
-    public void stop(){
-        gamemaster.stopGame();
+    public void stop() {
+        gameLogistics.stopGame();
     }
 
 

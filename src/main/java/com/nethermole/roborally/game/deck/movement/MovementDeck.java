@@ -6,8 +6,8 @@ import java.util.Random;
 
 public class MovementDeck {
 
-    List<MovementCard> deck;
-    Random random;
+    private List<MovementCard> deck;
+    private Random random;
 
     public MovementDeck(){
         random = new Random();
@@ -18,7 +18,7 @@ public class MovementDeck {
         return deck.remove(random.nextInt(deck.size()));
     }
 
-    public List<MovementCard> createNewDeck(){
+    private List<MovementCard> createNewDeck(){
         List<MovementCard> movementCardList = new ArrayList<>();
 
         movementCardList.add(new MovementCard(Movement.UTURN, 10));

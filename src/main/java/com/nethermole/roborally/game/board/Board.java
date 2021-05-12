@@ -13,10 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 public class Board {
 
+    @Getter
     private List<Player> players;
     private GameEventLogger gameEventLogger;
 
@@ -31,7 +33,7 @@ public class Board {
         this.gameEventLogger = gameEventLogger;
     }
 
-    public Board(int boardHeight, int boardWidth){
+    private Board(int boardHeight, int boardWidth){
         squares = new Tile[boardHeight][boardWidth];
         for(int i=0; i<boardHeight; i++){
             for(int j=0; j<boardWidth; j++){
@@ -50,6 +52,7 @@ public class Board {
         players.add(player);
     }
 
+    //break this out into a movement logic class
     public void movePlayer(Player player, Movement movement){
         switch(movement){
             case MOVE1:
@@ -81,6 +84,22 @@ public class Board {
         }
     }
 
+    private void resetPlayer(Player player){
+        System.out.println("Player " + player.getId() + " died. Resetting to x=5,y=5");
+        player.setPosition(new Coordinate(5,5));
+    }
+
+    private boolean overPit(Player player){
+        Coordinate playerPosition = player.getPosition();
+        Set<Element> elements = squares[playerPosition.getX()][playerPosition.getY()].getElements();
+        for(Element element : elements){
+            if(element.getElementEnum() == ElementEnum.PIT){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public List<Event> move1(Player player){
         Coordinate startPosition = player.getPosition();
         Coordinate endPosition = startPosition.moveForward1(player.getFacing());
@@ -96,24 +115,27 @@ public class Board {
             RobotMoveEvent moveEvent = new RobotMoveEvent(player, startPosition, endPosition, player.getFacing(), player.getFacing(), MovementMethod.MOVE);
             eventList.add(moveEvent);
 
+            if(overPit(player)){
+                resetPlayer(player);
+            }
             return eventList;
         }
     }
 
-    private void backup(Player player) {
+    public void backup(Player player) {
         Coordinate startPosition = player.getPosition();
         Coordinate endPosition = startPosition.moveBackward1(player.getFacing());
-        player.setPosition(endPosition);
 
         if(isWallBetween(startPosition, endPosition)){
             log.info("Robot belonging to player " + player + " hit a wall instead of move1", player.getId());
         } else {
+            player.setPosition(endPosition);
             RobotMoveEvent moveEvent = new RobotMoveEvent(player, startPosition, endPosition, player.getFacing(), player.getFacing(), MovementMethod.MOVE);
             gameEventLogger.log(moveEvent);
         }
     }
 
-    private void uturn(Player player){
+    public void uturn(Player player){
         Direction startFacing = player.getFacing();
         player.setFacing(Direction.turnLeft(Direction.turnLeft(player.getFacing())));
         RobotMoveEvent playerMoveEvent = new RobotMoveEvent(player, player.getPosition(), player.getPosition(), startFacing, player.getFacing(), MovementMethod.TURN);
@@ -121,7 +143,7 @@ public class Board {
         gameEventLogger.log(playerMoveEvent);
     }
 
-    private void turnLeft(Player player) {
+    public void turnLeft(Player player) {
         Direction startFacing = player.getFacing();
         player.setFacing(Direction.turnLeft(player.getFacing()));
         RobotMoveEvent playerMoveEvent = new RobotMoveEvent(player, player.getPosition(), player.getPosition(), startFacing, player.getFacing(), MovementMethod.TURN);
@@ -129,7 +151,7 @@ public class Board {
         gameEventLogger.log(playerMoveEvent);
     }
 
-    private void turnRight(Player player) {
+    public void turnRight(Player player) {
         Direction startFacing = player.getFacing();
         player.setFacing(Direction.turnRight(player.getFacing()));
         RobotMoveEvent playerMoveEvent = new RobotMoveEvent(player, player.getPosition(), player.getPosition(), startFacing, player.getFacing(), MovementMethod.TURN);
@@ -137,7 +159,7 @@ public class Board {
         gameEventLogger.log(playerMoveEvent);
     }
 
-    private boolean isWallBetween(Coordinate startPosition, Coordinate endPosition){
+    public boolean isWallBetween(Coordinate startPosition, Coordinate endPosition){
         if(startPosition.getX() == endPosition.getX()){
             Coordinate leftPosition = startPosition.getX() < endPosition.getX() ? startPosition : endPosition;
             for(int i = leftPosition.getX() + 1; i < endPosition.getX(); i++){

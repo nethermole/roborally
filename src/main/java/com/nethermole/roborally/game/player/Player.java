@@ -8,6 +8,8 @@ import lombok.EqualsAndHashCode;
 @Data
 public abstract class Player {
 
+    public static final int STARTING_HEALTH = 9;
+
     public int id;
     public int health;
     public String name;
@@ -15,16 +17,12 @@ public abstract class Player {
     private Coordinate position;
 
     public Player(){
-        health = 9;
+        health = STARTING_HEALTH;
     }
 
     public String getName(){
         return "Fred";
     }
-
-    public abstract void giveCards();
-
-    public abstract void getCards();
 
     public boolean hasPosition(){
         return position != null;

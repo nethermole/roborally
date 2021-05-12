@@ -9,34 +9,6 @@ public class Coordinate {
     private int x;
     private int y;
 
-    public boolean isAboveAdjacentTo(Coordinate coordinate){
-        if(this.getX() != coordinate.getX()){
-            return false;
-        }
-        if(this.getY() - coordinate.getY() != 1){
-            return false;
-        }
-        return true;
-    }
-
-    public boolean isRightAdjacentTo(Coordinate coordinate){
-        if(this.getY() != coordinate.getY()){
-            return false;
-        }
-        if(this.getX() - coordinate.getX() != 1){
-            return false;
-        }
-        return true;
-    }
-
-    public boolean isBelowAdjacentTo(Coordinate coordinate){
-        return coordinate.isAboveAdjacentTo(this);
-    }
-    public boolean isLeftAdjacentTo(Coordinate coordinate){
-        return coordinate.isRightAdjacentTo(this);
-    }
-
-
     public Coordinate moveForward1(Direction facing) {
         Coordinate endPosition = new Coordinate(x, y);
         switch(facing){

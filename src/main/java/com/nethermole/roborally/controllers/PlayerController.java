@@ -1,7 +1,6 @@
 package com.nethermole.roborally.controllers;
 
-import com.nethermole.roborally.Gamemaster;
-import com.nethermole.roborally.game.deck.movement.Movement;
+import com.nethermole.roborally.GameLogistics;
 import com.nethermole.roborally.game.deck.movement.MovementCard;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,19 +16,16 @@ import java.util.List;
 public class PlayerController {
 
     @Autowired
-    Gamemaster gamemaster;
+    GameLogistics gameLogistics;
 
     @PostMapping("/player/{id}/submitHand")
-    public void setCards(@PathVariable("id") Integer id, @RequestBody ArrayList<MovementCard> movementCardList){
-        gamemaster.submitHand(id, movementCardList);
+    public void setCards(@PathVariable("id") Integer id, @RequestBody ArrayList<MovementCard> movementCardList) {
+        gameLogistics.submitHand(id, movementCardList);
     }
 
     @GetMapping("/player/{id}/getHand")
-    public List<MovementCard> getCards(@PathVariable("id") Integer id){
-        while(gamemaster.getGame() == null){
-        }
-
-        List<MovementCard> movementCards = gamemaster.getHand(id);
+    public List<MovementCard> getCards(@PathVariable("id") Integer id) {
+        List<MovementCard> movementCards = gameLogistics.getHand(id);
         System.out.println(movementCards);
         return movementCards;
     }

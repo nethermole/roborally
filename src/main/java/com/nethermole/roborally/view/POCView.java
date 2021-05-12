@@ -1,9 +1,12 @@
 package com.nethermole.roborally.view;
 
-import com.nethermole.roborally.Gamemaster;
+import com.nethermole.roborally.GameLogistics;
+import com.nethermole.roborally.exceptions.GameNotStartedException;
 import com.nethermole.roborally.game.Game;
 import com.nethermole.roborally.game.board.Board;
 import com.nethermole.roborally.game.board.Direction;
+import com.nethermole.roborally.game.board.Tile;
+import com.nethermole.roborally.game.board.element.Element;
 import com.nethermole.roborally.game.player.Player;
 import lombok.Setter;
 
@@ -24,14 +27,14 @@ public class POCView extends AbstractView implements Runnable{
     DrawingPanel drawingPanel;
     boolean running;
 
-    Gamemaster gamemaster;
-    private POCView(Gamemaster gamemaster){
-        this.gamemaster = gamemaster;
+    GameLogistics gameLogistics;
+    private POCView(GameLogistics gameLogistics){
+        this.gameLogistics = gameLogistics;
     }
 
     @Override
     public Game getGame(){
-        return gamemaster.getGame();
+        return gameLogistics.getGame();
     }
 
     public void startViewing(){
@@ -57,7 +60,7 @@ public class POCView extends AbstractView implements Runnable{
         jFrame.setBounds(sideOffset, topOffset, windowWidth, windowHeight);
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        drawingPanel = new DrawingPanel(this.gamemaster, gridSize);
+        drawingPanel = new DrawingPanel(this.gameLogistics, gridSize);
         jFrame.add(drawingPanel);
 
         jFrame.setVisible(true);
@@ -69,32 +72,53 @@ public class POCView extends AbstractView implements Runnable{
     }
 
 
-    public static POCView startPOCView(Gamemaster gamemaster){
-        POCView pocView = new POCView(gamemaster);
+    public static POCView startPOCView(GameLogistics gameLogistics){
+        POCView pocView = new POCView(gameLogistics);
         Thread thread = new Thread(pocView);
         thread.start();
         return pocView;
     }
 
     private class DrawingPanel extends JPanel {
-        Gamemaster gamemaster;
+        GameLogistics gameLogistics;
 
         @Setter
         private int gridSize;
 
         @Override
-        public void paintComponent(Graphics graphics){
+        public void paintComponent(Graphics graphics) {
             super.paintComponent(graphics);
 
-            drawGrid(graphics);
-            for(Player player : gamemaster.getPlayers()){
-                drawRobot(graphics, Color.BLACK, player);
+            try {
+                drawGrid(graphics);
+                drawElements(graphics);
+                for(Player player : gameLogistics.getPlayers().values()){
+                    drawRobot(graphics, Color.BLACK, player);
+                }
+            } catch (GameNotStartedException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        private void drawElements(Graphics graphics) throws GameNotStartedException {
+            Board board = gameLogistics.getBoard();
+            Tile[][] tiles = board.getSquares();
+            int squaresX = tiles.length;
+            int squaresY = tiles[0].length;
+            for(int x = 0; x<squaresX; x++){
+                for(int y = 0; y<squaresY; y++){
+                    Tile tile = tiles[x][y];
+                    for(Element element : tile.getElements()){
+                        element.drawSelf(x*gridSize, y*gridSize, gridSize, graphics);
+                    }
+                }
             }
         }
 
         private void drawGrid(Graphics graphics){
             try {
-                Board board = gamemaster.getBoard();
+                Board board = gameLogistics.getBoard();
                 int squaresX = board.getSquares().length;
                 int squaresY = board.getSquares()[0].length;
                 for(int x = 0; x<squaresX; x++){
@@ -133,11 +157,12 @@ public class POCView extends AbstractView implements Runnable{
                 }
             }
 
-            graphics.drawChars(player.getFacing().toString().toCharArray(), 0, player.getFacing().toString().length(), 100, 100);
+            //to draw text
+            //graphics.drawChars(player.getFacing().toString().toCharArray(), 0, player.getFacing().toString().length(), 100, 100);
         }
 
-        public DrawingPanel(Gamemaster gamemaster, int gridSize){
-            this.gamemaster = gamemaster;
+        public DrawingPanel(GameLogistics gameLogistics, int gridSize){
+            this.gameLogistics = gameLogistics;
             this.gridSize = gridSize;
         }
     }

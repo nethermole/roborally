@@ -1,6 +1,7 @@
 package com.nethermole.roborally.game.player;
 
 public enum PlayerState {
-    DECIDING_TURN,
-    HAS_SUBMITTED_CARDS
+    CHOOSING_MOVEMENT_CARDS,
+    HAS_SUBMITTED_CARDS,
+    NO_INTERACTION_YET
 }
