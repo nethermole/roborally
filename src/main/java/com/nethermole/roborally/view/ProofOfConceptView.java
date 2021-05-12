@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class POCView extends AbstractView implements Runnable{
+public class ProofOfConceptView extends AbstractView implements Runnable {
 
     private static int windowWidth = 1500;
     private static int windowHeight = 1500;
@@ -28,29 +28,31 @@ public class POCView extends AbstractView implements Runnable{
     boolean running;
 
     GameLogistics gameLogistics;
-    private POCView(GameLogistics gameLogistics){
+
+    private ProofOfConceptView(GameLogistics gameLogistics) {
         this.gameLogistics = gameLogistics;
     }
 
     @Override
-    public Game getGame(){
+    public Game getGame() {
         return gameLogistics.getGame();
     }
 
-    public void startViewing(){
+    public void startViewing() {
         initializeView();
-        running=true;
-        while(running){
+        running = true;
+        while (running) {
             try {
                 Thread.sleep(100);
-            } catch (InterruptedException e){}
+            } catch (InterruptedException e) {
+            }
 
             drawingPanel.setGridSize(gridSize);
             drawingPanel.repaint();
         }
     }
 
-    public void stopViewing(){
+    public void stopViewing() {
         running = false;
     }
 
@@ -72,11 +74,11 @@ public class POCView extends AbstractView implements Runnable{
     }
 
 
-    public static POCView startPOCView(GameLogistics gameLogistics){
-        POCView pocView = new POCView(gameLogistics);
-        Thread thread = new Thread(pocView);
+    public static ProofOfConceptView startPOCView(GameLogistics gameLogistics) {
+        ProofOfConceptView proofOfConceptView = new ProofOfConceptView(gameLogistics);
+        Thread thread = new Thread(proofOfConceptView);
         thread.start();
-        return pocView;
+        return proofOfConceptView;
     }
 
     private class DrawingPanel extends JPanel {
@@ -92,7 +94,7 @@ public class POCView extends AbstractView implements Runnable{
             try {
                 drawGrid(graphics);
                 drawElements(graphics);
-                for(Player player : gameLogistics.getPlayers().values()){
+                for (Player player : gameLogistics.getPlayers().values()) {
                     drawRobot(graphics, Color.BLACK, player);
                 }
             } catch (GameNotStartedException e) {
@@ -106,34 +108,34 @@ public class POCView extends AbstractView implements Runnable{
             Tile[][] tiles = board.getSquares();
             int squaresX = tiles.length;
             int squaresY = tiles[0].length;
-            for(int x = 0; x<squaresX; x++){
-                for(int y = 0; y<squaresY; y++){
+            for (int x = 0; x < squaresX; x++) {
+                for (int y = 0; y < squaresY; y++) {
                     Tile tile = tiles[x][y];
-                    for(Element element : tile.getElements()){
-                        element.drawSelf(x*gridSize, y*gridSize, gridSize, graphics);
+                    for (Element element : tile.getElements()) {
+                        element.drawSelf(x * gridSize, y * gridSize, gridSize, graphics);
                     }
                 }
             }
         }
 
-        private void drawGrid(Graphics graphics){
+        private void drawGrid(Graphics graphics) {
             try {
                 Board board = gameLogistics.getBoard();
                 int squaresX = board.getSquares().length;
                 int squaresY = board.getSquares()[0].length;
-                for(int x = 0; x<squaresX; x++){
-                    for(int y = 0; y<squaresY; y++){
-                        graphics.drawRect(x*gridSize, y*gridSize, gridSize, gridSize);
+                for (int x = 0; x < squaresX; x++) {
+                    for (int y = 0; y < squaresY; y++) {
+                        graphics.drawRect(x * gridSize, y * gridSize, gridSize, gridSize);
                     }
                 }
-            } catch(Exception e){
+            } catch (Exception e) {
                 //log game not started exception
             }
         }
 
         private void drawRobot(Graphics graphics, Color color, Player player) {
             graphics.setColor(color);
-            if(player.hasPosition()) {
+            if (player.hasPosition()) {
                 int x = player.getPosition().getX() * gridSize;
                 int y = player.getPosition().getY() * gridSize;
 
@@ -161,7 +163,7 @@ public class POCView extends AbstractView implements Runnable{
             //graphics.drawChars(player.getFacing().toString().toCharArray(), 0, player.getFacing().toString().length(), 100, 100);
         }
 
-        public DrawingPanel(GameLogistics gameLogistics, int gridSize){
+        public DrawingPanel(GameLogistics gameLogistics, int gridSize) {
             this.gameLogistics = gameLogistics;
             this.gridSize = gridSize;
         }

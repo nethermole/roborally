@@ -4,19 +4,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class MovementDeckTest {
 
     MovementDeck movementDeck;
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
         movementDeck = new MovementDeck();
     }
 
     @Test
-    public void drawCard(){
+    public void drawCard() {
         MovementCard card = movementDeck.drawCard();
         assertThat(card).isNotNull();
 

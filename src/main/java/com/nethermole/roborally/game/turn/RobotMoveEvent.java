@@ -8,7 +8,7 @@ import lombok.Data;
 
 @AllArgsConstructor
 @Data
-public class RobotMoveEvent extends Event{
+public class RobotMoveEvent extends Event {
     Player player;
     Coordinate startPosition;
     Coordinate endPosition;
@@ -17,13 +17,13 @@ public class RobotMoveEvent extends Event{
     MovementMethod movementMethod;
 
     @Override
-    public String toString(){
+    public String toString() {
         StringBuilder log = new StringBuilder();
         String playerName = player.getName();
-        if(!startFacing.equals(endFacing)){
+        if (!startFacing.equals(endFacing)) {
             log.append(playerName + "'s robot turned from " + startFacing + " to " + endFacing + "\n");
         }
-        if(!startPosition.equals(endPosition)){
+        if (!startPosition.equals(endPosition)) {
             log.append(playerName + "'s robot moved from " + startPosition + " to " + endPosition);
         }
         return log.toString();

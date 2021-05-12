@@ -3,12 +3,11 @@ package com.nethermole.roborally.game.board;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class DirectionTest {
 
     @Test
-    public void turnRight(){
+    public void turnRight() {
         Direction subject = Direction.UP;
 
         Direction right = Direction.turnRight(subject);
@@ -23,7 +22,7 @@ class DirectionTest {
     }
 
     @Test
-    public void turnLeft(){
+    public void turnLeft() {
         Direction subject = Direction.UP;
 
         Direction left = Direction.turnLeft(subject);

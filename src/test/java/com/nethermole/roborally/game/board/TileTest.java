@@ -1,20 +1,18 @@
 package com.nethermole.roborally.game.board;
 
-import com.nethermole.roborally.game.board.element.Element;
 import com.nethermole.roborally.game.board.element.ElementEnum;
 import com.nethermole.roborally.game.board.element.HorizontalWall;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class TileTest {
 
     Tile tile;
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
         tile = new Tile();
     }
 

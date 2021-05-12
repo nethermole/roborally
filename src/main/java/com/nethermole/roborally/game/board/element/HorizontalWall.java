@@ -1,6 +1,6 @@
 package com.nethermole.roborally.game.board.element;
 
-public class HorizontalWall extends Element{
+public class HorizontalWall extends Element {
 
     @Override
     public ElementEnum getElementEnum() {

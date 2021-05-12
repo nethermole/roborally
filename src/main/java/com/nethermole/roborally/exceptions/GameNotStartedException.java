@@ -1,4 +1,4 @@
 package com.nethermole.roborally.exceptions;
 
-public class GameNotStartedException extends Exception{
+public class GameNotStartedException extends Exception {
 }

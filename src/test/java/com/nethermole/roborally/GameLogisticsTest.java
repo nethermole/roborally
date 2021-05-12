@@ -9,9 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,13 +24,13 @@ class GameLogisticsTest {
     Game game;
 
     @Test
-    public void isGameAlreadyStarted_gameIsNull_returnsFalse(){
+    public void isGameAlreadyStarted_gameIsNull_returnsFalse() {
         gameLogistics = new GameLogistics();
         assertThat(gameLogistics.getGame()).isNull();
     }
 
     @Test
-    public void startGame() throws Exception{
+    public void startGame() throws Exception {
         Player player0 = new HumanPlayer(0);
         Map<Integer, Player> players = new HashMap<>();
         players.put(0, player0);

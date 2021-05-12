@@ -24,13 +24,13 @@ class GameTest {
     List<Player> playerList;
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
         player0 = new HumanPlayer(0);
         player1 = new HumanPlayer(1);
         playerList = new ArrayList<>();
         playerList.add(player0);
         playerList.add(player1);
-        game = new Game(playerList,8, 8, new GameEventLogger());
+        game = new Game(playerList, 8, 8, new GameEventLogger());
 
         //gets the game into general testable state
         game.distributeCards();
@@ -38,32 +38,32 @@ class GameTest {
     }
 
     @Test
-    public void constructor(){
+    public void constructor() {
         assertThat(game.getBoard()).isNotNull();
         assertThat(game.getPlayersHands().entrySet()).isNotEmpty();
     }
 
     @Test
-    public void distributeCards(){
+    public void distributeCards() {
         List<MovementCard> playerHand = game.getHand(player0);
         assertThat(playerHand.size()).isEqualTo(Player.STARTING_HEALTH);
     }
 
     @Test
-    public void getHand_getsCardsForPlayer(){
+    public void getHand_getsCardsForPlayer() {
         List<MovementCard> playerHand = game.getHand(player0);
         assertThat(playerHand.size()).isEqualTo(Player.STARTING_HEALTH);
         assertThat(game.getPlayerStates().get(player0)).isEqualTo(PlayerState.CHOOSING_MOVEMENT_CARDS);
     }
 
     @Test
-    public void getHand_setsPlayerState(){
+    public void getHand_setsPlayerState() {
         game.getHand(player0);
         assertThat(game.getPlayerStates().get(player0)).isEqualTo(PlayerState.CHOOSING_MOVEMENT_CARDS);
     }
 
     @Test
-    public void submitPlayerHand_resetsPlayerHand(){
+    public void submitPlayerHand_resetsPlayerHand() {
         List<MovementCard> movementCardList = new ArrayList<>();
         movementCardList.add(new MovementCard(Movement.MOVE1, 100));
 
@@ -73,7 +73,7 @@ class GameTest {
     }
 
     @Test
-    public void submitPlayerHand_setsSubmittedHand(){
+    public void submitPlayerHand_setsSubmittedHand() {
         List<MovementCard> movementCardList = new ArrayList<>();
         MovementCard movementCard = new MovementCard(Movement.MOVE1, 100);
         movementCardList.add(movementCard);
@@ -84,12 +84,12 @@ class GameTest {
     }
 
     @Test
-    public void isReadyToProcessTurn_noPlayersHaveSubmittedCards_returnsFalse(){
+    public void isReadyToProcessTurn_noPlayersHaveSubmittedCards_returnsFalse() {
         assertThat(game.isReadyToProcessTurn()).isFalse();
     }
 
     @Test
-    public void isReadyToProcessTurn_notAllPlayersHaveSubmittedCards_returnsFalse(){
+    public void isReadyToProcessTurn_notAllPlayersHaveSubmittedCards_returnsFalse() {
         assertThat(playerList.size()).isGreaterThan(1);
 
         game.submitPlayerHand(player1, new ArrayList<>());
@@ -97,7 +97,7 @@ class GameTest {
     }
 
     @Test
-    public void isReadyToProcessTurn_allPlayersHaveSubmittedCards_returnsTrue(){
+    public void isReadyToProcessTurn_allPlayersHaveSubmittedCards_returnsTrue() {
         assertThat(playerList.size()).isEqualTo(2);
 
         game.submitPlayerHand(player0, new ArrayList<>());
@@ -106,7 +106,7 @@ class GameTest {
     }
 
     @Test
-    public void constructBoard_constructsBoard(){
+    public void constructBoard_constructsBoard() {
         game.constructBoard("Empty");
 
         assertThat(game.getBoard().getSquares().length).isEqualTo(8);

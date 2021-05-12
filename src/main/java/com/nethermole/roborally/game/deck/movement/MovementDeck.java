@@ -9,16 +9,16 @@ public class MovementDeck {
     private List<MovementCard> deck;
     private Random random;
 
-    public MovementDeck(){
+    public MovementDeck() {
         random = new Random();
         deck = createNewDeck();
     }
 
-    public MovementCard drawCard(){
+    public MovementCard drawCard() {
         return deck.remove(random.nextInt(deck.size()));
     }
 
-    private List<MovementCard> createNewDeck(){
+    private List<MovementCard> createNewDeck() {
         List<MovementCard> movementCardList = new ArrayList<>();
 
         movementCardList.add(new MovementCard(Movement.UTURN, 10));

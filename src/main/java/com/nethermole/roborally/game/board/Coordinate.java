@@ -11,18 +11,18 @@ public class Coordinate {
 
     public Coordinate moveForward1(Direction facing) {
         Coordinate endPosition = new Coordinate(x, y);
-        switch(facing){
+        switch (facing) {
             case UP:
-                endPosition.setY(endPosition.y-1);
+                endPosition.setY(endPosition.y - 1);
                 break;
             case RIGHT:
-                endPosition.setX(endPosition.x+1);
+                endPosition.setX(endPosition.x + 1);
                 break;
             case DOWN:
-                endPosition.setY(endPosition.y+1);
+                endPosition.setY(endPosition.y + 1);
                 break;
             case LEFT:
-                endPosition.setX(endPosition.x-1);
+                endPosition.setX(endPosition.x - 1);
                 break;
         }
         return endPosition;
@@ -30,25 +30,25 @@ public class Coordinate {
 
     public Coordinate moveBackward1(Direction facing) {
         Coordinate endPosition = new Coordinate(x, y);
-        switch(facing){
+        switch (facing) {
             case UP:
-                endPosition.setY(endPosition.y+1);
+                endPosition.setY(endPosition.y + 1);
                 break;
             case RIGHT:
-                endPosition.setX(endPosition.x-1);
+                endPosition.setX(endPosition.x - 1);
                 break;
             case DOWN:
-                endPosition.setY(endPosition.y-1);
+                endPosition.setY(endPosition.y - 1);
                 break;
             case LEFT:
-                endPosition.setX(endPosition.x+1);
+                endPosition.setX(endPosition.x + 1);
                 break;
         }
         return endPosition;
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "(" + x + ", " + y + ")";
     }
 }

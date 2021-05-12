@@ -1,15 +1,10 @@
 package com.nethermole.roborally.game.board;
 
-import com.nethermole.roborally.game.board.element.Element;
-import com.nethermole.roborally.game.board.element.HorizontalWall;
 import com.nethermole.roborally.game.board.element.VerticalWall;
 import com.nethermole.roborally.game.player.HumanPlayer;
 import com.nethermole.roborally.game.player.NPCPlayer;
 import com.nethermole.roborally.game.player.Player;
 import com.nethermole.roborally.logs.GameEventLogger;
-import jdk.nashorn.internal.ir.annotations.Ignore;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,32 +16,32 @@ import static org.assertj.core.api.Assertions.assertThat;
 class BoardTest {
 
     @InjectMocks
-    Board board = new Board(8,8, new Coordinate(0,0), new GameEventLogger());
+    Board board = new Board(8, 8, new Coordinate(0, 0), new GameEventLogger());
 
     @Test
-    public void board_initializesPlayersAndSquares(){
+    public void board_initializesPlayersAndSquares() {
         assertThat(board.getSquares()).isNotNull();
         assertThat(board.getPlayers()).isNotNull();
     }
 
     @Test
-    public void addElement(){
+    public void addElement() {
         VerticalWall verticalWall = new VerticalWall();
-        board.addElement(verticalWall, new Coordinate(0,0));
+        board.addElement(verticalWall, new Coordinate(0, 0));
         assertThat(board.getSquares()[0][0].getElements()).contains(verticalWall);
     }
 
     @Test
-    public void addPlayer(){
+    public void addPlayer() {
         Player player = new NPCPlayer();
         board.addPlayer(player);
         assertThat(board.getPlayers()).contains(player);
     }
 
     @Test
-    public void move1(){
+    public void move1() {
         Player player = new HumanPlayer(0);
-        player.setPosition(new Coordinate(5,5));
+        player.setPosition(new Coordinate(5, 5));
         player.setFacing(Direction.UP);
 
         board.move1(player);
@@ -56,9 +51,9 @@ class BoardTest {
     }
 
     @Test
-    public void backup(){
+    public void backup() {
         Player player = new HumanPlayer(0);
-        player.setPosition(new Coordinate(5,5));
+        player.setPosition(new Coordinate(5, 5));
         player.setFacing(Direction.UP);
 
         board.backup(player);
@@ -69,9 +64,9 @@ class BoardTest {
     }
 
     @Test
-    public void uturn(){
+    public void uturn() {
         Player player = new HumanPlayer(0);
-        player.setPosition(new Coordinate(5,5));
+        player.setPosition(new Coordinate(5, 5));
 
         player.setFacing(Direction.UP);
         board.uturn(player);

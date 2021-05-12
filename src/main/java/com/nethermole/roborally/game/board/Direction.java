@@ -3,8 +3,8 @@ package com.nethermole.roborally.game.board;
 public enum Direction {
     UP, RIGHT, DOWN, LEFT;
 
-    public static Direction turnRight(Direction original){
-        switch (original){
+    public static Direction turnRight(Direction original) {
+        switch (original) {
             case UP:
                 return RIGHT;
             case RIGHT:
@@ -18,8 +18,8 @@ public enum Direction {
         }
     }
 
-    public static Direction turnLeft(Direction original){
-        switch (original){
+    public static Direction turnLeft(Direction original) {
+        switch (original) {
             case UP:
                 return LEFT;
             case RIGHT:

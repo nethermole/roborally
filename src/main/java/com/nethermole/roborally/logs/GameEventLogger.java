@@ -11,11 +11,11 @@ public class GameEventLogger {
 
     private List<Event> eventList;
 
-    public GameEventLogger(){
+    public GameEventLogger() {
         eventList = new ArrayList<>();
     }
 
-    public void log(Event event){
+    public void log(Event event) {
         eventList.add(event);
         System.out.println(event.toString());
     }

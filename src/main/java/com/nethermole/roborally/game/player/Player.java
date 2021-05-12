@@ -3,7 +3,6 @@ package com.nethermole.roborally.game.player;
 import com.nethermole.roborally.game.board.Coordinate;
 import com.nethermole.roborally.game.board.Direction;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
 public abstract class Player {
@@ -16,20 +15,20 @@ public abstract class Player {
     private Direction facing;
     private Coordinate position;
 
-    public Player(){
+    public Player() {
         health = STARTING_HEALTH;
     }
 
-    public String getName(){
+    public String getName() {
         return "Fred";
     }
 
-    public boolean hasPosition(){
+    public boolean hasPosition() {
         return position != null;
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return id;
     }
 

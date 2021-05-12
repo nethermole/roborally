@@ -6,9 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class RoborallyApplication {
 
-	public static void main(String[] args) {
-		System.setProperty("java.awt.headless", "false");
-		SpringApplication.run(RoborallyApplication.class, args);
-	}
+    public static void main(String[] args) {
+        System.setProperty("java.awt.headless", "false");
+        SpringApplication.run(RoborallyApplication.class, args);
+    }
 
 }
