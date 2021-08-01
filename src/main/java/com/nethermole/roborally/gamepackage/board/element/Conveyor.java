@@ -9,11 +9,11 @@ public class Conveyor extends Element {
     Direction outputDirection;
     int speed;
 
-    public Conveyor(Direction direction){
+    public Conveyor(Direction direction) {
         this(direction, 1);
     }
 
-    public Conveyor(Direction direction, int speed){
+    public Conveyor(Direction direction, int speed) {
         inputDirection = Direction.getOpposite(direction);
         outputDirection = direction;
         this.speed = speed;
@@ -23,7 +23,7 @@ public class Conveyor extends Element {
         this(inputDirection, outputDirection, 1);
     }
 
-    public Conveyor(Direction inputDirection, Direction outputDirection, int speed){
+    public Conveyor(Direction inputDirection, Direction outputDirection, int speed) {
         this.inputDirection = inputDirection;
         this.outputDirection = outputDirection;
         this.speed = speed;
@@ -31,11 +31,11 @@ public class Conveyor extends Element {
 
     @Override
     public ElementEnum getElementEnum() {
-        String enumName = "CONVEYOR_"+speed+"_"+inputDirection+"_"+outputDirection;
+        String enumName = "CONVEYOR_" + speed + "_" + inputDirection + "_" + outputDirection;
         return ElementEnum.valueOf(enumName);
     }
 
-    public RuntimeException createRuntimeExceptionForElementEnum(){
+    public RuntimeException createRuntimeExceptionForElementEnum() {
         return new RuntimeException("invalid elementEnum for conveyor: " + speed + "," + inputDirection + "," + outputDirection);
     }
 }

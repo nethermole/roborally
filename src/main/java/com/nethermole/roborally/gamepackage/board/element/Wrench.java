@@ -7,12 +7,12 @@ public class Wrench extends Element {
 
     int healAmount;
 
-    public Wrench(){
+    public Wrench() {
         healAmount = 1;
     }
 
     @Override
     public ElementEnum getElementEnum() {
-        return ElementEnum.valueOf("WRENCH_"+healAmount);
+        return ElementEnum.valueOf("WRENCH_" + healAmount);
     }
 }

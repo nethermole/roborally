@@ -7,19 +7,19 @@ public class Wall extends Element {
     Direction side;
     boolean laserAttachment;
 
-    public Wall(Direction direction){
+    public Wall(Direction direction) {
         this.side = direction;
         laserAttachment = false;
     }
 
-    public Wall(Direction direction, boolean laserAttachment){
+    public Wall(Direction direction, boolean laserAttachment) {
         this.side = direction;
         this.laserAttachment = laserAttachment;
     }
 
     @Override
     public ElementEnum getElementEnum() {
-        switch(side){
+        switch (side) {
             case UP:
                 return ElementEnum.WALL_UP;
             case RIGHT:

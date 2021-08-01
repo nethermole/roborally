@@ -13,24 +13,24 @@ public class GameLog {
     List<List<ViewStep>> viewStepsByTurn;
 
     @PostConstruct
-    public void init(){
+    public void init() {
         viewStepsByTurn = new ArrayList<>();
     }
 
-    public void addViewSteps(int turn, List<ViewStep> viewSteps){
-        while(turn >= viewStepsByTurn.size()){
+    public void addViewSteps(int turn, List<ViewStep> viewSteps) {
+        while (turn >= viewStepsByTurn.size()) {
             viewStepsByTurn.add(new ArrayList<>());
         }
-        for(ViewStep viewStep : viewSteps){
+        for (ViewStep viewStep : viewSteps) {
             addViewStep(turn, viewStep);
         }
     }
 
-    public void addViewStep(int turn, ViewStep viewStep){
+    public void addViewStep(int turn, ViewStep viewStep) {
         viewStepsByTurn.get(turn).add(viewStep);
     }
 
-    public List<ViewStep> getViewstepsByTurn(int turn){
+    public List<ViewStep> getViewstepsByTurn(int turn) {
         return viewStepsByTurn.get(turn);
     }
 

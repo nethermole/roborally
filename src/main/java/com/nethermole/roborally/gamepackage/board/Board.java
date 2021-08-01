@@ -93,9 +93,9 @@ public class Board {
 
     private boolean overPit(Player player) {
         Position playerPosition = player.getPosition();
-        if(playerPosition.getX() < 0 || playerPosition.getX() >= squares.length
-        || playerPosition.getY() < 0 || playerPosition.getY() >= squares[0].length
-        ){
+        if (playerPosition.getX() < 0 || playerPosition.getX() >= squares.length
+                || playerPosition.getY() < 0 || playerPosition.getY() >= squares[0].length
+        ) {
             return true;
         }
         Set<Element> elements = squares[playerPosition.getX()][playerPosition.getY()].getElements();
@@ -123,7 +123,7 @@ public class Board {
             if (overPit(player)) {
                 viewSteps.add(resetPlayer(player));
             }
-           return viewSteps;
+            return viewSteps;
         }
     }
 
@@ -167,7 +167,7 @@ public class Board {
         if (startPosition.getX() == endPosition.getX()) {
             Position leftPosition = startPosition.getX() < endPosition.getX() ? startPosition : endPosition;
             for (int i = leftPosition.getX() + 1; i < endPosition.getX(); i++) {
-                if (squares[leftPosition.getY()][i].hasElement(ElementEnum.WALL_LEFT )) {
+                if (squares[leftPosition.getY()][i].hasElement(ElementEnum.WALL_LEFT)) {
                     return true;
                 }
             }

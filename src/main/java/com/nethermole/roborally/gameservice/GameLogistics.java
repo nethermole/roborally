@@ -10,7 +10,6 @@ import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
 import com.nethermole.roborally.gamepackage.player.Player;
 import com.nethermole.roborally.view.AbstractView;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +37,7 @@ public class GameLogistics {
     //todo extract clientUpdate logic
     public void startGame(Map<Integer, Player> players) {
         this.players = players;
-        game = new Game(players, gameLog, new Position(6,6));
+        game = new Game(players, gameLog, new Position(6, 6));
 
         BoardFactory boardFactory = new BoardFactory();
         //constructBoard(boardElements, boardHeight, boardWidth, startLocation, gameEventLogger);
@@ -65,8 +64,8 @@ public class GameLogistics {
         return game.getBoard();
     }
 
-    public List<ViewStep> getViewstepsByTurn(int turn){
-        if(turn >= game.getCurrentTurn()){
+    public List<ViewStep> getViewstepsByTurn(int turn) {
+        if (turn >= game.getCurrentTurn()) {
             return new ArrayList<>();
         }
         return gameLog.getViewstepsByTurn(turn);

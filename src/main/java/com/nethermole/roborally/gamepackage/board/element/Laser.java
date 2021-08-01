@@ -5,11 +5,11 @@ public class Laser extends Element {
     Orientation orientation;
     int damage;
 
-    public Laser(Orientation orientation){
+    public Laser(Orientation orientation) {
         this(orientation, 1);
     }
 
-    public Laser(Orientation orientation, int damage){
+    public Laser(Orientation orientation, int damage) {
         this.orientation = orientation;
         this.damage = damage;
     }
@@ -17,9 +17,9 @@ public class Laser extends Element {
     @Override
     public ElementEnum getElementEnum() {
 
-        if(orientation == Orientation.VERTICAL){
+        if (orientation == Orientation.VERTICAL) {
             return ElementEnum.LASER_V;
-        } else if(orientation == Orientation.HORIZONTAL){
+        } else if (orientation == Orientation.HORIZONTAL) {
             return ElementEnum.LASER_H;
         } else {
             throw new RuntimeException("Unknown orientation: " + orientation);

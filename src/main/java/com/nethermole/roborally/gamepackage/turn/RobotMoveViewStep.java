@@ -1,8 +1,8 @@
 package com.nethermole.roborally.gamepackage.turn;
 
 import com.nethermole.roborally.gamepackage.ViewStep;
-import com.nethermole.roborally.gamepackage.board.Position;
 import com.nethermole.roborally.gamepackage.board.Direction;
+import com.nethermole.roborally.gamepackage.board.Position;
 import com.nethermole.roborally.gamepackage.player.Player;
 import lombok.Data;
 

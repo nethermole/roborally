@@ -1,6 +1,5 @@
 package com.nethermole.roborally.view;
 
-import com.nethermole.roborally.gameservice.GameLogistics;
 import com.nethermole.roborally.exceptions.GameNotStartedException;
 import com.nethermole.roborally.gamepackage.Game;
 import com.nethermole.roborally.gamepackage.board.Board;
@@ -8,6 +7,7 @@ import com.nethermole.roborally.gamepackage.board.Direction;
 import com.nethermole.roborally.gamepackage.board.Tile;
 import com.nethermole.roborally.gamepackage.board.element.Element;
 import com.nethermole.roborally.gamepackage.player.Player;
+import com.nethermole.roborally.gameservice.GameLogistics;
 import lombok.Setter;
 
 import javax.swing.JFrame;

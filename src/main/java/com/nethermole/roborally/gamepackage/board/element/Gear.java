@@ -11,9 +11,9 @@ public class Gear extends Element {
     @Override
     public ElementEnum getElementEnum() {
 
-        if(spin == Spin.CLOCKWISE){
+        if (spin == Spin.CLOCKWISE) {
             return ElementEnum.GEAR_C;
-        } else if(spin == Spin.COUNTERCLOCKWISE){
+        } else if (spin == Spin.COUNTERCLOCKWISE) {
             return ElementEnum.GEAR_CC;
         } else {
             throw new RuntimeException("Unexpected spin state: " + spin);

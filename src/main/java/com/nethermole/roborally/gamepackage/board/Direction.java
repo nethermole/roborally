@@ -18,7 +18,7 @@ public enum Direction {
         }
     }
 
-    public static Direction getOpposite(Direction original){
+    public static Direction getOpposite(Direction original) {
         switch (original) {
             case UP:
                 return DOWN;

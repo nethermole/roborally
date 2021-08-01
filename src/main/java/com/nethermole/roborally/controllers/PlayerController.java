@@ -1,8 +1,8 @@
 package com.nethermole.roborally.controllers;
 
-import com.nethermole.roborally.gameservice.GameLogistics;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
 import com.nethermole.roborally.gamepackage.player.Player;
+import com.nethermole.roborally.gameservice.GameLogistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,13 +21,13 @@ public class PlayerController {
     GameLogistics gameLogistics;
 
     @GetMapping("/player")
-    public Collection<Player> getPlayers(){
+    public Collection<Player> getPlayers() {
         return gameLogistics.getPlayers().values();
     }
 
     @PostMapping("/player/{id}/submitHand")
     public void setCards(@PathVariable("id") Integer id, @RequestBody ArrayList<MovementCard> movementCardList) {
-        for(MovementCard movementCard : movementCardList){
+        for (MovementCard movementCard : movementCardList) {
             System.out.println("Player" + id + ": " + movementCard);
         }
         gameLogistics.submitHand(id, movementCardList);

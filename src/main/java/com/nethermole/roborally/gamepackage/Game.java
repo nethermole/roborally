@@ -2,8 +2,6 @@ package com.nethermole.roborally.gamepackage;
 
 import com.nethermole.roborally.gamepackage.board.Board;
 import com.nethermole.roborally.gamepackage.board.Position;
-import com.nethermole.roborally.gamepackage.board.element.Element;
-import com.nethermole.roborally.gamepackage.board.element.Pit;
 import com.nethermole.roborally.gamepackage.deck.GameState;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementDeck;
@@ -49,7 +47,7 @@ public class Game {
         this.gameLog = gameLog;
         gameState = GameState.STARTING;
         playersHands = new HashMap<>();
-        for(Player player : players.values()){
+        for (Player player : players.values()) {
             playersHands.put(player, new ArrayList<>());
         }
 
