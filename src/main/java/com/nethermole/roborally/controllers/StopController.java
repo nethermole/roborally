@@ -1,6 +1,6 @@
 package com.nethermole.roborally.controllers;
 
-import com.nethermole.roborally.GameLogistics;
+import com.nethermole.roborally.gameservice.GameLogistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;

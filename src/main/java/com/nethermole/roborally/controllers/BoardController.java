@@ -1,7 +1,7 @@
 package com.nethermole.roborally.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nethermole.roborally.GameLogistics;
+import com.nethermole.roborally.gameservice.GameLogistics;
 import com.nethermole.roborally.exceptions.GameNotStartedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

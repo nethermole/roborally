@@ -1,7 +1,7 @@
 package com.nethermole.roborally.controllers;
 
-import com.nethermole.roborally.GameLogistics;
 import com.nethermole.roborally.exceptions.GameNotStartedException;
+import com.nethermole.roborally.gameservice.GameLogistics;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

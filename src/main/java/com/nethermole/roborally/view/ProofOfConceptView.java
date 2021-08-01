@@ -1,13 +1,13 @@
 package com.nethermole.roborally.view;
 
-import com.nethermole.roborally.GameLogistics;
+import com.nethermole.roborally.gameservice.GameLogistics;
 import com.nethermole.roborally.exceptions.GameNotStartedException;
-import com.nethermole.roborally.game.Game;
-import com.nethermole.roborally.game.board.Board;
-import com.nethermole.roborally.game.board.Direction;
-import com.nethermole.roborally.game.board.Tile;
-import com.nethermole.roborally.game.board.element.Element;
-import com.nethermole.roborally.game.player.Player;
+import com.nethermole.roborally.gamepackage.Game;
+import com.nethermole.roborally.gamepackage.board.Board;
+import com.nethermole.roborally.gamepackage.board.Direction;
+import com.nethermole.roborally.gamepackage.board.Tile;
+import com.nethermole.roborally.gamepackage.board.element.Element;
+import com.nethermole.roborally.gamepackage.player.Player;
 import lombok.Setter;
 
 import javax.swing.JFrame;
