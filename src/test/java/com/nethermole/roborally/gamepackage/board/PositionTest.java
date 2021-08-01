@@ -12,44 +12,44 @@ class PositionTest {
     public void moveForward1() {
         position = new Position(5, 5);
 
-        Position up = position.moveForward1(Direction.UP);
-        Position right = position.moveForward1(Direction.RIGHT);
-        Position down = position.moveForward1(Direction.DOWN);
-        Position left = position.moveForward1(Direction.LEFT);
+        Position facingUp = position.moveForward1(Direction.UP);
+        Position facingRight = position.moveForward1(Direction.RIGHT);
+        Position facingDown = position.moveForward1(Direction.DOWN);
+        Position facingLeft = position.moveForward1(Direction.LEFT);
 
-        assertThat(up.getX()).isEqualTo(5);
-        assertThat(up.getY()).isEqualTo(4);
+        assertThat(facingUp.getX()).isEqualTo(5);
+        assertThat(facingUp.getY()).isEqualTo(6);
 
-        assertThat(right.getX()).isEqualTo(6);
-        assertThat(right.getY()).isEqualTo(5);
+        assertThat(facingRight.getX()).isEqualTo(6);
+        assertThat(facingRight.getY()).isEqualTo(5);
 
-        assertThat(down.getX()).isEqualTo(5);
-        assertThat(down.getY()).isEqualTo(6);
+        assertThat(facingDown.getX()).isEqualTo(5);
+        assertThat(facingDown.getY()).isEqualTo(4);
 
-        assertThat(left.getX()).isEqualTo(4);
-        assertThat(left.getY()).isEqualTo(5);
+        assertThat(facingLeft.getX()).isEqualTo(4);
+        assertThat(facingLeft.getY()).isEqualTo(5);
     }
 
     @Test
     public void moveBackward1() {
         position = new Position(5, 5);
 
-        Position up = position.moveBackward1(Direction.UP);
-        Position right = position.moveBackward1(Direction.RIGHT);
-        Position down = position.moveBackward1(Direction.DOWN);
-        Position left = position.moveBackward1(Direction.LEFT);
+        Position facingUp = position.moveBackward1(Direction.UP);
+        Position facingRight = position.moveBackward1(Direction.RIGHT);
+        Position facingDown = position.moveBackward1(Direction.DOWN);
+        Position facingLeft = position.moveBackward1(Direction.LEFT);
 
-        assertThat(up.getX()).isEqualTo(5);
-        assertThat(up.getY()).isEqualTo(6);
+        assertThat(facingUp.getX()).isEqualTo(5);
+        assertThat(facingUp.getY()).isEqualTo(4);
 
-        assertThat(right.getX()).isEqualTo(4);
-        assertThat(right.getY()).isEqualTo(5);
+        assertThat(facingRight.getX()).isEqualTo(4);
+        assertThat(facingRight.getY()).isEqualTo(5);
 
-        assertThat(down.getX()).isEqualTo(5);
-        assertThat(down.getY()).isEqualTo(4);
+        assertThat(facingDown.getX()).isEqualTo(5);
+        assertThat(facingDown.getY()).isEqualTo(6);
 
-        assertThat(left.getX()).isEqualTo(6);
-        assertThat(left.getY()).isEqualTo(5);
+        assertThat(facingLeft.getX()).isEqualTo(6);
+        assertThat(facingLeft.getY()).isEqualTo(5);
     }
 
 }

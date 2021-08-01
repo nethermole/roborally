@@ -10,6 +10,6 @@ class VerticalWallLeftTest {
     @Test
     void getElementEnum() {
         Wall verticalWallLeft = new Wall(Direction.LEFT);
-        assertThat(verticalWallLeft.getElementEnum()).isEqualTo(ElementEnum.WALL_DOWN);
+        assertThat(verticalWallLeft.getElementEnum()).isEqualTo(ElementEnum.WALL_LEFT);
     }
 }

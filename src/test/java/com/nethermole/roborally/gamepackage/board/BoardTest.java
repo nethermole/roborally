@@ -46,7 +46,7 @@ class BoardTest {
         board.move1(player);
         Position position = player.getPosition();
         assertThat(position.getX()).isEqualTo(5);
-        assertThat(position.getY()).isEqualTo(4);
+        assertThat(position.getY()).isEqualTo(6);
     }
 
     @Test
@@ -59,7 +59,7 @@ class BoardTest {
 
         Position position = player.getPosition();
         assertThat(position.getX()).isEqualTo(5);
-        assertThat(position.getY()).isEqualTo(6);
+        assertThat(position.getY()).isEqualTo(4);
     }
 
     @Test
