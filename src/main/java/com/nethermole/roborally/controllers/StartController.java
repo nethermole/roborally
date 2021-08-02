@@ -2,6 +2,7 @@ package com.nethermole.roborally.controllers;
 
 import com.nethermole.roborally.gamepackage.player.HumanPlayer;
 import com.nethermole.roborally.gamepackage.player.Player;
+import com.nethermole.roborally.gamepackage.player.bot.RandomBot;
 import com.nethermole.roborally.gameservice.GameLogistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +19,7 @@ public class StartController {
 
     @PostMapping("/start")
     public void startGame() {
-        int playerCount = 8;
+        int playerCount = 1;
 
         if (!gameLogistics.isGameAlreadyStarted()) {
             Map<Integer, Player> players = new HashMap<>();
@@ -31,6 +32,15 @@ public class StartController {
         } else {
             System.out.println("Game in progress, no new game started");
         }
+    }
+
+    @PostMapping("/debugStart")
+    public void debugStart(){
+        Map<Integer, Player> players = new HashMap<>();
+        players.put(0, new HumanPlayer(0));
+        players.put(1, new RandomBot(1));
+        gameLogistics.startGame(players);
+        System.out.println("New game started");
     }
 
 }

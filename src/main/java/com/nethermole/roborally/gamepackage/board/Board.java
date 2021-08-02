@@ -82,12 +82,12 @@ public class Board {
 
     private ViewStep resetPlayer(Player player) {
         Position currentPosition = new Position(player.getPosition());
-        Position endPosition = new Position(player.getRespawnPosition());
+        Position endPosition = new Position(player.getBeacon().getPosition());
 
         ViewStep moveEvent = new RobotMoveViewStep(player, currentPosition, endPosition, player.getFacing(), player.getFacing(), MovementMethod.PIT_DEATH);
 
-        player.setPosition(player.getRespawnPosition());
-        System.out.println("Player " + player.getId() + " died. Resetting to " + player.getRespawnPosition());
+        player.setPosition(player.getBeacon().getPosition());
+        System.out.println("Player " + player.getId() + " died. Resetting to " + player.getPosition());
         return moveEvent;
     }
 

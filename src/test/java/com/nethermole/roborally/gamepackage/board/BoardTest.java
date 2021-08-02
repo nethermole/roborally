@@ -2,8 +2,9 @@ package com.nethermole.roborally.gamepackage.board;
 
 import com.nethermole.roborally.gamepackage.board.element.Wall;
 import com.nethermole.roborally.gamepackage.player.HumanPlayer;
-import com.nethermole.roborally.gamepackage.player.NPCPlayer;
+import com.nethermole.roborally.gamepackage.player.bot.NPCPlayer;
 import com.nethermole.roborally.gamepackage.player.Player;
+import com.nethermole.roborally.gamepackage.player.bot.RandomBot;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,7 +33,7 @@ class BoardTest {
 
     @Test
     public void addPlayer() {
-        Player player = new NPCPlayer();
+        Player player = new RandomBot(0);
         board.addPlayer(player);
         assertThat(board.getPlayers()).contains(player);
     }

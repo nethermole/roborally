@@ -3,10 +3,19 @@ package com.nethermole.roborally.gamepackage.board.element;
 public enum ElementEnum {
 
     BOARD_NAME,
+    PIT,
+
+    BEACON,
+    BEACON0,
+    BEACON1,
+
+    CHECKPOINT1,
+    CHECKPOINT2,
+    CHECKPOINT3,
+
     GEAR_C,
     GEAR_CC,
 
-    PIT,
     WALL_UP,
     WALL_RIGHT,
     WALL_DOWN,

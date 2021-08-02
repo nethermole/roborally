@@ -26,6 +26,7 @@ class GameTest {
     HumanPlayer player1;
 
     Map<Integer, Player> playerList;
+    List<Position> checkpointList;
 
     @BeforeEach
     public void setup() {
@@ -34,13 +35,16 @@ class GameTest {
         playerList = new HashMap<>();
         playerList.put(0, player0);
         playerList.put(1, player1);
-        game = new Game(playerList, new GameLog(), new Position(6,6));
+        checkpointList = new ArrayList<>();
+        checkpointList.add(new Position(6,6));
+        checkpointList.add(new Position(6,6));
+        game = new Game(playerList, new GameLog(), checkpointList);
 
         //gets the game into general testable state
         game.distributeCards();
 
         BoardFactory boardFactory = new BoardFactory();
-        game.setBoard(boardFactory.board_empty());
+        game.setBoards(boardFactory.board_empty());
     }
 
     @Test

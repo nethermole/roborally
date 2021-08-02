@@ -1,15 +1,20 @@
 package com.nethermole.roborally.gamepackage;
 
 import com.nethermole.roborally.gamepackage.board.Board;
+import com.nethermole.roborally.gamepackage.board.Direction;
 import com.nethermole.roborally.gamepackage.board.Position;
+import com.nethermole.roborally.gamepackage.board.element.Beacon;
+import com.nethermole.roborally.gamepackage.board.element.Checkpoint;
+import com.nethermole.roborally.gamepackage.board.element.Element;
 import com.nethermole.roborally.gamepackage.deck.GameState;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementDeck;
 import com.nethermole.roborally.gamepackage.player.Player;
 import com.nethermole.roborally.gamepackage.player.PlayerState;
+import com.nethermole.roborally.gamepackage.player.bot.NPCPlayer;
 import com.nethermole.roborally.gameservice.GameLog;
 import lombok.Getter;
-import lombok.Setter;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,11 +22,11 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Game {
 
     @Getter
-    @Setter
     private Board board;
 
     private MovementDeck movementDeck;
@@ -38,11 +43,21 @@ public class Game {
     private Map<Integer, Player> players;
 
     @Getter
+    Player winningPlayer;
+
+    List<Position> checkpointPositions;
+    Checkpoint lastCheckpoint;
+
+    @Getter
     private int currentTurn;
 
     GameLog gameLog;
 
-    public Game(Map<Integer, Player> players, GameLog gameLog, Position startLocation) {
+    @Getter
+    private boolean over;
+
+    public Game(Map<Integer, Player> players, GameLog gameLog, List<Position> checkpointPositions) {
+        this.checkpointPositions = checkpointPositions;
         this.players = players;
         this.gameLog = gameLog;
         gameState = GameState.STARTING;
@@ -57,11 +72,8 @@ public class Game {
         }
         playerSubmittedHands = new HashMap<>();
 
-        //todo startLocation as board element?
         for (Player player : players.values()) {
             playersHands.put(player, new ArrayList<>());
-            player.setPosition(startLocation);
-            player.setRespawnPosition(startLocation);
         }
 
         movementDeck = new MovementDeck();
@@ -85,8 +97,6 @@ public class Game {
 
     public void submitPlayerHand(Player player, List<MovementCard> movementCardList) {
         playerStates.put(player, PlayerState.HAS_SUBMITTED_CARDS);
-
-        validateMovementCards();
         playersHands.put(player, new ArrayList<>());
         playerSubmittedHands.put(player, movementCardList);
     }
@@ -115,11 +125,39 @@ public class Game {
             for (MovementCard movementCard : movementCardsThisTurn) {
                 List<ViewStep> viewSteps = board.movePlayer(playerByMovementCard.get(movementCard), movementCard.getMovement());
                 gameLog.addViewSteps(currentTurn, viewSteps);
+                checkForWinner();
+                if(winningPlayer != null){
+                    currentTurn++;
+                    return;
+                }
             }
         }
         currentTurn++;
         this.gameState = GameState.TURN_PREPARATION;
         distributeCards();
+        npcPlayersSelectCards();
+    }
+
+    public void checkForWinner(){
+        for(Player player : players.values()){
+            Position position = player.getPosition();
+            Set<Element> elements = board.getSquares()[position.getX()][position.getY()].getElements();
+            if(elements.contains(lastCheckpoint)){
+                winningPlayer = player;
+                System.out.println("Player " + player.getId() + " won the game!");
+            }
+        }
+    }
+
+    public void npcPlayersSelectCards(){
+        for(Player player : players.values()){
+            if(player instanceof NPCPlayer){
+                NPCPlayer npcPlayer = (NPCPlayer) player;
+                List<MovementCard> npcPlayerCards = playersHands.get(player);
+                List<MovementCard> selectedCards = npcPlayer.chooseCards(npcPlayerCards);
+                submitPlayerHand(player, selectedCards);
+            }
+        }
     }
 
     public boolean isReadyToProcessTurn() {
@@ -131,7 +169,29 @@ public class Game {
         return true;
     }
 
-    private void validateMovementCards() {
+    public void setBoards(Board board) {
+        List<Board> boards = new ArrayList<>();
+        boards.add(board);
+        setBoards(boards);
+    }
+
+    public void setBoards(List<Board> boards) {
+        if (boards.size() != 1) {
+            throw new NotImplementedException();
+        }
+        this.board = boards.get(0);
+        for(int i = 1; i < checkpointPositions.size() ; i++){
+            lastCheckpoint = new Checkpoint(i);
+            board.addElement(lastCheckpoint, checkpointPositions.get(i));
+        }
+
+        Beacon startBeacon = Beacon.startBeacon(checkpointPositions.get(0));
+        board.addElement(startBeacon, startBeacon.getPosition());
+        for(Player player : players.values()){
+            player.setBeacon(startBeacon);
+            player.setPosition(startBeacon.getPosition());
+            player.setFacing(Direction.UP);
+        }
     }
 
 }

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 @Service
 public class GameLogistics {
@@ -37,12 +38,24 @@ public class GameLogistics {
     //todo extract clientUpdate logic
     public void startGame(Map<Integer, Player> players) {
         this.players = players;
-        game = new Game(players, gameLog, new Position(6, 6));
+        Random random = new Random();
 
         BoardFactory boardFactory = new BoardFactory();
-        //constructBoard(boardElements, boardHeight, boardWidth, startLocation, gameEventLogger);
-        game.setBoard(boardFactory.board_exchange());
+        Board board = boardFactory.board_exchange();
+
+        Position startPosition = new Position(random.nextInt(board.getSquares().length), random.nextInt(board.getSquares().length));
+        Position endPosition = new Position(random.nextInt(board.getSquares().length), random.nextInt(board.getSquares().length));
+        while(startPosition.equals(endPosition)){
+            endPosition = new Position(random.nextInt(board.getSquares().length), random.nextInt(board.getSquares().length));
+        }
+        List<Position> checkpointPositions = new ArrayList<>();
+        checkpointPositions.add(startPosition);
+        checkpointPositions.add(endPosition);
+
+        game = new Game(players, gameLog, checkpointPositions);
+        game.setBoards(board);
         game.distributeCards();
+        game.npcPlayersSelectCards();
 
         //ProofOfConceptView pocView = ProofOfConceptView.startPOCView(this);
         viewers = new ArrayList<>();

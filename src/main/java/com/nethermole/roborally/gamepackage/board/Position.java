@@ -53,6 +53,22 @@ public class Position {
     }
 
     @Override
+    public boolean equals(Object other){
+        if(other instanceof Position){
+            Position otherPosition = (Position) other;
+            if(x != otherPosition.x){
+                return false;
+            }
+            if(y != otherPosition.y){
+                return false;
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
     public String toString() {
         return "(" + x + ", " + y + ")";
     }

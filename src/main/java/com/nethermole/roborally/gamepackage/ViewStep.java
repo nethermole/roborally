@@ -8,5 +8,4 @@ public abstract class ViewStep {
     @Getter
     @Setter
     private String typeName;
-
 }
