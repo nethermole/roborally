@@ -25,7 +25,7 @@ public class GameLogistics {
     @Getter
     private Game game;
 
-    @Getter //todo remove getter when unity view is functional
+    @Getter
     private Map<Integer, Player> players;
     private List<AbstractView> viewers;
 

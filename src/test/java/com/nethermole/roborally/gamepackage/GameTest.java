@@ -3,7 +3,6 @@ package com.nethermole.roborally.gamepackage;
 import com.nethermole.roborally.gamepackage.board.Board;
 import com.nethermole.roborally.gamepackage.board.BoardFactory;
 import com.nethermole.roborally.gamepackage.board.Position;
-import com.nethermole.roborally.gamepackage.board.element.ElementEnum;
 import com.nethermole.roborally.gamepackage.deck.movement.Movement;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
 import com.nethermole.roborally.gamepackage.player.HumanPlayer;
@@ -37,7 +36,8 @@ class GameTest {
         playerList.put(0, player0);
         playerList.put(1, player1);
         checkpointList = new ArrayList<>();
-        checkpointList.add(new Position(6,6));
+        checkpointList.add(new Position(0,0));
+        checkpointList.add(new Position(1,1));
         game = new Game(playerList, new GameLog());
 
         //gets the game into general testable state
@@ -115,6 +115,52 @@ class GameTest {
         game.submitPlayerHand(player0, new ArrayList<>());
         game.submitPlayerHand(player1, new ArrayList<>());
         assertThat(game.isReadyToProcessTurn()).isTrue();
+    }
+
+    @Test
+    public void checkForWinner_checkPointPreset_returnsTrue(){
+        game.getPlayer(0).setPosition(new Position(1, 1));
+        game.checkForWinner();
+        assertThat(game.getWinningPlayer()).isEqualTo(game.getPlayer(0));
+    }
+
+    @Test
+    public void checkForWinner_checkpointNotPreset_returnsFalse(){
+        game.getPlayer(0).setPosition(new Position(0, 0));
+        game.checkForWinner();
+        assertThat(game.getWinningPlayer()).isNull();
+    }
+
+    @Test
+    public void positionInSquares_tooLowX_returnsFalse(){
+        Position out = new Position(-1, 0);
+        assertThat(game.isPositionInSquares(out)).isFalse();
+    }
+
+    @Test
+    public void positionInSquares_tooLowY_returnsFalse(){
+        Position out = new Position(0, -1);
+        assertThat(game.isPositionInSquares(out)).isFalse();
+    }
+
+    @Test
+    public void positionInSquares_inBounds_returnsTrue(){
+        Position _00 = new Position(0, 0);
+        Position _55 = new Position(5, 5);
+        assertThat(game.isPositionInSquares(_00)).isTrue();
+        assertThat(game.isPositionInSquares(_55)).isTrue();
+    }
+
+    @Test
+    public void positionInSquares_tooBigX_returnsFalse(){
+        Position out = new Position(20, 0);
+        assertThat(game.isPositionInSquares(out)).isFalse();
+    }
+
+    @Test
+    public void positionInSquares_tooBigY_returnsFalse(){
+        Position out = new Position(0, 20);
+        assertThat(game.isPositionInSquares(out)).isFalse();
     }
 
 }

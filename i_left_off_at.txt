@@ -1,1 +1,1 @@
-checkPoint positions, start position, index 0 confusion
+about to refactor processTurn... it may have far reaching consequences

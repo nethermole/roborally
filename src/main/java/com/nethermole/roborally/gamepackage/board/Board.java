@@ -8,7 +8,6 @@ import com.nethermole.roborally.gamepackage.player.Player;
 import com.nethermole.roborally.gamepackage.turn.MovementMethod;
 import com.nethermole.roborally.gamepackage.turn.RobotMoveViewStep;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -86,7 +85,7 @@ public class Board {
         return viewSteps;
     }
 
-    private ViewStep resetPlayer(Player player) {
+    public ViewStep resetPlayer(Player player) {
         Position currentPosition = new Position(player.getPosition());
         Position endPosition = new Position(player.getBeacon().getPosition());
 
@@ -97,14 +96,20 @@ public class Board {
         return moveEvent;
     }
 
-    private boolean overPit(Player player) {
-        Position playerPosition = player.getPosition();
-        if (playerPosition.getX() < 0 || playerPosition.getX() >= squares.length
-                || playerPosition.getY() < 0 || playerPosition.getY() >= squares[0].length
-        ) {
+    public boolean isPositionInSquares(Position position){
+        return
+                position.getX() >=0 &&
+                position.getY() >=0 &&
+                position.getX() < squares.length &&
+                position.getY() < squares[0].length;
+    }
+
+    public boolean isOverPit(Position position) {
+        if(!isPositionInSquares(position)){
             return true;
         }
-        Set<Element> elements = squares[playerPosition.getX()][playerPosition.getY()].getElements();
+
+        Set<Element> elements = squares[position.getX()][position.getY()].getElements();
         for (Element element : elements) {
             if (element.getElementEnum() == ElementEnum.PIT) {
                 return true;
@@ -126,7 +131,7 @@ public class Board {
             player.setPosition(endPosition);
             viewSteps.add(new RobotMoveViewStep(player, startPosition, endPosition, player.getFacing(), player.getFacing(), MovementMethod.MOVE));
 
-            if (overPit(player)) {
+            if (isOverPit(player.getPosition())) {
                 viewSteps.add(resetPlayer(player));
             }
             return viewSteps;
@@ -170,6 +175,7 @@ public class Board {
 
     //TODO: needs to detect other walls
     public boolean isWallBetween(Position startPosition, Position endPosition) {
+        /*
         if (startPosition.getX() == endPosition.getX()) {
             Position leftPosition = startPosition.getX() < endPosition.getX() ? startPosition : endPosition;
             for (int i = leftPosition.getX() + 1; i < endPosition.getX(); i++) {
@@ -186,6 +192,8 @@ public class Board {
                 }
             }
         }
+        return false;
+         */
         return false;
     }
 

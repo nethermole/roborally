@@ -140,7 +140,7 @@ public class Game {
     public void checkForWinner(){
         for(Player player : players.values()){
             Position position = player.getPosition();
-            if(positionInSquares(position)) {
+            if(isPositionInSquares(position)) {
                 Set<Element> elements = board.getSquares()[position.getX()][position.getY()].getElements();
                 if (elements.contains(checkPoints.get(checkPoints.size() - 1))) {
                     winningPlayer = player;
@@ -150,12 +150,8 @@ public class Game {
         }
     }
 
-    public boolean positionInSquares(Position position){
-        return
-                position.getX() >=0 &&
-                position.getY() >=0 &&
-                position.getX() < board.getSquares().length &&
-                position.getX() < board.getSquares()[0].length;
+    public boolean isPositionInSquares(Position position){
+        return board.isPositionInSquares(position);
     }
 
     public void npcPlayersSelectCards(){
@@ -198,6 +194,10 @@ public class Game {
             player.setPosition(startBeacon.getPosition());
             player.setFacing(Direction.UP);
         }
+    }
+
+    public Player getPlayer(int id){
+        return players.get(id);
     }
 
 }
