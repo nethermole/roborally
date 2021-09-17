@@ -16,7 +16,8 @@ import com.nethermole.roborally.gamepackage.player.PlayerState;
 import com.nethermole.roborally.gamepackage.player.bot.NPCPlayer;
 import com.nethermole.roborally.gameservice.GameLog;
 import lombok.Getter;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,59 +25,68 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@NoArgsConstructor
 public class Game {
 
+    @Setter
+    private Map<Integer, Player> players;
+
+    @Setter
+    private GameLog gameLog;
+
     @Getter
+    @Setter
     private Board board;
 
     private MovementDeck movementDeck;
 
     @Getter
     private Map<Player, List<MovementCard>> playersHands;
+
     @Getter
     private Map<Player, List<MovementCard>> playerSubmittedHands;
+
     @Getter
     private Map<Player, PlayerState> playerStates;
+
     @Getter
     private GameState gameState;
 
-    private List<Checkpoint> checkPoints;
-
-    private Map<Integer, Player> players;
+    @Setter
+    private Beacon startBeacon;
 
     @Getter
-    Player winningPlayer;
+    @Setter
+    private List<Checkpoint> checkPoints;
+
+    @Getter
+    private Player winningPlayer;
 
     @Getter
     private int currentTurn;
 
-    GameLog gameLog;
-
-    public Game(Map<Integer, Player> players, GameLog gameLog) {
-        this.players = players;
-        this.gameLog = gameLog;
-        gameState = GameState.STARTING;
-        playersHands = new HashMap<>();
-        for (Player player : players.values()) {
-            playersHands.put(player, new ArrayList<>());
-        }
-
-        playerStates = new HashMap<>();
-        for (Player player : players.values()) {
-            playerStates.put(player, PlayerState.NO_INTERACTION_YET);
-        }
+    void initializeFields() {
         playerSubmittedHands = new HashMap<>();
+        playersHands = new HashMap<>();
+        playerStates = new HashMap<>();
 
-        for (Player player : players.values()) {
-            playersHands.put(player, new ArrayList<>());
-        }
-
+        gameState = GameState.STARTING;
         movementDeck = new MovementDeck();
         currentTurn = 0;
+
+        for (Player player : players.values()) {
+            playerStates.put(player, PlayerState.NO_INTERACTION_YET);
+            player.setFacing(Direction.UP);
+        }
+
+        //is the below necessary?
+        for (Player player : players.values()) {
+            playersHands.put(player, new ArrayList<>());
+        }
     }
 
-    public Position getStartPosition(){
-        return board.getPositionOfElement(checkPoints.get(0));
+    public Position getStartPosition() {
+        return board.getPositionOfElement(startBeacon);
     }
 
     public void distributeCards() {
@@ -106,14 +116,17 @@ public class Game {
         for (int i = 0; i < GameConstants.PHASES_PER_TURN; i++) {
             processPhase(organizedPlayerHands.get(i), playerHandProcessor);
             checkForWinner();
-            if(winningPlayer != null) {
+            if (winningPlayer != null) {
                 break;
             }
         }
     }
 
-    public void setupForNextTurn(){
+    public void incrementCurrentTurn() {
         currentTurn++;
+    }
+
+    public void setupForNextTurn() {
         this.gameState = GameState.TURN_PREPARATION;
         distributeCards();
         npcPlayersSelectCards();
@@ -127,10 +140,10 @@ public class Game {
         }
     }
 
-    public void checkForWinner(){
-        for(Player player : players.values()){
+    public void checkForWinner() {
+        for (Player player : players.values()) {
             Position position = player.getPosition();
-            if(isPositionInSquares(position)) {
+            if (isPositionInSquares(position)) {
                 Set<Element> elements = board.getSquares()[position.getX()][position.getY()].getElements();
                 if (elements.contains(checkPoints.get(checkPoints.size() - 1))) {
                     winningPlayer = player;
@@ -140,13 +153,13 @@ public class Game {
         }
     }
 
-    public boolean isPositionInSquares(Position position){
+    public boolean isPositionInSquares(Position position) {
         return board.isPositionInSquares(position);
     }
 
-    public void npcPlayersSelectCards(){
-        for(Player player : players.values()){
-            if(player instanceof NPCPlayer){
+    public void npcPlayersSelectCards() {
+        for (Player player : players.values()) {
+            if (player instanceof NPCPlayer) {
                 NPCPlayer npcPlayer = (NPCPlayer) player;
                 List<MovementCard> npcPlayerCards = playersHands.get(player);
                 List<MovementCard> selectedCards = npcPlayer.chooseCards(npcPlayerCards);
@@ -164,29 +177,7 @@ public class Game {
         return true;
     }
 
-    public void setBoards(List<Board> boards, List<Position> checkpointPositions) {
-        this.checkPoints = new ArrayList<>();
-
-        if (boards.size() != 1) {
-            throw new NotImplementedException();
-        }
-        this.board = boards.get(0);
-        for(int i = 0; i < checkpointPositions.size() ; i++){
-            Checkpoint checkpoint = new Checkpoint(i);
-            checkPoints.add(checkpoint);
-            board.addElement(checkpoint, checkpointPositions.get(i));
-        }
-
-        Beacon startBeacon = Beacon.startBeacon(checkpointPositions.get(0));
-        board.addElement(startBeacon, startBeacon.getPosition());
-        for(Player player : players.values()){
-            player.setBeacon(startBeacon);
-            player.setPosition(startBeacon.getPosition());
-            player.setFacing(Direction.UP);
-        }
-    }
-
-    public Player getPlayer(int id){
+    public Player getPlayer(int id) {
         return players.get(id);
     }
 

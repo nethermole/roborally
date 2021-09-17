@@ -1,6 +1,5 @@
 package com.nethermole.roborally.gamepackage;
 
-import com.nethermole.roborally.gamepackage.board.Board;
 import com.nethermole.roborally.gamepackage.board.BoardFactory;
 import com.nethermole.roborally.gamepackage.board.Position;
 import com.nethermole.roborally.gamepackage.deck.movement.Movement;
@@ -8,7 +7,6 @@ import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
 import com.nethermole.roborally.gamepackage.player.HumanPlayer;
 import com.nethermole.roborally.gamepackage.player.Player;
 import com.nethermole.roborally.gamepackage.player.PlayerState;
-import com.nethermole.roborally.gameservice.GameLog;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +24,6 @@ class GameTest {
     HumanPlayer player1;
 
     Map<Integer, Player> playerList;
-    List<Position> checkpointList;
 
     @BeforeEach
     public void setup() {
@@ -35,18 +32,15 @@ class GameTest {
         playerList = new HashMap<>();
         playerList.put(0, player0);
         playerList.put(1, player1);
-        checkpointList = new ArrayList<>();
-        checkpointList.add(new Position(0,0));
-        checkpointList.add(new Position(1,1));
-        game = new Game(playerList, new GameLog());
 
-        //gets the game into general testable state
-        game.distributeCards();
-
-        BoardFactory boardFactory = new BoardFactory();
-        List<Board> boards = new ArrayList<>();
-        boards.add(boardFactory.board_empty());
-        game.setBoards(boards, checkpointList);
+        GameBuilder gameBuilder = new GameBuilder();
+        gameBuilder.players(playerList);
+        gameBuilder.gameLog(null);
+        gameBuilder.board((new BoardFactory()).board_empty());
+        gameBuilder.generateStartBeacon();
+        gameBuilder.generateCheckpoints(1);
+        game = gameBuilder.buildGame();
+        game.setupForNextTurn();
     }
 
     @Test
@@ -118,33 +112,34 @@ class GameTest {
     }
 
     @Test
-    public void checkForWinner_checkPointPreset_returnsTrue(){
-        game.getPlayer(0).setPosition(new Position(1, 1));
+    public void checkForWinner_checkPointPreset_returnsTrue() {
+        Position winningPosition = game.getBoard().getPositionOfElement(game.getCheckPoints().get(game.getCheckPoints().size() - 1));
+        game.getPlayer(0).setPosition(winningPosition);
         game.checkForWinner();
         assertThat(game.getWinningPlayer()).isEqualTo(game.getPlayer(0));
     }
 
     @Test
-    public void checkForWinner_checkpointNotPreset_returnsFalse(){
+    public void checkForWinner_checkpointNotPreset_returnsFalse() {
         game.getPlayer(0).setPosition(new Position(0, 0));
         game.checkForWinner();
         assertThat(game.getWinningPlayer()).isNull();
     }
 
     @Test
-    public void positionInSquares_tooLowX_returnsFalse(){
+    public void positionInSquares_tooLowX_returnsFalse() {
         Position out = new Position(-1, 0);
         assertThat(game.isPositionInSquares(out)).isFalse();
     }
 
     @Test
-    public void positionInSquares_tooLowY_returnsFalse(){
+    public void positionInSquares_tooLowY_returnsFalse() {
         Position out = new Position(0, -1);
         assertThat(game.isPositionInSquares(out)).isFalse();
     }
 
     @Test
-    public void positionInSquares_inBounds_returnsTrue(){
+    public void positionInSquares_inBounds_returnsTrue() {
         Position _00 = new Position(0, 0);
         Position _55 = new Position(5, 5);
         assertThat(game.isPositionInSquares(_00)).isTrue();
@@ -152,13 +147,13 @@ class GameTest {
     }
 
     @Test
-    public void positionInSquares_tooBigX_returnsFalse(){
+    public void positionInSquares_tooBigX_returnsFalse() {
         Position out = new Position(20, 0);
         assertThat(game.isPositionInSquares(out)).isFalse();
     }
 
     @Test
-    public void positionInSquares_tooBigY_returnsFalse(){
+    public void positionInSquares_tooBigY_returnsFalse() {
         Position out = new Position(0, 20);
         assertThat(game.isPositionInSquares(out)).isFalse();
     }

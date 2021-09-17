@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 @Slf4j
@@ -47,7 +48,7 @@ public class Board {
         players.add(player);
     }
 
-    public Position getPositionOfElement(Element element){
+    public Position getPositionOfElement(Element element) {
         return elementPositions.get(element);
     }
 
@@ -87,25 +88,25 @@ public class Board {
 
     public ViewStep resetPlayer(Player player) {
         Position currentPosition = new Position(player.getPosition());
-        Position endPosition = new Position(player.getBeacon().getPosition());
+        Position endPosition = new Position(getPositionOfElement(player.getBeacon()));
 
         ViewStep moveEvent = new RobotMoveViewStep(player, currentPosition, endPosition, player.getFacing(), player.getFacing(), MovementMethod.PIT_DEATH);
 
-        player.setPosition(player.getBeacon().getPosition());
+        player.setPosition(getPositionOfElement(player.getBeacon()));
         System.out.println("Player " + player.getId() + " died. Resetting to " + player.getPosition());
         return moveEvent;
     }
 
-    public boolean isPositionInSquares(Position position){
+    public boolean isPositionInSquares(Position position) {
         return
-                position.getX() >=0 &&
-                position.getY() >=0 &&
-                position.getX() < squares.length &&
-                position.getY() < squares[0].length;
+                position.getX() >= 0 &&
+                        position.getY() >= 0 &&
+                        position.getX() < squares.length &&
+                        position.getY() < squares[0].length;
     }
 
     public boolean isOverPit(Position position) {
-        if(!isPositionInSquares(position)){
+        if (!isPositionInSquares(position)) {
             return true;
         }
 
@@ -171,6 +172,20 @@ public class Board {
         player.setFacing(Direction.turnRight(player.getFacing()));
         ViewStep viewStep = new RobotMoveViewStep(player, player.getPosition(), player.getPosition(), startFacing, player.getFacing(), MovementMethod.TURN);
         return viewStep;
+    }
+
+    public Position getRandomEmptySquare() {
+        Random random = new Random();
+        Position emptySquare = null;
+        while (emptySquare == null) {
+            int x = random.nextInt(squares.length);
+            int y = random.nextInt(squares[0].length);
+            Tile tile = squares[x][y];
+            if (tile.isEmpty()) {
+                emptySquare = new Position(x, y);
+            }
+        }
+        return emptySquare;
     }
 
     //TODO: needs to detect other walls

@@ -4,18 +4,14 @@ import com.nethermole.roborally.gamepackage.board.element.Beacon;
 import com.nethermole.roborally.gamepackage.board.element.Pit;
 import com.nethermole.roborally.gamepackage.board.element.Wall;
 import com.nethermole.roborally.gamepackage.player.HumanPlayer;
-import com.nethermole.roborally.gamepackage.player.bot.NPCPlayer;
 import com.nethermole.roborally.gamepackage.player.Player;
 import com.nethermole.roborally.gamepackage.player.bot.RandomBot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class BoardTest {
@@ -23,7 +19,7 @@ class BoardTest {
     Board board;
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
         board = new Board(8, 8);
     }
 
@@ -99,17 +95,17 @@ class BoardTest {
     }
 
     @Test
-    public void resetPlayer_movesPlayerToBeaconPosition(){
+    public void resetPlayer_movesPlayerToBeaconPosition() {
         Player player = new RandomBot(0);
         board.addPlayer(player);
-        player.setPosition(new Position(0,0));
+        player.setPosition(new Position(0, 0));
 
-        Beacon respawnBeacon = mock(Beacon.class);
-        when(respawnBeacon.getPosition()).thenReturn(new Position(4,4));
+        Beacon respawnBeacon = new Beacon(-1);
+        board.addElement(respawnBeacon, new Position(4, 4));
         player.setBeacon(respawnBeacon);
 
         board.resetPlayer(player);
-        assertThat(player.getPosition()).isEqualTo(new Position(4,4));
+        assertThat(player.getPosition()).isEqualTo(new Position(4, 4));
     }
 
     @Test
@@ -153,19 +149,19 @@ class BoardTest {
     }
 
     @Test
-    public void isOverPit_notInSquares_returnsTrue(){
-        assertThat(board.isOverPit(new Position(-1,5))).isTrue();
+    public void isOverPit_notInSquares_returnsTrue() {
+        assertThat(board.isOverPit(new Position(-1, 5))).isTrue();
     }
 
     @Test
-    public void isOverPit_overPit_returnsTrue(){
-        board.addElement(new Pit(), new Position(5,5));
-        assertThat(board.isOverPit(new Position(5,5))).isTrue();
+    public void isOverPit_overPit_returnsTrue() {
+        board.addElement(new Pit(), new Position(5, 5));
+        assertThat(board.isOverPit(new Position(5, 5))).isTrue();
     }
 
     @Test
-    public void isOverPit_notOverPut_returnFalse(){
-        assertThat(board.isOverPit(new Position(5,5))).isFalse();
+    public void isOverPit_notOverPut_returnFalse() {
+        assertThat(board.isOverPit(new Position(5, 5))).isFalse();
     }
 
 }

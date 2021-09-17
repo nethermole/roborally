@@ -28,4 +28,8 @@ public class Tile {
         }
         return false;
     }
+
+    public boolean isEmpty() {
+        return elements.isEmpty();
+    }
 }
