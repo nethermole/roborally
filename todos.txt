@@ -26,6 +26,8 @@
     - Battle royale
     - Roguelike
 - Procedurally generated boards
+-Multi checkpoint support
+-Locked register phases at high damage
 
 If public
 // Validate player hand submission

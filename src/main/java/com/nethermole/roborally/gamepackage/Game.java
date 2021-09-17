@@ -1,5 +1,7 @@
 package com.nethermole.roborally.gamepackage;
 
+import com.nethermole.roborally.GameConstants;
+import com.nethermole.roborally.PlayerHandProcessor;
 import com.nethermole.roborally.gamepackage.board.Board;
 import com.nethermole.roborally.gamepackage.board.Direction;
 import com.nethermole.roborally.gamepackage.board.Position;
@@ -17,8 +19,6 @@ import lombok.Getter;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,41 +100,31 @@ public class Game {
         playerSubmittedHands.put(player, movementCardList);
     }
 
-    //todo untangle this, put it under test
     public void processTurn() {
-        Map<MovementCard, Player> playerByMovementCard = new HashMap<>();
-
-        //gather the cards
-        List<List<MovementCard>> cardsByPriorityByPhase = new ArrayList<>();
-        for (int phase = 0; phase < 5; phase++) { //5 is the number of movement cards we recieve from players
-            List<MovementCard> cardsThisTurn = new ArrayList<>();
-            for (Map.Entry<Player, List<MovementCard>> entry : playerSubmittedHands.entrySet()) {
-                MovementCard movementCard = entry.getValue().get(phase);
-                cardsThisTurn.add(movementCard);
-
-                playerByMovementCard.put(movementCard, entry.getKey());
-            }
-            cardsThisTurn.sort(Comparator.comparing(MovementCard::getPriority));
-            Collections.reverse(cardsThisTurn);
-            cardsByPriorityByPhase.add(cardsThisTurn);
-        }
-
-        for (List<MovementCard> movementCardsThisTurn : cardsByPriorityByPhase) {
-            //perform movement actions
-            for (MovementCard movementCard : movementCardsThisTurn) {
-                List<ViewStep> viewSteps = board.movePlayer(playerByMovementCard.get(movementCard), movementCard.getMovement());
-                gameLog.addViewSteps(currentTurn, viewSteps);
-                checkForWinner();
-                if(winningPlayer != null){
-                    currentTurn++;
-                    return;
-                }
+        PlayerHandProcessor playerHandProcessor = new PlayerHandProcessor();
+        List<List<MovementCard>> organizedPlayerHands = playerHandProcessor.submitHands(playerSubmittedHands);
+        for (int i = 0; i < GameConstants.PHASES_PER_TURN; i++) {
+            processPhase(organizedPlayerHands.get(i), playerHandProcessor);
+            checkForWinner();
+            if(winningPlayer != null) {
+                break;
             }
         }
+    }
+
+    public void setupForNextTurn(){
         currentTurn++;
         this.gameState = GameState.TURN_PREPARATION;
         distributeCards();
         npcPlayersSelectCards();
+    }
+
+    public void processPhase(List<MovementCard> movementCards, PlayerHandProcessor playerHandProcessor) {
+        for (MovementCard movementCard : movementCards) {
+            Player player = playerHandProcessor.getPlayerWhoSubmittedCard(movementCard);
+            List<ViewStep> viewSteps = board.movePlayer(player, movementCard.getMovement());
+            gameLog.addViewSteps(currentTurn, viewSteps);
+        }
     }
 
     public void checkForWinner(){

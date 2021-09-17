@@ -109,6 +109,7 @@ public class GameLogistics {
 
         if (game.isReadyToProcessTurn()) {
             game.processTurn();
+            game.setupForNextTurn();
         }
     }
 
