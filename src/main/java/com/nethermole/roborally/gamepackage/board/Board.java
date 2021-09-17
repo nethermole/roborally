@@ -81,7 +81,7 @@ public class Board {
                 viewSteps.add(backup(player));
                 break;
             default:
-                throw new RuntimeException("hit default case in movePlayer");
+                return new ArrayList<>();
         }
         return viewSteps;
     }

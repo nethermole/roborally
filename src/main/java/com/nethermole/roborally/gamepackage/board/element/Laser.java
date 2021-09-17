@@ -22,7 +22,7 @@ public class Laser extends Element {
         } else if (orientation == Orientation.HORIZONTAL) {
             return ElementEnum.LASER_H;
         } else {
-            throw new RuntimeException("Unknown orientation: " + orientation);
+            return null;
         }
     }
 }

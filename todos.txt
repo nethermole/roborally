@@ -1,13 +1,9 @@
 //Tech debt & Bugfixes
-- Game to builder pattern
 - Deserializing board into elementEnums isn't scalable. Let's actually serialize/deserialize the board better. full json into objects, not keying off of elementenum. see conveyor elementEnums
-- Remove ProofOfConceptView
 - Unit test code coverage to 95%
     - Includes untangling anything to refactors
 - Fix/revisit wall logic
 - Introduce a real logging framework
-- Get rid of runtime exceptions and use checked exception
-- Remove "gamestate" in Game.java, assuming no logic using it. If so, abstract it out.
 - General refactoring to improve separation of concerns
 - Move constants to configuration
 - Implement checkpoint order checks, and related logic around ending the game
@@ -25,6 +21,7 @@
     - Robo rally
     - Battle royale
     - Roguelike
+    - Looter shooter
 - Procedurally generated boards
 -Multi checkpoint support
 -Locked register phases at high damage

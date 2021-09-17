@@ -19,23 +19,9 @@ public class Conveyor extends Element {
         this.speed = speed;
     }
 
-    public Conveyor(Direction inputDirection, Direction outputDirection) {
-        this(inputDirection, outputDirection, 1);
-    }
-
-    public Conveyor(Direction inputDirection, Direction outputDirection, int speed) {
-        this.inputDirection = inputDirection;
-        this.outputDirection = outputDirection;
-        this.speed = speed;
-    }
-
     @Override
     public ElementEnum getElementEnum() {
         String enumName = "CONVEYOR_" + speed + "_" + inputDirection + "_" + outputDirection;
         return ElementEnum.valueOf(enumName);
-    }
-
-    public RuntimeException createRuntimeExceptionForElementEnum() {
-        return new RuntimeException("invalid elementEnum for conveyor: " + speed + "," + inputDirection + "," + outputDirection);
     }
 }

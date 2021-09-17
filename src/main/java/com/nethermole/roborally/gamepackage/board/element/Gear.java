@@ -16,7 +16,7 @@ public class Gear extends Element {
         } else if (spin == Spin.COUNTERCLOCKWISE) {
             return ElementEnum.GEAR_CC;
         } else {
-            throw new RuntimeException("Unexpected spin state: " + spin);
+            return null;
         }
     }
 

@@ -29,7 +29,7 @@ public class Wall extends Element {
             case LEFT:
                 return ElementEnum.WALL_LEFT;
             default:
-                throw new RuntimeException("no elementEnum found for wall - this should never happen");
+                return null;
         }
 
     }

@@ -14,7 +14,7 @@ public enum Direction {
             case LEFT:
                 return UP;
             default:
-                throw new RuntimeException("hit default case in direction turnRight");
+                return null;
         }
     }
 
@@ -29,7 +29,7 @@ public enum Direction {
             case LEFT:
                 return RIGHT;
             default:
-                throw new RuntimeException("hit default case in direction getOpposite");
+                return null;
         }
     }
 
@@ -44,7 +44,7 @@ public enum Direction {
             case LEFT:
                 return DOWN;
             default:
-                throw new RuntimeException("hit default case in direction turnLeft");
+                return null;
         }
     }
 }
