@@ -1,5 +1,6 @@
 package com.nethermole.roborally.gamepackage;
 
+import com.nethermole.roborally.gamepackage.board.Board;
 import com.nethermole.roborally.gamepackage.board.BoardFactory;
 import com.nethermole.roborally.gamepackage.board.Position;
 import com.nethermole.roborally.gamepackage.board.element.ElementEnum;
@@ -37,14 +38,15 @@ class GameTest {
         playerList.put(1, player1);
         checkpointList = new ArrayList<>();
         checkpointList.add(new Position(6,6));
-        checkpointList.add(new Position(6,6));
-        game = new Game(playerList, new GameLog(), checkpointList);
+        game = new Game(playerList, new GameLog());
 
         //gets the game into general testable state
         game.distributeCards();
 
         BoardFactory boardFactory = new BoardFactory();
-        game.setBoards(boardFactory.board_empty());
+        List<Board> boards = new ArrayList<>();
+        boards.add(boardFactory.board_empty());
+        game.setBoards(boards, checkpointList);
     }
 
     @Test

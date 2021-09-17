@@ -12,7 +12,9 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Slf4j
@@ -24,11 +26,10 @@ public class Board {
     @Getter
     private Tile[][] squares;
 
-    @Getter
-    @Setter
-    private Position start;
+    private Map<Element, Position> elementPositions;
 
     public Board(int boardHeight, int boardWidth) {
+        elementPositions = new HashMap<>();
         squares = new Tile[boardHeight][boardWidth];
         for (int i = 0; i < boardHeight; i++) {
             for (int j = 0; j < boardWidth; j++) {
@@ -39,11 +40,16 @@ public class Board {
     }
 
     public void addElement(Element element, Position position) {
+        elementPositions.put(element, position);
         squares[position.getX()][position.getY()].addElement(element);
     }
 
     public void addPlayer(Player player) {
         players.add(player);
+    }
+
+    public Position getPositionOfElement(Element element){
+        return elementPositions.get(element);
     }
 
     //break this out into a movement logic class

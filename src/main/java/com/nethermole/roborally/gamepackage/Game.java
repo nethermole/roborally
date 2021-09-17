@@ -40,24 +40,19 @@ public class Game {
     @Getter
     private GameState gameState;
 
+    private List<Checkpoint> checkPoints;
+
     private Map<Integer, Player> players;
 
     @Getter
     Player winningPlayer;
-
-    List<Position> checkpointPositions;
-    Checkpoint lastCheckpoint;
 
     @Getter
     private int currentTurn;
 
     GameLog gameLog;
 
-    @Getter
-    private boolean over;
-
-    public Game(Map<Integer, Player> players, GameLog gameLog, List<Position> checkpointPositions) {
-        this.checkpointPositions = checkpointPositions;
+    public Game(Map<Integer, Player> players, GameLog gameLog) {
         this.players = players;
         this.gameLog = gameLog;
         gameState = GameState.STARTING;
@@ -78,6 +73,10 @@ public class Game {
 
         movementDeck = new MovementDeck();
         currentTurn = 0;
+    }
+
+    public Position getStartPosition(){
+        return board.getPositionOfElement(checkPoints.get(0));
     }
 
     public void distributeCards() {
@@ -141,12 +140,22 @@ public class Game {
     public void checkForWinner(){
         for(Player player : players.values()){
             Position position = player.getPosition();
-            Set<Element> elements = board.getSquares()[position.getX()][position.getY()].getElements();
-            if(elements.contains(lastCheckpoint)){
-                winningPlayer = player;
-                System.out.println("Player " + player.getId() + " won the game!");
+            if(positionInSquares(position)) {
+                Set<Element> elements = board.getSquares()[position.getX()][position.getY()].getElements();
+                if (elements.contains(checkPoints.get(checkPoints.size() - 1))) {
+                    winningPlayer = player;
+                    System.out.println("Player " + player.getId() + " won the game!");
+                }
             }
         }
+    }
+
+    public boolean positionInSquares(Position position){
+        return
+                position.getX() >=0 &&
+                position.getY() >=0 &&
+                position.getX() < board.getSquares().length &&
+                position.getX() < board.getSquares()[0].length;
     }
 
     public void npcPlayersSelectCards(){
@@ -169,20 +178,17 @@ public class Game {
         return true;
     }
 
-    public void setBoards(Board board) {
-        List<Board> boards = new ArrayList<>();
-        boards.add(board);
-        setBoards(boards);
-    }
+    public void setBoards(List<Board> boards, List<Position> checkpointPositions) {
+        this.checkPoints = new ArrayList<>();
 
-    public void setBoards(List<Board> boards) {
         if (boards.size() != 1) {
             throw new NotImplementedException();
         }
         this.board = boards.get(0);
-        for(int i = 1; i < checkpointPositions.size() ; i++){
-            lastCheckpoint = new Checkpoint(i);
-            board.addElement(lastCheckpoint, checkpointPositions.get(i));
+        for(int i = 0; i < checkpointPositions.size() ; i++){
+            Checkpoint checkpoint = new Checkpoint(i);
+            checkPoints.add(checkpoint);
+            board.addElement(checkpoint, checkpointPositions.get(i));
         }
 
         Beacon startBeacon = Beacon.startBeacon(checkpointPositions.get(0));

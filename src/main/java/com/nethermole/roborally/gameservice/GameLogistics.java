@@ -1,5 +1,6 @@
 package com.nethermole.roborally.gameservice;
 
+import com.nethermole.roborally.StartInfo;
 import com.nethermole.roborally.exceptions.GameNotStartedException;
 import com.nethermole.roborally.gamepackage.Game;
 import com.nethermole.roborally.gamepackage.ViewStep;
@@ -35,6 +36,10 @@ public class GameLogistics {
         return (game != null);
     }
 
+    public boolean isGameAboutToStart(){
+        return isGameAlreadyStarted() && game.getCurrentTurn() == 0;
+    }
+
     //todo extract clientUpdate logic
     public void startGame(Map<Integer, Player> players) {
         this.players = players;
@@ -52,8 +57,10 @@ public class GameLogistics {
         checkpointPositions.add(startPosition);
         checkpointPositions.add(endPosition);
 
-        game = new Game(players, gameLog, checkpointPositions);
-        game.setBoards(board);
+        game = new Game(players, gameLog);
+        ArrayList<Board> boards = new ArrayList<>();
+        boards.add(board);
+        game.setBoards(boards, checkpointPositions);
         game.distributeCards();
         game.npcPlayersSelectCards();
 
@@ -103,5 +110,9 @@ public class GameLogistics {
         if (game.isReadyToProcessTurn()) {
             game.processTurn();
         }
+    }
+
+    public StartInfo getStartInfo(){
+        return new StartInfo(players.size(), game.getStartPosition());
     }
 }

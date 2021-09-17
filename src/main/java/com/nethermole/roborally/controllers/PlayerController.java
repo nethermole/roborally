@@ -22,7 +22,11 @@ public class PlayerController {
 
     @GetMapping("/player")
     public Collection<Player> getPlayers() {
-        return gameLogistics.getPlayers().values();
+        if(gameLogistics.getPlayers() != null && !gameLogistics.getPlayers().isEmpty()) {
+            return gameLogistics.getPlayers().values();
+        } else{
+            return new ArrayList<>();
+        }
     }
 
     @PostMapping("/player/{id}/submitHand")

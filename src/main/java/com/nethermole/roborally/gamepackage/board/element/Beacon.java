@@ -28,7 +28,7 @@ public class Beacon extends Element{
 
     public static Beacon startBeacon(Position startPosition){
         Beacon beacon = new Beacon(0);
-        beacon.position = startPosition;
+        beacon.position = new Position(startPosition);
         beacon.playerId = -1;
         return beacon;
     }

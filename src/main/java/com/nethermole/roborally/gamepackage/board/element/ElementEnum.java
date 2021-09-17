@@ -9,6 +9,7 @@ public enum ElementEnum {
     BEACON0,
     BEACON1,
 
+    CHECKPOINT0,
     CHECKPOINT1,
     CHECKPOINT2,
     CHECKPOINT3,

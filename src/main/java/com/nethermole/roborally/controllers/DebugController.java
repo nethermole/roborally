@@ -11,7 +11,7 @@ public class DebugController {
     @Autowired
     GameLogistics gameLogistics;
 
-    @GetMapping
+    @GetMapping("/debug")
     public void debug(){
         System.out.println();
     }

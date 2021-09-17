@@ -1,5 +1,6 @@
 package com.nethermole.roborally.gamepackage;
 
+import com.nethermole.roborally.StartInfo;
 import lombok.Data;
 
 import java.util.List;
@@ -8,5 +9,7 @@ import java.util.List;
 public class ViewUpdate {
 
     private List<ViewStep> viewSteps;
+
+    private StartInfo startInfo;
 
 }
