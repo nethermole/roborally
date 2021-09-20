@@ -33,7 +33,7 @@ class BoardTest {
     public void addElement() {
         Wall verticalWallLeft = new Wall(Direction.LEFT);
         board.addElement(verticalWallLeft, new Position(0, 0));
-        assertThat(board.getSquares()[0][0].getElements()).contains(verticalWallLeft);
+        assertThat(board.getSquares().get(0).get(0).getElements()).contains(verticalWallLeft);
     }
 
     @Test

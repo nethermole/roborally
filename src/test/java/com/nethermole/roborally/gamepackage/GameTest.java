@@ -126,36 +126,5 @@ class GameTest {
         assertThat(game.getWinningPlayer()).isNull();
     }
 
-    @Test
-    public void positionInSquares_tooLowX_returnsFalse() {
-        Position out = new Position(-1, 0);
-        assertThat(game.isPositionInSquares(out)).isFalse();
-    }
-
-    @Test
-    public void positionInSquares_tooLowY_returnsFalse() {
-        Position out = new Position(0, -1);
-        assertThat(game.isPositionInSquares(out)).isFalse();
-    }
-
-    @Test
-    public void positionInSquares_inBounds_returnsTrue() {
-        Position _00 = new Position(0, 0);
-        Position _55 = new Position(5, 5);
-        assertThat(game.isPositionInSquares(_00)).isTrue();
-        assertThat(game.isPositionInSquares(_55)).isTrue();
-    }
-
-    @Test
-    public void positionInSquares_tooBigX_returnsFalse() {
-        Position out = new Position(20, 0);
-        assertThat(game.isPositionInSquares(out)).isFalse();
-    }
-
-    @Test
-    public void positionInSquares_tooBigY_returnsFalse() {
-        Position out = new Position(0, 20);
-        assertThat(game.isPositionInSquares(out)).isFalse();
-    }
 
 }

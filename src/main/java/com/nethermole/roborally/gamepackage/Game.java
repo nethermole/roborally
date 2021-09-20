@@ -143,18 +143,12 @@ public class Game {
     public void checkForWinner() {
         for (Player player : players.values()) {
             Position position = player.getPosition();
-            if (isPositionInSquares(position)) {
-                Set<Element> elements = board.getSquares()[position.getX()][position.getY()].getElements();
-                if (elements.contains(checkPoints.get(checkPoints.size() - 1))) {
-                    winningPlayer = player;
-                    System.out.println("Player " + player.getId() + " won the game!");
-                }
+            Set<Element> elements = board.getSquares().get(position.getX()).get(position.getY()).getElements();
+            if (elements.contains(checkPoints.get(checkPoints.size() - 1))) {
+                winningPlayer = player;
+                System.out.println("Player " + player.getId() + " won the game!");
             }
         }
-    }
-
-    public boolean isPositionInSquares(Position position) {
-        return board.isPositionInSquares(position);
     }
 
     public void npcPlayersSelectCards() {

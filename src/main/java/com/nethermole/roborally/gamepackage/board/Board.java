@@ -24,24 +24,42 @@ public class Board {
     private List<Player> players;
 
     @Getter
-    private Tile[][] squares;
+    private Map<Integer, Map<Integer, Tile>> squares;
 
     private Map<Element, Position> elementPositions;
 
     public Board(int boardHeight, int boardWidth) {
         elementPositions = new HashMap<>();
-        squares = new Tile[boardHeight][boardWidth];
-        for (int i = 0; i < boardHeight; i++) {
-            for (int j = 0; j < boardWidth; j++) {
-                squares[i][j] = new Tile();
+        squares = new HashMap<>();
+        for (int x = 0; x < boardHeight; x++) {
+            squares.put(x, new HashMap<>());
+            for (int y = 0; y < boardWidth; y++) {
+                squares.get(x).put(y, new Tile());
             }
         }
         players = new ArrayList<>();
     }
 
+    public void addBoard(Board otherBoard, int posX, int posY){
+        int startX = (posX*12);
+        int startY = (posY*12);
+
+        for(int x = 0; x < 12; x++){
+            Map<Integer, Tile> row = squares.getOrDefault(startX + x, new HashMap<>());
+            for(int y = 0; y < 12; y++){
+                Map<Integer, Tile> otherRow = otherBoard.squares.getOrDefault(x, null);
+                if(otherRow != null){
+                    Tile tile = otherRow.get(y);
+                    row.put(startY + y, tile);
+                }
+            }
+            squares.put(startX + x, row);
+        }
+    }
+
     public void addElement(Element element, Position position) {
         elementPositions.put(element, position);
-        squares[position.getX()][position.getY()].addElement(element);
+        squares.get(position.getX()).get(position.getY()).addElement(element);
     }
 
     public void addPlayer(Player player) {
@@ -97,20 +115,17 @@ public class Board {
         return moveEvent;
     }
 
-    public boolean isPositionInSquares(Position position) {
-        return
-                position.getX() >= 0 &&
-                        position.getY() >= 0 &&
-                        position.getX() < squares.length &&
-                        position.getY() < squares[0].length;
-    }
-
     public boolean isOverPit(Position position) {
-        if (!isPositionInSquares(position)) {
+        Map<Integer, Tile> row = squares.get(position.getX());
+        if(row == null){
+            return true;
+        }
+        Tile tile = row.get(position.getY());
+        if(tile == null){
             return true;
         }
 
-        Set<Element> elements = squares[position.getX()][position.getY()].getElements();
+        Set<Element> elements = squares.get(position.getX()).get(position.getY()).getElements();
         for (Element element : elements) {
             if (element.getElementEnum() == ElementEnum.PIT) {
                 return true;
@@ -176,16 +191,9 @@ public class Board {
 
     public Position getRandomEmptySquare() {
         Random random = new Random();
-        Position emptySquare = null;
-        while (emptySquare == null) {
-            int x = random.nextInt(squares.length);
-            int y = random.nextInt(squares[0].length);
-            Tile tile = squares[x][y];
-            if (tile.isEmpty()) {
-                emptySquare = new Position(x, y);
-            }
-        }
-        return emptySquare;
+        int x = random.nextInt(squares.size());
+        int y = random.nextInt(squares.get(x).size());
+        return new Position(x, y);
     }
 
     //TODO: needs to detect other walls

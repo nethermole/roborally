@@ -1,7 +1,7 @@
 package com.nethermole.roborally.controllers;
 
 import com.nethermole.roborally.exceptions.GameNotStartedException;
-import com.nethermole.roborally.gameservice.GameLogistics;
+import com.nethermole.roborally.gamepackage.GameLogistics;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,7 +30,7 @@ class BoardControllerTest {
 
 
         String result = boardController.getBoard();
-        assertThat(result).contains("{\"players\":[],\"squares\":[[{\"elements\":[{\"elementEnum\":\"");
+        assertThat(result).contains("{\"players\":[],\"squares\":{\"0\":{\"0\":{\"elements\":[{");
     }
 
     @Test

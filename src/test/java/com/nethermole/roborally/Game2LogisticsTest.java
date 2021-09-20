@@ -3,7 +3,7 @@ package com.nethermole.roborally;
 import com.nethermole.roborally.gamepackage.Game;
 import com.nethermole.roborally.gamepackage.player.HumanPlayer;
 import com.nethermole.roborally.gamepackage.player.Player;
-import com.nethermole.roborally.gameservice.GameLogistics;
+import com.nethermole.roborally.gamepackage.GameLogistics;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

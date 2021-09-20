@@ -1,14 +1,12 @@
-package com.nethermole.roborally.gameservice;
+package com.nethermole.roborally.gamepackage;
 
 import com.nethermole.roborally.StartInfo;
 import com.nethermole.roborally.exceptions.GameNotStartedException;
-import com.nethermole.roborally.gamepackage.Game;
-import com.nethermole.roborally.gamepackage.GameBuilder;
-import com.nethermole.roborally.gamepackage.ViewStep;
 import com.nethermole.roborally.gamepackage.board.Board;
 import com.nethermole.roborally.gamepackage.board.BoardFactory;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
 import com.nethermole.roborally.gamepackage.player.Player;
+import com.nethermole.roborally.gameservice.GameLog;
 import com.nethermole.roborally.view.AbstractView;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +43,7 @@ public class GameLogistics {
 
         BoardFactory boardFactory = new BoardFactory();
         Board board = boardFactory.board_exchange();
+        board.addBoard(boardFactory.board_exchange(), 1,0);
 
         GameBuilder gameBuilder = new GameBuilder();
         gameBuilder.players(players);
