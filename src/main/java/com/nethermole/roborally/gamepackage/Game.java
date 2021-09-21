@@ -5,6 +5,7 @@ import com.nethermole.roborally.PlayerHandProcessor;
 import com.nethermole.roborally.gamepackage.board.Board;
 import com.nethermole.roborally.gamepackage.board.Direction;
 import com.nethermole.roborally.gamepackage.board.Position;
+import com.nethermole.roborally.gamepackage.board.Tile;
 import com.nethermole.roborally.gamepackage.board.element.Beacon;
 import com.nethermole.roborally.gamepackage.board.element.Checkpoint;
 import com.nethermole.roborally.gamepackage.board.element.Element;
@@ -142,11 +143,13 @@ public class Game {
 
     public void checkForWinner() {
         for (Player player : players.values()) {
-            Position position = player.getPosition();
-            Set<Element> elements = board.getSquares().get(position.getX()).get(position.getY()).getElements();
-            if (elements.contains(checkPoints.get(checkPoints.size() - 1))) {
-                winningPlayer = player;
-                System.out.println("Player " + player.getId() + " won the game!");
+            Tile tile = board.getTileAtPosition(player.getPosition());
+            if (tile != null) {
+                Set<Element> elements = tile.getElements();
+                if (elements.contains(checkPoints.get(checkPoints.size() - 1))) {
+                    winningPlayer = player;
+                    System.out.println("Player " + player.getId() + " won the game!");
+                }
             }
         }
     }

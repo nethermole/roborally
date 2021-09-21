@@ -1,5 +1,6 @@
 package com.nethermole.roborally.gamepackage.board;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nethermole.roborally.gamepackage.ViewStep;
 import com.nethermole.roborally.gamepackage.board.element.Element;
 import com.nethermole.roborally.gamepackage.board.element.ElementEnum;
@@ -23,7 +24,7 @@ public class Board {
     @Getter
     private List<Player> players;
 
-    @Getter
+    @JsonProperty
     private Map<Integer, Map<Integer, Tile>> squares;
 
     private Map<Element, Position> elementPositions;
@@ -40,15 +41,23 @@ public class Board {
         players = new ArrayList<>();
     }
 
-    public void addBoard(Board otherBoard, int posX, int posY){
-        int startX = (posX*12);
-        int startY = (posY*12);
+    public Tile getTileAtPosition(Position position) {
+        Map<Integer, Tile> row = squares.get(position.getX());
+        if (row == null) {
+            return null;
+        }
+        return row.get(position.getY());
+    }
 
-        for(int x = 0; x < 12; x++){
+    public void addBoard(Board otherBoard, int posX, int posY) {
+        int startX = (posX * 12);
+        int startY = (posY * 12);
+
+        for (int x = 0; x < 12; x++) {
             Map<Integer, Tile> row = squares.getOrDefault(startX + x, new HashMap<>());
-            for(int y = 0; y < 12; y++){
+            for (int y = 0; y < 12; y++) {
                 Map<Integer, Tile> otherRow = otherBoard.squares.getOrDefault(x, null);
-                if(otherRow != null){
+                if (otherRow != null) {
                     Tile tile = otherRow.get(y);
                     row.put(startY + y, tile);
                 }
@@ -117,11 +126,11 @@ public class Board {
 
     public boolean isOverPit(Position position) {
         Map<Integer, Tile> row = squares.get(position.getX());
-        if(row == null){
+        if (row == null) {
             return true;
         }
         Tile tile = row.get(position.getY());
-        if(tile == null){
+        if (tile == null) {
             return true;
         }
 
@@ -191,9 +200,15 @@ public class Board {
 
     public Position getRandomEmptySquare() {
         Random random = new Random();
-        int x = random.nextInt(squares.size());
-        int y = random.nextInt(squares.get(x).size());
-        return new Position(x, y);
+        for (int i = 0; i < 500; i++) {   //retry count
+            int x = random.nextInt(squares.size());
+            int y = random.nextInt(squares.get(x).size());
+
+            if (squares.get(x).get(y).getElements().isEmpty()) {
+                return new Position(x, y);
+            }
+        }
+        return null;
     }
 
     //TODO: needs to detect other walls
