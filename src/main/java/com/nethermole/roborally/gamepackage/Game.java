@@ -19,6 +19,8 @@ import com.nethermole.roborally.gameservice.GameLog;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +30,8 @@ import java.util.Set;
 
 @NoArgsConstructor
 public class Game {
+
+    private static Logger log = LogManager.getLogger(Game.class);
 
     @Setter
     private Map<Integer, Player> players;
@@ -148,7 +152,7 @@ public class Game {
                 Set<Element> elements = tile.getElements();
                 if (elements.contains(checkPoints.get(checkPoints.size() - 1))) {
                     winningPlayer = player;
-                    System.out.println("Player " + player.getId() + " won the game!");
+                    log.info("Player " + player.getId() + " won the game!");
                 }
             }
         }

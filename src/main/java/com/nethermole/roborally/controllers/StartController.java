@@ -4,6 +4,8 @@ import com.nethermole.roborally.gamepackage.player.HumanPlayer;
 import com.nethermole.roborally.gamepackage.player.Player;
 import com.nethermole.roborally.gamepackage.player.bot.RandomBot;
 import com.nethermole.roborally.gamepackage.GameLogistics;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,11 +16,15 @@ import java.util.Map;
 @RestController
 public class StartController {
 
+    private static Logger log = LogManager.getLogger(StartController.class);
+
     @Autowired
     GameLogistics gameLogistics;
 
     @PostMapping("/start")
     public void startGame() {
+        log.info("startGame() called");
+
         int playerCount = 1;
 
         if (!gameLogistics.isGameAlreadyStarted()) {
@@ -28,9 +34,9 @@ public class StartController {
             }
 
             gameLogistics.startGame(players);
-            System.out.println("New game started");
+            log.info("New game started");
         } else {
-            System.out.println("Game in progress, no new game started");
+            log.info("Game in progress, no new game started");
         }
     }
 
@@ -40,7 +46,7 @@ public class StartController {
         players.put(0, new HumanPlayer(0));
         players.put(1, new RandomBot(1));
         gameLogistics.startGame(players);
-        System.out.println("New game started");
+        log.info("New game started");
     }
 
 }

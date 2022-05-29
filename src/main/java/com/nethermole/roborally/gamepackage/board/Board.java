@@ -120,7 +120,7 @@ public class Board {
         ViewStep moveEvent = new RobotMoveViewStep(player, currentPosition, endPosition, player.getFacing(), player.getFacing(), MovementMethod.PIT_DEATH);
 
         player.setPosition(getPositionOfElement(player.getBeacon()));
-        System.out.println("Player " + player.getId() + " died. Resetting to " + player.getPosition());
+        log.info("Player " + player.getId() + " died. Resetting to " + player.getPosition());
         return moveEvent;
     }
 
