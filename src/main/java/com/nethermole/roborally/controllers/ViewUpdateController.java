@@ -20,7 +20,7 @@ public class ViewUpdateController {
 
     @GetMapping("/viewupdate/turn/{turn}")
     public ViewUpdate getViewUpdate(@PathVariable("turn") Integer turn) {
-        log.info("getViewUpdate() called");
+        log.trace("getViewUpdate() called");
 
         StartInfo startInfo = null;
         if(gameLogistics.isGameAboutToStart()){

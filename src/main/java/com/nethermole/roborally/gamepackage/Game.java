@@ -95,6 +95,7 @@ public class Game {
     }
 
     public void distributeCards() {
+        playerSubmittedHands = new HashMap<>();
         for (Player player : playersHands.keySet()) {
             List<MovementCard> hand = new ArrayList<>();
             for (int i = 0; i < player.getHealth(); i++) {

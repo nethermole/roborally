@@ -7,6 +7,7 @@
 - General refactoring to improve separation of concerns
 - Move constants to configuration
 - Implement checkpoint order checks, and related logic around ending the game
+- Reduce excess logic around "isReadyToProcessTurn"
 
 //Features
 - Multi-board support

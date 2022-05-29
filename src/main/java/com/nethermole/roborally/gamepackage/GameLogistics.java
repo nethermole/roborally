@@ -4,6 +4,7 @@ import com.nethermole.roborally.StartInfo;
 import com.nethermole.roborally.exceptions.GameNotStartedException;
 import com.nethermole.roborally.gamepackage.board.Board;
 import com.nethermole.roborally.gamepackage.board.BoardFactory;
+import com.nethermole.roborally.gamepackage.deck.GameState;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
 import com.nethermole.roborally.gamepackage.player.Player;
 import com.nethermole.roborally.gameservice.GameLog;
@@ -105,5 +106,10 @@ public class GameLogistics {
 
     public StartInfo getStartInfo() {
         return new StartInfo(players.size(), game.getStartPosition());
+    }
+
+    public boolean isWaitingOnPlayer(int playerId){
+        return game.getGameState() == GameState.TURN_PREPARATION &&
+                !game.getPlayerSubmittedHands().containsKey(playerId);
     }
 }
