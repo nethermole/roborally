@@ -35,7 +35,7 @@ public class GameLogistics {
     }
 
     public boolean isGameAboutToStart() {
-        return isGameAlreadyStarted() && game.getCurrentTurn() == 0;
+        return isGameAlreadyStarted() && game.getCurrentTurn() == 1;
     }
 
     //todo extract clientUpdate logic
@@ -75,7 +75,7 @@ public class GameLogistics {
     }
 
     public List<ViewStep> getViewstepsByTurn(int turn) {
-        if (turn >= game.getCurrentTurn()) {
+        if (game == null || turn >= game.getCurrentTurn()) {
             return new ArrayList<>();
         }
         return gameLog.getViewstepsByTurn(turn);

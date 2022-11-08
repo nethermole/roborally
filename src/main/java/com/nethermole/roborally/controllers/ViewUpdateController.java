@@ -1,5 +1,7 @@
 package com.nethermole.roborally.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nethermole.roborally.StartInfo;
 import com.nethermole.roborally.gamepackage.ViewUpdate;
 import com.nethermole.roborally.gamepackage.GameLogistics;
@@ -19,8 +21,8 @@ public class ViewUpdateController {
     GameLogistics gameLogistics;
 
     @GetMapping("/viewupdate/turn/{turn}")
-    public ViewUpdate getViewUpdate(@PathVariable("turn") Integer turn) {
-        log.trace("getViewUpdate() called");
+    public ViewUpdate getViewUpdate(@PathVariable("turn") Integer turn) throws JsonProcessingException {
+        log.info("getViewUpdate(" + turn + ") called");
 
         StartInfo startInfo = null;
         if(gameLogistics.isGameAboutToStart()){
@@ -29,6 +31,7 @@ public class ViewUpdateController {
         ViewUpdate viewUpdate = new ViewUpdate();
         viewUpdate.setStartInfo(startInfo);
         viewUpdate.setViewSteps(gameLogistics.getViewstepsByTurn(turn));
+        log.info("Responding to getViewUpdate(" + turn + ") with" + (new ObjectMapper()).writerWithDefaultPrettyPrinter().writeValueAsString(viewUpdate));
         return viewUpdate;
     }
 
