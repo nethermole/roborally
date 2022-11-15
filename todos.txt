@@ -8,6 +8,7 @@
 - Move constants to configuration
 - Implement checkpoint order checks, and related logic around ending the game
 - Reduce excess logic around "isReadyToProcessTurn"
+- Separate getting game start into from GetViewUpdateList
 
 //Features
 - Multi-board support
@@ -42,3 +43,4 @@ If public
             - Check out VR 3d art?
         - Defined order in stacknedness towards player camera, for ease of viewing tile
     - Menu, HUD
+    - GameObject and script registry?

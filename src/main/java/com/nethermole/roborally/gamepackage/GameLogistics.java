@@ -27,6 +27,9 @@ public class GameLogistics {
     private Map<Integer, Player> players;
     private List<AbstractView> viewers;
 
+    @Getter
+    private StartInfo startInfo;
+
     @Autowired
     GameLog gameLog;
 
@@ -55,6 +58,8 @@ public class GameLogistics {
 
         game = gameBuilder.buildGame();
         game.setupForNextTurn();
+
+        startInfo = new StartInfo(players.size(), game.getStartPosition());
 
         viewers = new ArrayList<>();
     }
@@ -102,10 +107,6 @@ public class GameLogistics {
             game.setupForNextTurn();
             game.incrementCurrentTurn();
         }
-    }
-
-    public StartInfo getStartInfo() {
-        return new StartInfo(players.size(), game.getStartPosition());
     }
 
     public boolean isWaitingOnPlayer(int playerId){

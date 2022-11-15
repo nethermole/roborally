@@ -24,10 +24,7 @@ public class ViewUpdateController {
     public ViewUpdate getViewUpdate(@PathVariable("turn") Integer turn) throws JsonProcessingException {
         log.info("getViewUpdate(" + turn + ") called");
 
-        StartInfo startInfo = null;
-        if(gameLogistics.isGameAboutToStart()){
-            startInfo = gameLogistics.getStartInfo();
-        }
+        StartInfo startInfo = gameLogistics.getStartInfo();
         ViewUpdate viewUpdate = new ViewUpdate();
         viewUpdate.setStartInfo(startInfo);
         viewUpdate.setViewSteps(gameLogistics.getViewstepsByTurn(turn));
