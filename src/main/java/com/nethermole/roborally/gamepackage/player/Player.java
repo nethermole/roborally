@@ -3,8 +3,12 @@ package com.nethermole.roborally.gamepackage.player;
 import com.nethermole.roborally.gamepackage.board.Direction;
 import com.nethermole.roborally.gamepackage.board.Position;
 import com.nethermole.roborally.gamepackage.board.element.Beacon;
+import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
+import com.nethermole.roborally.gamepackage.player.bot.NPCPlayer;
 import lombok.Data;
 import lombok.Getter;
+
+import java.util.List;
 
 @Data
 public abstract class Player {
@@ -37,6 +41,15 @@ public abstract class Player {
     @Override
     public int hashCode() {
         return id;
+    }
+
+    public static Player instance(){
+        return new NPCPlayer(Integer.MAX_VALUE) {
+            @Override
+            public List<MovementCard> chooseCards(List<MovementCard> movementCards) {
+                return null;
+            }
+        };
     }
 
 }

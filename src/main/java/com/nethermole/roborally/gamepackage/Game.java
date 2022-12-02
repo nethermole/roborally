@@ -70,6 +70,8 @@ public class Game {
     @Getter
     private int currentTurn;
 
+    private int maxTurn;
+
     void initializeFields() {
         playerSubmittedHands = new HashMap<>();
         playersHands = new HashMap<>();
@@ -78,6 +80,7 @@ public class Game {
         gameState = GameState.STARTING;
         movementDeck = new MovementDeck();
         currentTurn = 0;
+        maxTurn = 5000;
 
         for (Player player : players.values()) {
             playerStates.put(player, PlayerState.NO_INTERACTION_YET);
@@ -122,6 +125,9 @@ public class Game {
         for (int i = 0; i < GameConstants.PHASES_PER_TURN; i++) {
             processPhase(organizedPlayerHands.get(i), playerHandProcessor);
             checkForWinner();
+            if(currentTurn > maxTurn){
+                winningPlayer = Player.instance();
+            }
             if (winningPlayer != null) {
                 break;
             }
