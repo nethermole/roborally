@@ -198,8 +198,7 @@ public class Board {
         return viewStep;
     }
 
-    public Position getRandomEmptySquare() {
-        Random random = new Random();
+    public Position getRandomEmptySquare(Random random) {
         for (int i = 0; i < 500; i++) {   //retry count
             int x = random.nextInt(squares.size());
             int y = random.nextInt(squares.get(x).size());

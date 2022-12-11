@@ -17,7 +17,10 @@ public abstract class Player {
 
     public int id;
     public int health;
-    public String name;
+
+    @Getter
+    protected String name;
+
     private Direction facing;
 
     @Getter
@@ -28,10 +31,6 @@ public abstract class Player {
     public Player(int id) {
         this.id = id;
         health = STARTING_HEALTH;
-    }
-
-    public String getName() {
-        return "Fred";
     }
 
     public boolean hasPosition() {

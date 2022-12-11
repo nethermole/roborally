@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,7 +34,7 @@ class GameTest {
         playerList.put(0, player0);
         playerList.put(1, player1);
 
-        GameBuilder gameBuilder = new GameBuilder();
+        GameBuilder gameBuilder = new GameBuilder((new Random()).nextLong());
         gameBuilder.players(playerList);
         gameBuilder.gameLog(null);
         gameBuilder.board((new BoardFactory()).board_empty());

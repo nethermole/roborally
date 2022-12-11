@@ -10,4 +10,9 @@ import lombok.NoArgsConstructor;
 public class MovementCard {
     private Movement movement;
     private int priority;
+
+    @Override
+    public String toString(){
+        return movement.string;
+    }
 }

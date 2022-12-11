@@ -9,8 +9,9 @@ public class MovementDeck {
     private List<MovementCard> deck;
     private Random random;
 
-    public MovementDeck() {
-        random = new Random();
+    public MovementDeck(Random random) {
+        this.random = random;
+
         deck = createNewDeck();
     }
 

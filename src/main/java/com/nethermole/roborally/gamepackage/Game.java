@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -72,13 +73,20 @@ public class Game {
 
     private int maxTurn;
 
+    @Setter
+    private Random random;
+
+    Game(Random random){
+        this.random = random;
+    }
+
     void initializeFields() {
         playerSubmittedHands = new HashMap<>();
         playersHands = new HashMap<>();
         playerStates = new HashMap<>();
 
         gameState = GameState.STARTING;
-        movementDeck = new MovementDeck();
+        movementDeck = new MovementDeck(random);
         currentTurn = 0;
         maxTurn = 5000;
 
@@ -114,6 +122,7 @@ public class Game {
     }
 
     public void submitPlayerHand(Player player, List<MovementCard> movementCardList) {
+        log.info("Player " + player.getName() + "submitted hand: " + movementCardList);
         playerStates.put(player, PlayerState.HAS_SUBMITTED_CARDS);
         playersHands.put(player, new ArrayList<>());
         playerSubmittedHands.put(player, movementCardList);

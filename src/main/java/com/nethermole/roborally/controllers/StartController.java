@@ -8,10 +8,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 @RestController
 public class StartController {
@@ -22,8 +24,10 @@ public class StartController {
     GameLogistics gameLogistics;
 
     @PostMapping("/start")
-    public void startGame() {
-        log.info("startGame() called");
+    public void startGame(@RequestParam(required = false) Long seedIn) {
+        long seed = seedIn != null ? seedIn : (new Random()).nextLong();
+        log.info("startGame(" + seed + ") called");
+
 
         int playerCount = 1;
 
@@ -33,20 +37,23 @@ public class StartController {
                 players.put(i, new HumanPlayer(i));
             }
 
-            gameLogistics.startGame(players);
-            log.info("New game started");
+            gameLogistics.startGame(players, seed);
+            log.info("New game started with startPosition: " + gameLogistics.getStartInfo().getStartPosition());
         } else {
             log.info("Game in progress, no new game started");
         }
     }
 
     @PostMapping("/debugStart")
-    public void debugStart(){
+    public void debugStart(@RequestParam(required = false) Long seedIn){
+        long seed = seedIn != null ? seedIn : (new Random()).nextLong();
+        log.info("startGame(" + seed + ") called");
+
         Map<Integer, Player> players = new HashMap<>();
         players.put(0, new HumanPlayer(0));
         players.put(1, new RandomBot(1));
-        gameLogistics.startGame(players);
-        log.info("New game started");
+        gameLogistics.startGame(players, seed);
+        log.info("New game started with startPosition: " + gameLogistics.getStartInfo().getStartPosition());
     }
 
 }

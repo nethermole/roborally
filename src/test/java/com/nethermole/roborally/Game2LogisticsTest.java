@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,7 +36,7 @@ class Game2LogisticsTest {
         Player player0 = new HumanPlayer(0);
         Map<Integer, Player> players = new HashMap<>();
         players.put(0, player0);
-        gameLogistics.startGame(players);
+        gameLogistics.startGame(players, (new Random()).nextLong());
 
         assertThat(gameLogistics.getPlayers().containsValue(player0));
     }

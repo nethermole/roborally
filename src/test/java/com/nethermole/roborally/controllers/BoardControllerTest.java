@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashMap;
+import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -24,9 +25,9 @@ class BoardControllerTest {
 
     @Test
     public void getBoard() throws Exception {
-        GameLogistics actualGameMaster = new GameLogistics();
-        actualGameMaster.startGame(new HashMap<>());
-        when(gameLogistics.getBoard()).thenReturn(actualGameMaster.getBoard());
+        GameLogistics gameLogistics = new GameLogistics();
+        gameLogistics.startGame(new HashMap<>(), (new Random()).nextLong());
+        when(this.gameLogistics.getBoard()).thenReturn(gameLogistics.getBoard());
 
 
         String result = boardController.getBoard();

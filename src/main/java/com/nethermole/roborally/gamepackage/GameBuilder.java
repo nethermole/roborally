@@ -6,14 +6,18 @@ import com.nethermole.roborally.gamepackage.board.element.Beacon;
 import com.nethermole.roborally.gamepackage.board.element.Checkpoint;
 import com.nethermole.roborally.gamepackage.player.Player;
 import com.nethermole.roborally.gameservice.GameLog;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class GameBuilder {
 
-    //fields
+    @Getter
+    Random random;
+
     Map<Integer, Player> players;
     GameLog gameLog;
     Board board;
@@ -21,6 +25,10 @@ public class GameBuilder {
     List<Checkpoint> checkpoints;
 
     boolean hasCalledBoardLayout;
+
+    GameBuilder(Long seed){
+        this.random = new Random(seed);
+    }
 
     public void players(Map<Integer, Player> players) {
         this.players = players;
@@ -40,7 +48,7 @@ public class GameBuilder {
             throw new UnsupportedOperationException("Must call boardLayout before generateStartBeacon");
         }
 
-        Position startPosition = board.getRandomEmptySquare();
+        Position startPosition = board.getRandomEmptySquare(random);
         startBeacon = Beacon.startBeacon();
         board.addElement(startBeacon, startPosition);
         for (Player player : players.values()) {
@@ -55,13 +63,13 @@ public class GameBuilder {
             Checkpoint checkpoint = new Checkpoint(i);
             checkpoints.add(checkpoint);
 
-            Position position = board.getRandomEmptySquare();
+            Position position = board.getRandomEmptySquare(random);
             board.addElement(checkpoint, position);
         }
     }
 
     public Game buildGame() {
-        Game game = new Game();
+        Game game = new Game(random);
         game.setPlayers(players);
         game.setGameLog(gameLog);
         game.setBoard(board);

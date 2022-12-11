@@ -3,6 +3,8 @@ package com.nethermole.roborally.gamepackage.deck.movement;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Random;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MovementDeckTest {
@@ -11,7 +13,7 @@ class MovementDeckTest {
 
     @BeforeEach
     public void setup() {
-        movementDeck = new MovementDeck();
+        movementDeck = new MovementDeck(new Random());
     }
 
     @Test

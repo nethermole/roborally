@@ -8,6 +8,7 @@ public class RandomBot extends NPCPlayer{
 
     public RandomBot(int id){
         super(id);
+        this.name = "Bot" + id;
     }
 
     @Override
