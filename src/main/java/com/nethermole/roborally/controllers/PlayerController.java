@@ -35,15 +35,12 @@ public class PlayerController {
     }
 
     @PostMapping("/player/{id}/submitHand")
-    public void setCards(@PathVariable("id") Integer id, @RequestBody ArrayList<MovementCard> movementCardList) {
-        log.info("submitHand() called");
-        log.info("Player " + id + " submitted hand: " + movementCardList);
+    public void submitHand(@PathVariable("id") Integer id, @RequestBody ArrayList<MovementCard> movementCardList) {
         gameLogistics.submitHand(id, movementCardList);
     }
 
     @GetMapping("/player/{id}/getHand")
     public List<MovementCard> getCards(@PathVariable("id") Integer id) {
-        log.info("getHand() called");
         List<MovementCard> movementCards = gameLogistics.getHand(id);
         return movementCards;
     }

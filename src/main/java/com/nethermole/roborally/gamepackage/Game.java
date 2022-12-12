@@ -122,7 +122,7 @@ public class Game {
     }
 
     public void submitPlayerHand(Player player, List<MovementCard> movementCardList) {
-        log.info("Player " + player.getName() + "submitted hand: " + movementCardList);
+        log.info("Player " + player.getName() + " submitted hand: " + movementCardList);
         playerStates.put(player, PlayerState.HAS_SUBMITTED_CARDS);
         playersHands.put(player, new ArrayList<>());
         playerSubmittedHands.put(player, movementCardList);

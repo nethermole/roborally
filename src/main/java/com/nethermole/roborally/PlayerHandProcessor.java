@@ -24,6 +24,8 @@ public class PlayerHandProcessor {
             for (Player player : inputHands.keySet()) {
                 MovementCard movementCard = inputHands.get(player).get(i);
                 movementCardsInPhase.add(movementCard);
+
+                if(playerByMovementCard.containsKey(movementCard)){ throw new IllegalStateException("Duplicate card detected on card submission"); }
                 playerByMovementCard.put(movementCard, player);
             }
             movementCardsInPhase.sort(Comparator.comparing(MovementCard::getPriority).reversed());

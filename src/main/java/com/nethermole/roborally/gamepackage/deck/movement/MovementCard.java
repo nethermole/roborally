@@ -13,6 +13,6 @@ public class MovementCard {
 
     @Override
     public String toString(){
-        return movement.string;
+        return movement.string + "-" + priority;
     }
 }

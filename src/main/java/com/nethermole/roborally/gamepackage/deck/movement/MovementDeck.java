@@ -15,9 +15,12 @@ public class MovementDeck {
         deck = createNewDeck();
     }
 
+    public int cardsLeftInDeck(){
+        return deck.size();
+    }
+
     public MovementCard drawCard() {
-        //needs to be remove...
-        return deck.get(random.nextInt(deck.size()));
+        return deck.remove(random.nextInt(deck.size()));
     }
 
     private List<MovementCard> createNewDeck() {
