@@ -8,8 +8,11 @@ import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
 import com.nethermole.roborally.gamepackage.player.HumanPlayer;
 import com.nethermole.roborally.gamepackage.player.Player;
 import com.nethermole.roborally.gamepackage.player.PlayerState;
+import com.nethermole.roborally.gamepackage.player.bot.NPCPlayer;
+import com.nethermole.roborally.gamepackage.player.bot.RandomBot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Spy;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,13 +21,16 @@ import java.util.Map;
 import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class GameTest {
 
+    @Spy
     Game game;
+
     HumanPlayer player0;
     HumanPlayer player1;
+    NPCPlayer npcPlayer2;
 
     Map<Integer, Player> playerList;
 
@@ -32,9 +38,12 @@ class GameTest {
     public void setup() {
         player0 = new HumanPlayer(0);
         player1 = new HumanPlayer(1);
+        npcPlayer2 = new RandomBot(2);
+
         playerList = new HashMap<>();
         playerList.put(0, player0);
         playerList.put(1, player1);
+        playerList.put(1, npcPlayer2);
 
         GameBuilder gameBuilder = new GameBuilder((new Random()).nextLong());
         gameBuilder.players(playerList);
@@ -42,6 +51,7 @@ class GameTest {
         gameBuilder.board((new BoardFactory()).board_empty());
         gameBuilder.generateStartBeacon();
         gameBuilder.generateCheckpoints(1);
+
         game = gameBuilder.buildGame();
         game.setupForNextTurn();
     }
@@ -98,13 +108,8 @@ class GameTest {
     }
 
     @Test
-    public void submitPlayerHand_playerWasntDealtCard_throwsInvalidHandException() {
-        fail();
-    }
-
-    @Test
-    public void submitPlayerHand_playerWasntDealtCard_throwsIllegalStateException() {
-        fail();
+    public void submitPlayerHand_humanPlayerWasntDealtCard_throwsInvalidHandException() {
+        assertThrows(InvalidSubmittedHandException.class, () -> game.submitPlayerHand(player0, game.getHand(player1)));
     }
 
     @Test
