@@ -15,8 +15,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -86,6 +88,11 @@ public class GameLogistics {
     }
 
     public List<ViewStep> getViewstepsByTurn(int turn) {
+        //todo: this
+//        if(game.getWinningPlayer() != null){
+//            return Arrays.asList(new GameEndViewStep(game.getWinningPlayer()));
+//        }
+
         if (game == null || turn >= game.getCurrentTurn()) {
             return new ArrayList<>();
         }
