@@ -1,5 +1,6 @@
 package com.nethermole.roborally.gamepackage;
 
+import com.nethermole.roborally.exceptions.InvalidSubmittedHandException;
 import com.nethermole.roborally.gamepackage.board.BoardFactory;
 import com.nethermole.roborally.gamepackage.board.Position;
 import com.nethermole.roborally.gamepackage.deck.movement.Movement;
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class GameTest {
 
@@ -70,7 +72,7 @@ class GameTest {
     }
 
     @Test
-    public void submitPlayerHand_resetsPlayerHand() {
+    public void submitPlayerHand_resetsPlayerHand() throws InvalidSubmittedHandException {
         List<MovementCard> movementCardList = new ArrayList<>();
         movementCardList.add(new MovementCard(Movement.MOVE1, 100));
 
@@ -80,7 +82,7 @@ class GameTest {
     }
 
     @Test
-    public void submitPlayerHand_setsSubmittedHand() {
+    public void submitPlayerHand_setsSubmittedHand() throws InvalidSubmittedHandException {
         List<MovementCard> movementCardList = new ArrayList<>();
         MovementCard movementCard = new MovementCard(Movement.MOVE1, 100);
         movementCardList.add(movementCard);
@@ -96,7 +98,17 @@ class GameTest {
     }
 
     @Test
-    public void isReadyToProcessTurn_notAllPlayersHaveSubmittedCards_returnsFalse() {
+    public void submitPlayerHand_playerWasntDealtCard_throwsInvalidHandException() {
+        fail();
+    }
+
+    @Test
+    public void submitPlayerHand_playerWasntDealtCard_throwsIllegalStateException() {
+        fail();
+    }
+
+    @Test
+    public void isReadyToProcessTurn_notAllPlayersHaveSubmittedCards_returnsFalse() throws InvalidSubmittedHandException {
         assertThat(playerList.size()).isGreaterThan(1);
 
         game.submitPlayerHand(player1, new ArrayList<>());
@@ -104,7 +116,7 @@ class GameTest {
     }
 
     @Test
-    public void isReadyToProcessTurn_allPlayersHaveSubmittedCards_returnsTrue() {
+    public void isReadyToProcessTurn_allPlayersHaveSubmittedCards_returnsTrue() throws InvalidSubmittedHandException {
         assertThat(playerList.size()).isEqualTo(2);
 
         game.submitPlayerHand(player0, new ArrayList<>());

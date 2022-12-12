@@ -17,7 +17,7 @@ import java.util.Random;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-class Game2LogisticsTest {
+class GameLogisticsTest {
 
     @InjectMocks
     GameLogistics gameLogistics = new GameLogistics();

@@ -2,6 +2,7 @@ package com.nethermole.roborally.gamepackage;
 
 import com.nethermole.roborally.StartInfo;
 import com.nethermole.roborally.exceptions.GameNotStartedException;
+import com.nethermole.roborally.exceptions.InvalidSubmittedHandException;
 import com.nethermole.roborally.gamepackage.board.Board;
 import com.nethermole.roborally.gamepackage.board.BoardFactory;
 import com.nethermole.roborally.gamepackage.deck.GameState;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class GameLogistics {
@@ -63,7 +65,7 @@ public class GameLogistics {
         game = gameBuilder.buildGame();
         game.setupForNextTurn();
 
-        startInfo = new StartInfo(new ArrayList(players.values()), game.getStartPosition());
+        startInfo = new StartInfo(players.values().stream().map(player -> player.snapshot()).collect(Collectors.toList()), game.getStartPosition());
 
         viewers = new ArrayList<>();
     }
@@ -98,7 +100,7 @@ public class GameLogistics {
         return game.getHand(player);
     }
 
-    public void submitHand(int playerId, List<MovementCard> movementCardList) {
+    public void submitHand(int playerId, List<MovementCard> movementCardList) throws InvalidSubmittedHandException {
         if (game == null) {
             throw new UnsupportedOperationException("game not started yet. cant submit hand");
         }

@@ -2,6 +2,7 @@ package com.nethermole.roborally.gamepackage;
 
 import com.nethermole.roborally.GameConstants;
 import com.nethermole.roborally.PlayerHandProcessor;
+import com.nethermole.roborally.exceptions.InvalidSubmittedHandException;
 import com.nethermole.roborally.gamepackage.board.Board;
 import com.nethermole.roborally.gamepackage.board.Direction;
 import com.nethermole.roborally.gamepackage.board.Position;
@@ -121,8 +122,17 @@ public class Game {
         return playersHands.get(player);
     }
 
-    public void submitPlayerHand(Player player, List<MovementCard> movementCardList) {
+    public void submitPlayerHand(Player player, List<MovementCard> movementCardList) throws InvalidSubmittedHandException {
         log.info("Player " + player.getName() + " submitted hand: " + movementCardList);
+
+        List<MovementCard> originalPlayerHandCopy = new ArrayList<>(playersHands.get(player));
+        for(MovementCard movementCard : movementCardList){
+            boolean playerWasDealtSubmittedCard = originalPlayerHandCopy.remove(movementCard);
+            if(!playerWasDealtSubmittedCard){
+                throw new InvalidSubmittedHandException(playersHands.get(player), movementCardList, player);
+            }
+        }
+
         playerStates.put(player, PlayerState.HAS_SUBMITTED_CARDS);
         playersHands.put(player, new ArrayList<>());
         playerSubmittedHands.put(player, movementCardList);
@@ -150,7 +160,12 @@ public class Game {
     public void setupForNextTurn() {
         this.gameState = GameState.TURN_PREPARATION;
         distributeCards();
-        npcPlayersSelectCards();
+        try{
+            npcPlayersSelectCards();
+        } catch (InvalidSubmittedHandException e){
+            log.error(e.getMessage());
+            throw new IllegalStateException("npcPlayersSelectCards() submitted invalidCards");
+        }
     }
 
     public void processPhase(List<MovementCard> movementCards, PlayerHandProcessor playerHandProcessor) {
@@ -174,7 +189,7 @@ public class Game {
         }
     }
 
-    public void npcPlayersSelectCards() {
+    public void npcPlayersSelectCards() throws InvalidSubmittedHandException {
         for (Player player : players.values()) {
             if (player instanceof NPCPlayer) {
                 NPCPlayer npcPlayer = (NPCPlayer) player;

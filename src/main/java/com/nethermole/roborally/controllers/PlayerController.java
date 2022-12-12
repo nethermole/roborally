@@ -35,8 +35,13 @@ public class PlayerController {
     }
 
     @PostMapping("/player/{id}/submitHand")
-    public void submitHand(@PathVariable("id") Integer id, @RequestBody ArrayList<MovementCard> movementCardList) {
-        gameLogistics.submitHand(id, movementCardList);
+    public String submitHand(@PathVariable("id") Integer id, @RequestBody ArrayList<MovementCard> movementCardList) {
+        try {
+            gameLogistics.submitHand(id, movementCardList);
+        } catch (Exception e){
+            return e.getMessage();
+        }
+        return "";
     }
 
     @GetMapping("/player/{id}/getHand")
