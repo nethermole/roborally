@@ -3,22 +3,22 @@
 - Unit test code coverage to 95%
     - Includes untangling anything to refactors
 - Fix/revisit wall logic
-- Introduce a real logging framework
 - General refactoring to improve separation of concerns
 - Move constants to configuration
 - Implement checkpoint order checks, and related logic around ending the game
 - Reduce excess logic around "isReadyToProcessTurn"
 - Separate getting game start into from GetViewUpdateList
+- Wrap "getLogger" in a class, in case I choose to switch frameworks later
 
 //Features
 - Multi-board support
 - Stop current game
 - Choose player starting direction
 - AI
-    - Random
+    - Random //complete
     - Brute force ignores board
-    - Brute force uses board (this will be fun... unfortunately copy constructors... fortunately lombok .toBuilder.build)
-    - AI plugin integration (toy with AI here?)
+    - Brute force uses board (this will be fun... unfortunately copy constructors... fortunately lombok.toBuilder.build)
+    - AI plugin integration (toy with AI here)
 - Gamemodes
     - Robo rally
     - Battle royale
@@ -27,9 +27,6 @@
 - Procedurally generated boards
 -Multi checkpoint support
 -Locked register phases at high damage
-
-If public
-// Validate player hand submission
 
 //RoborallyClient
     //Tech debt
@@ -44,3 +41,8 @@ If public
         - Defined order in stacknedness towards player camera, for ease of viewing tile
     - Menu, HUD
     - GameObject and script registry?
+
+    //Modes
+    - Player is playing
+    - AI is grinding
+    - Replay a gameEventLog from file

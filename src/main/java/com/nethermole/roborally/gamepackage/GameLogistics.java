@@ -45,10 +45,6 @@ public class GameLogistics {
         return (game != null);
     }
 
-    public boolean isGameAboutToStart() {
-        return isGameAlreadyStarted() && game.getCurrentTurn() == 1;
-    }
-
     //todo extract clientUpdate logic
     public void startGame(Map<Integer, Player> players, Long seed) {
         this.players = players;
@@ -62,7 +58,7 @@ public class GameLogistics {
         gameBuilder.gameLog(gameLog);
         gameBuilder.board(board);
         gameBuilder.generateStartBeacon();
-        gameBuilder.generateCheckpoints(1);
+        gameBuilder.generateCheckpoints(2);
 
         game = gameBuilder.buildGame();
         game.setupForNextTurn();

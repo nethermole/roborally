@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class Board {
@@ -47,6 +48,10 @@ public class Board {
             return null;
         }
         return row.get(position.getY());
+    }
+
+    public List<Map.Entry<Element, Position>> getAllElementsOfType(Class clazz){
+        return elementPositions.entrySet().stream().filter(it -> it.getKey().getClass() == clazz).collect(Collectors.toList());
     }
 
     public void addBoard(Board otherBoard, int posX, int posY) {
