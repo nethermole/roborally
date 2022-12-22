@@ -20,6 +20,9 @@ public class ViewUpdateController {
     @Autowired
     GameLogistics gameLogistics;
 
+    @Autowired
+    ObjectMapper objectMapper;
+
     @GetMapping("/viewupdate/turn/{turn}")
     public ViewUpdate getViewUpdate(@PathVariable("turn") Integer turn) throws JsonProcessingException {
         log.trace("getViewUpdate(" + turn + ") called");
@@ -28,7 +31,7 @@ public class ViewUpdateController {
         ViewUpdate viewUpdate = new ViewUpdate();
         viewUpdate.setStartInfo(startInfo);
         viewUpdate.setViewSteps(gameLogistics.getViewstepsByTurn(turn));
-        log.trace("Responding to getViewUpdate(" + turn + ") with" + (new ObjectMapper()).writerWithDefaultPrettyPrinter().writeValueAsString(viewUpdate));
+        log.trace("Responding to getViewUpdate(" + turn + ") with" + objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(viewUpdate));
         return viewUpdate;
     }
 

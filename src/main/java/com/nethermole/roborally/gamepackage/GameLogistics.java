@@ -15,10 +15,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -26,12 +25,11 @@ import java.util.stream.Collectors;
 @Service
 public class GameLogistics {
 
-    @Getter
-    private Game game;
+    private static Logger log;
+    private List<AbstractView> viewers;
 
     @Getter
-    private Map<Integer, Player> players;
-    private List<AbstractView> viewers;
+    private Game game;
 
     @Getter
     private StartInfo startInfo;
@@ -39,16 +37,17 @@ public class GameLogistics {
     @Autowired
     GameLog gameLog;
 
-    private static Logger log = LogManager.getLogger(Game.class);
+    @PostConstruct
+    public void init() {
+        log = LogManager.getLogger(Game.class);
+        viewers = new ArrayList<>();
+    }
 
     public boolean isGameAlreadyStarted() {
         return (game != null);
     }
 
-    //todo extract clientUpdate logic
-    public void startGame(Map<Integer, Player> players, Long seed) {
-        this.players = players;
-
+    public void startGame(Map<Integer, Player> players, Long seed){
         BoardFactory boardFactory = new BoardFactory();
         Board board = boardFactory.board_exchange();
         board.addBoard(boardFactory.board_exchange(), 1,0);
@@ -100,6 +99,11 @@ public class GameLogistics {
             return null;
         }
         Player player = players.get(playerId);
+
+        if(game.getPlayer(playerId) == null){
+            log.info("Player " + playerId + " not found in game. Cannot deal hand.");
+            return null;
+        }
         return game.getHand(player);
     }
 

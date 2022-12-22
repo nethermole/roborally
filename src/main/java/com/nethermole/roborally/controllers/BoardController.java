@@ -15,13 +15,16 @@ public class BoardController {
     @Autowired
     GameLogistics gameLogistics;
 
+    @Autowired
+    ObjectMapper objectMapper;
+
     private static Logger log = LogManager.getLogger(BoardController.class);
 
     @GetMapping("/board")
     public String getBoard() throws Exception {
         log.debug("getBoard() called");
         try {
-            return (new ObjectMapper().writeValueAsString(gameLogistics.getBoard()));
+            return objectMapper.writeValueAsString(gameLogistics.getBoard());
         } catch (GameNotStartedException e) {
             return "GameNotStartedYet";
         }
