@@ -24,16 +24,6 @@ public class PlayerController {
 
     private static Logger log = LogManager.getLogger(PlayerController.class);
 
-    @GetMapping("/player")
-    public Collection<Player> getPlayers() {
-        log.info("getPlayers() called");
-        if(gameLogistics.getPlayers() != null && !gameLogistics.getPlayers().isEmpty()) {
-            return gameLogistics.getPlayers().values();
-        } else{
-            return new ArrayList<>();
-        }
-    }
-
     @PostMapping("/player/{id}/submitHand")
     public String submitHand(@PathVariable("id") Integer id, @RequestBody ArrayList<MovementCard> movementCardList) {
         try {

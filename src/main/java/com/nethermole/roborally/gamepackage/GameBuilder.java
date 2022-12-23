@@ -70,13 +70,12 @@ public class GameBuilder {
 
     public Game buildGame() {
         Game game = new Game(random);
-        game.setPlayers(players);
         game.setGameLog(gameLog);
         game.setBoard(board);
         game.setStartBeacon(startBeacon);
         game.setCheckPoints(checkpoints);
 
-        game.initializeFields();
+        game.initializeFields(players);
         return game;
     }
 

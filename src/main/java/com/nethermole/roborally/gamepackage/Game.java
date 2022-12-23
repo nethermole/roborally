@@ -27,15 +27,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
-import java.util.Set;
 
 @NoArgsConstructor
 public class Game {
 
     private static Logger log = LogManager.getLogger(Game.class);
 
-    @Setter
+    @Getter
     private Map<Integer, Player> players;
 
     @Setter
@@ -81,15 +81,17 @@ public class Game {
         this.random = random;
     }
 
-    void initializeFields() {
+    void initializeFields(Map<Integer, Player> players) {
         playerSubmittedHands = new HashMap<>();
         playersHands = new HashMap<>();
         playerStates = new HashMap<>();
 
-        gameState = GameState.STARTING;
-        movementDeck = new MovementDeck(random);
         currentTurn = 0;
         maxTurn = 5000;
+
+        gameState = GameState.STARTING;
+        movementDeck = new MovementDeck(random);
+        this.players = players;
 
         for (Player player : players.values()) {
             playerStates.put(player.getId(), PlayerState.NO_INTERACTION_YET);
@@ -118,7 +120,9 @@ public class Game {
     }
 
     public List<MovementCard> getHand(int playerId) {
-        playerStates.put(playerId, PlayerState.CHOOSING_MOVEMENT_CARDS);
+        if(playerStates.get(playerId) != PlayerState.HAS_SUBMITTED_CARDS){
+            playerStates.put(playerId, PlayerState.CHOOSING_MOVEMENT_CARDS);
+        }
 
         return playersHands.get(playerId);
     }
@@ -175,19 +179,21 @@ public class Game {
 
             Player player = players.get(playerPlayerId);
             List<ViewStep> viewSteps = board.movePlayer(player, movementCard.getMovement());
+
+            Optional checkpoint = board.getTileAtPosition(player.getPosition()).getElements().stream().filter(element -> element.getClass() == Checkpoint.class).findFirst();
+            if(checkpoint.isPresent()){
+                player.touchCheckpoint((Checkpoint) checkpoint.get());
+            }
+
             gameLog.addViewSteps(currentTurn, viewSteps);
         }
     }
 
     public void checkForWinner() {
         for (Player player : players.values()) {
-            Tile tile = board.getTileAtPosition(player.getPosition());
-            if (tile != null) {
-                Set<Element> elements = tile.getElements();
-                if (elements.contains(checkPoints.get(checkPoints.size() - 1))) {
-                    winningPlayer = player;
-                    log.info("Player " + player.getId() + " won the game!");
-                }
+            if(player.getMostRecentCheckpointTouched() == checkPoints.get(checkPoints.size() - 1).getIndex()){
+                winningPlayer = player;
+                log.info("Player " + player.getId() + " won the game!");
             }
         }
     }
@@ -195,9 +201,9 @@ public class Game {
     public void npcPlayersSelectCards() throws InvalidSubmittedHandException {
         for (Player player : players.values()) {
             if (player instanceof NPCPlayer) {
-                NPCPlayer npcPlayer = (NPCPlayer) player;
-                List<MovementCard> npcPlayerCards = playersHands.get(player);
-                List<MovementCard> selectedCards = npcPlayer.chooseCards(npcPlayerCards);
+                List<MovementCard> npcPlayerCards = playersHands.get(player.getId());
+
+                List<MovementCard> selectedCards = ((NPCPlayer) player).chooseCards(npcPlayerCards);
                 submitPlayerHand(player.getId(), selectedCards);
             }
         }

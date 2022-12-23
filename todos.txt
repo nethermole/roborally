@@ -9,9 +9,9 @@
 - Reduce excess logic around "isReadyToProcessTurn"
 - Separate getting game start into from GetViewUpdateList
 - Wrap "getLogger" in a class, in case I choose to switch frameworks later
+- Verify that client is getting their specific hand, otherwise its like looking at other players hands
 
 //Features
-- Multi-board support
 - Stop current game
 - Choose player starting direction
 - AI
@@ -25,7 +25,6 @@
     - Roguelike
     - Looter shooter
 - Procedurally generated boards
--Multi checkpoint support
 -Locked register phases at high damage
 
 //RoborallyClient
