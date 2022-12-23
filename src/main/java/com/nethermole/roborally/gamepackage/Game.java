@@ -48,13 +48,13 @@ public class Game {
     private MovementDeck movementDeck;
 
     @Getter
-    private Map<Player, List<MovementCard>> playersHands;
+    private Map<Integer, List<MovementCard>> playersHands;
 
     @Getter
-    private Map<Player, List<MovementCard>> playerSubmittedHands;
+    private Map<Integer, List<MovementCard>> playerSubmittedHands;
 
     @Getter
-    private Map<Player, PlayerState> playerStates;
+    private Map<Integer, PlayerState> playerStates;
 
     @Getter
     private GameState gameState;
@@ -92,13 +92,13 @@ public class Game {
         maxTurn = 5000;
 
         for (Player player : players.values()) {
-            playerStates.put(player, PlayerState.NO_INTERACTION_YET);
+            playerStates.put(player.getId(), PlayerState.NO_INTERACTION_YET);
             player.setFacing(Direction.UP);
         }
 
         //is the below necessary?
         for (Player player : players.values()) {
-            playersHands.put(player, new ArrayList<>());
+            playersHands.put(player.getId(), new ArrayList<>());
         }
     }
 
@@ -108,34 +108,35 @@ public class Game {
 
     public void distributeCards() {
         playerSubmittedHands = new HashMap<>();
-        for (Player player : playersHands.keySet()) {
+        for (Integer playerId : playersHands.keySet()) {
             List<MovementCard> hand = new ArrayList<>();
-            for (int i = 0; i < player.getHealth(); i++) {
+            for (int i = 0; i < players.get(playerId).getHealth(); i++) {
                 hand.add(movementDeck.drawCard());
             }
-            playersHands.put(player, hand);
+            playersHands.put(playerId, hand);
         }
     }
 
-    public List<MovementCard> getHand(Player player) {
-        playerStates.put(player, PlayerState.CHOOSING_MOVEMENT_CARDS);
-        return playersHands.get(player);
+    public List<MovementCard> getHand(int playerId) {
+        playerStates.put(playerId, PlayerState.CHOOSING_MOVEMENT_CARDS);
+
+        return playersHands.get(playerId);
     }
 
-    public void submitPlayerHand(Player player, List<MovementCard> movementCardList) throws InvalidSubmittedHandException {
-        log.info("Player " + player.getName() + " submitted hand: " + movementCardList);
+    public void submitPlayerHand(int playerId, List<MovementCard> movementCardList) throws InvalidSubmittedHandException {
+        log.info("Player " + players.get(playerId).getName() + " submitted hand: " + movementCardList);
 
-        List<MovementCard> originalPlayerHandCopy = new ArrayList<>(playersHands.get(player));
+        List<MovementCard> originalPlayerHandCopy = new ArrayList<>(playersHands.get(playerId));
         for(MovementCard movementCard : movementCardList){
             boolean playerWasDealtSubmittedCard = originalPlayerHandCopy.remove(movementCard);
             if(!playerWasDealtSubmittedCard){
-                throw new InvalidSubmittedHandException(playersHands.get(player), movementCardList, player);
+                throw new InvalidSubmittedHandException(playersHands.get(playerId), movementCardList, playerId, this);
             }
         }
 
-        playerStates.put(player, PlayerState.HAS_SUBMITTED_CARDS);
-        playersHands.put(player, new ArrayList<>());
-        playerSubmittedHands.put(player, movementCardList);
+        playerStates.put(playerId, PlayerState.HAS_SUBMITTED_CARDS);
+        playersHands.put(playerId, new ArrayList<>());
+        playerSubmittedHands.put(playerId, movementCardList);
     }
 
     public void processTurn() {
@@ -170,7 +171,9 @@ public class Game {
 
     public void processPhase(List<MovementCard> movementCards, PlayerHandProcessor playerHandProcessor) {
         for (MovementCard movementCard : movementCards) {
-            Player player = playerHandProcessor.getPlayerWhoSubmittedCard(movementCard);
+            int playerPlayerId = playerHandProcessor.getPlayerWhoSubmittedCard(movementCard);
+
+            Player player = players.get(playerPlayerId);
             List<ViewStep> viewSteps = board.movePlayer(player, movementCard.getMovement());
             gameLog.addViewSteps(currentTurn, viewSteps);
         }
@@ -195,18 +198,13 @@ public class Game {
                 NPCPlayer npcPlayer = (NPCPlayer) player;
                 List<MovementCard> npcPlayerCards = playersHands.get(player);
                 List<MovementCard> selectedCards = npcPlayer.chooseCards(npcPlayerCards);
-                submitPlayerHand(player, selectedCards);
+                submitPlayerHand(player.getId(), selectedCards);
             }
         }
     }
 
     public boolean isReadyToProcessTurn() {
-        for (Map.Entry<Player, PlayerState> player : playerStates.entrySet()) {
-            if (player.getValue() != PlayerState.HAS_SUBMITTED_CARDS) {
-                return false;
-            }
-        }
-        return true;
+        return playerStates.values().stream().allMatch(it -> it == PlayerState.HAS_SUBMITTED_CARDS);
     }
 
     public Player getPlayer(int id) {

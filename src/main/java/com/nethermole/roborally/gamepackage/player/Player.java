@@ -16,7 +16,8 @@ public abstract class Player {
 
     public static final int STARTING_HEALTH = 9;
 
-    public int id;
+    @Getter
+    private int id;
 
     @Getter
     @Setter

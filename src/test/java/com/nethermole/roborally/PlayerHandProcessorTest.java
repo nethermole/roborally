@@ -33,8 +33,8 @@ class PlayerHandProcessorTest {
                 new MovementCard(Movement.UTURN, 30),
                 new MovementCard(Movement.TURN_RIGHT, 100)
         );
-        Map<Player, List<MovementCard>> inputHands = new HashMap<>();
-        inputHands.put(new HumanPlayer(0), hand);
+        Map<Integer, List<MovementCard>> inputHands = new HashMap<>();
+        inputHands.put(0, hand);
 
         List<List<MovementCard>> actualMovementCardsInTurn = playerHandProcessor.submitHands(inputHands);
         List<List<MovementCard>> expectedMovementCardsInTurn = Arrays.asList(
@@ -66,9 +66,9 @@ class PlayerHandProcessorTest {
                 new MovementCard(Movement.MOVE1, 620)
         );
 
-        Map<Player, List<MovementCard>> inputHands = new HashMap<>();
-        inputHands.put(new HumanPlayer(0), hand0);
-        inputHands.put(new HumanPlayer(1), hand1);
+        Map<Integer, List<MovementCard>> inputHands = new HashMap<>();
+        inputHands.put(0, hand0);
+        inputHands.put(1, hand1);
 
         List<List<MovementCard>> actualMovementCardsInTurn = playerHandProcessor.submitHands(inputHands);
         List<List<MovementCard>> expectedMovementCardsInTurn = Arrays.asList(
@@ -100,9 +100,9 @@ class PlayerHandProcessorTest {
                 new MovementCard(Movement.MOVE1, 620)
         );
 
-        Map<Player, List<MovementCard>> inputHands = new HashMap<>();
-        inputHands.put(new HumanPlayer(0), hand0);
-        inputHands.put(new HumanPlayer(1), hand1);
+        Map<Integer, List<MovementCard>> inputHands = new HashMap<>();
+        inputHands.put(0, hand0);
+        inputHands.put(1, hand1);
 
         assertThrows(IllegalStateException.class, () -> playerHandProcessor.submitHands(inputHands), "Duplicate card detected on card submission");
     }

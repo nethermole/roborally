@@ -1,7 +1,7 @@
 package com.nethermole.roborally.exceptions;
 
+import com.nethermole.roborally.gamepackage.Game;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
-import com.nethermole.roborally.gamepackage.player.Player;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
@@ -10,13 +10,15 @@ import java.util.List;
 public class InvalidSubmittedHandException extends Exception {
     List<MovementCard> handDealt;
     List<MovementCard> handSubmitted;
-    Player player;
+    Integer playerId;
+
+    Game game;
 
     @Override
     public String getMessage(){
         return "--- InvalidSubmittedHandException ---\n" +
-                "Player:\t"+player.getName()+"\n" +
-                "Dealt:\t"+handDealt.toString()+"\n" +
-                "Submitted:\t"+handSubmitted.toString();
+                "Player:\t" + game.getPlayer(playerId).getName()+"\n" +
+                "Dealt:\t" + handDealt.toString()+"\n" +
+                "Submitted:\t" + handSubmitted.toString();
     }
 }

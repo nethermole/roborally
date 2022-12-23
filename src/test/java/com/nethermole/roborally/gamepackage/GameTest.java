@@ -43,7 +43,7 @@ class GameTest {
         playerList = new HashMap<>();
         playerList.put(0, player0);
         playerList.put(1, player1);
-        playerList.put(1, npcPlayer2);
+        playerList.put(2, npcPlayer2);
 
         GameBuilder gameBuilder = new GameBuilder((new Random()).nextLong());
         gameBuilder.players(playerList);
@@ -64,21 +64,21 @@ class GameTest {
 
     @Test
     public void distributeCards() {
-        List<MovementCard> playerHand = game.getHand(player0);
+        List<MovementCard> playerHand = game.getHand(0);
         assertThat(playerHand.size()).isEqualTo(Player.STARTING_HEALTH);
     }
 
     @Test
     public void getHand_getsCardsForPlayer() {
-        List<MovementCard> playerHand = game.getHand(player0);
+        List<MovementCard> playerHand = game.getHand(0);
         assertThat(playerHand.size()).isEqualTo(Player.STARTING_HEALTH);
         assertThat(game.getPlayerStates().get(player0)).isEqualTo(PlayerState.CHOOSING_MOVEMENT_CARDS);
     }
 
     @Test
     public void getHand_setsPlayerState() {
-        game.getHand(player0);
-        assertThat(game.getPlayerStates().get(player0)).isEqualTo(PlayerState.CHOOSING_MOVEMENT_CARDS);
+        game.getHand(0);
+        assertThat(game.getPlayerStates().get(0)).isEqualTo(PlayerState.CHOOSING_MOVEMENT_CARDS);
     }
 
     @Test
@@ -86,7 +86,7 @@ class GameTest {
         List<MovementCard> movementCardList = new ArrayList<>();
         movementCardList.add(new MovementCard(Movement.MOVE1, 100));
 
-        game.submitPlayerHand(player0, movementCardList);
+        game.submitPlayerHand(0, movementCardList);
 
         assertThat(game.getPlayersHands().get(player0)).isEmpty();
     }
@@ -97,7 +97,7 @@ class GameTest {
         MovementCard movementCard = new MovementCard(Movement.MOVE1, 100);
         movementCardList.add(movementCard);
 
-        game.submitPlayerHand(player0, movementCardList);
+        game.submitPlayerHand(0, movementCardList);
 
         assertThat(game.getPlayerSubmittedHands().get(player0).get(0)).isEqualTo(movementCard);
     }
@@ -109,14 +109,14 @@ class GameTest {
 
     @Test
     public void submitPlayerHand_humanPlayerWasntDealtCard_throwsInvalidHandException() {
-        assertThrows(InvalidSubmittedHandException.class, () -> game.submitPlayerHand(player0, game.getHand(player1)));
+        assertThrows(InvalidSubmittedHandException.class, () -> game.submitPlayerHand(0, game.getHand(1)));
     }
 
     @Test
     public void isReadyToProcessTurn_notAllPlayersHaveSubmittedCards_returnsFalse() throws InvalidSubmittedHandException {
         assertThat(playerList.size()).isGreaterThan(1);
 
-        game.submitPlayerHand(player1, new ArrayList<>());
+        game.submitPlayerHand(1, new ArrayList<>());
         assertThat(game.isReadyToProcessTurn()).isFalse();
     }
 
@@ -124,8 +124,8 @@ class GameTest {
     public void isReadyToProcessTurn_allPlayersHaveSubmittedCards_returnsTrue() throws InvalidSubmittedHandException {
         assertThat(playerList.size()).isEqualTo(2);
 
-        game.submitPlayerHand(player0, new ArrayList<>());
-        game.submitPlayerHand(player1, new ArrayList<>());
+        game.submitPlayerHand(0, new ArrayList<>());
+        game.submitPlayerHand(1, new ArrayList<>());
         assertThat(game.isReadyToProcessTurn()).isTrue();
     }
 

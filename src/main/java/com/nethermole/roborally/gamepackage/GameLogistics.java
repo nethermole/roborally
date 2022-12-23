@@ -98,13 +98,7 @@ public class GameLogistics {
         if (game == null) {
             return null;
         }
-        Player player = players.get(playerId);
-
-        if(game.getPlayer(playerId) == null){
-            log.info("Player " + playerId + " not found in game. Cannot deal hand.");
-            return null;
-        }
-        return game.getHand(player);
+        return game.getHand(playerId);
     }
 
     public void submitHand(int playerId, List<MovementCard> movementCardList) throws InvalidSubmittedHandException {
@@ -112,8 +106,7 @@ public class GameLogistics {
             throw new UnsupportedOperationException("game not started yet. cant submit hand");
         }
 
-        Player player = players.get(playerId);
-        game.submitPlayerHand(player, movementCardList);
+        game.submitPlayerHand(playerId, movementCardList);
 
         if (game.isReadyToProcessTurn()) {
             log.info("All hands received, processing turn");
