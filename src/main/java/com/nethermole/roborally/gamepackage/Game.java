@@ -225,6 +225,7 @@ public class Game {
 
             gameLog.addViewSteps(currentTurn, viewSteps);
         }
+
     }
 
     public void checkForWinner() {
