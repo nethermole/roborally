@@ -3,7 +3,7 @@ import requests
 def toChars(word):
     return [char for char in word]
 
-requests.post("http://localhost:8080/debugStart")
+requests.post("http://localhost:8080/debugStart?seedIn=-5121015280827996104")
 
 go = True
 while go:
@@ -11,15 +11,18 @@ while go:
     for i in range(len(cards)):
         print(str(i) + "    " + str(cards[i]))
     numberChoices = input("Which cards do you want?")
+    while len(numberChoices) != 5:
+        numberChoices = input("Try again. Which cards do you want?")
     indexes = toChars(numberChoices)
     cardChoices = []
     for i in range(5):
         cardChoices.append(cards[int(numberChoices[i])])
 
-    requests.post("http://localhost:8080/player/0/submitHand", json=cardChoices)
     print("Submitted hand:")
     for i in range(len(cardChoices)):
         print(str(cardChoices[i]))
+
+    requests.post("http://localhost:8080/player/0/submitHand", json=cardChoices)
 
     go = input("Press n to stop") != "n"
 
