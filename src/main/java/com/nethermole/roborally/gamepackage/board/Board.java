@@ -2,9 +2,9 @@ package com.nethermole.roborally.gamepackage.board;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nethermole.roborally.gamepackage.ViewStep;
+import com.nethermole.roborally.gamepackage.board.element.Checkpoint;
 import com.nethermole.roborally.gamepackage.board.element.Element;
 import com.nethermole.roborally.gamepackage.board.element.ElementEnum;
-import com.nethermole.roborally.gamepackage.board.element.Pit;
 import com.nethermole.roborally.gamepackage.deck.movement.Movement;
 import com.nethermole.roborally.gamepackage.player.Player;
 import com.nethermole.roborally.gamepackage.turn.MovementMethod;
@@ -16,8 +16,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -202,6 +202,19 @@ public class Board {
             }
         }
         return null;
+    }
+
+    public Position getPositionOfCheckpoint(int checkpointIndex){
+        Optional<Map.Entry<Element, Position>> element = elementPositions.entrySet().stream()
+                .filter(entry -> entry.getKey().getClass() == Checkpoint.class)
+                .filter(entry -> ((Checkpoint) entry.getKey()).getBase1index() == checkpointIndex)
+                .findFirst();
+        if(element.isPresent()){
+            return element.get().getValue();
+        } else {
+            log.warn("Position not found for checkpoint"+checkpointIndex);
+            throw null;
+        }
     }
 
     //TODO: needs to detect other walls

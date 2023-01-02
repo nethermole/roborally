@@ -19,7 +19,6 @@ import com.nethermole.roborally.gameservice.GameLog;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -139,7 +138,7 @@ public class Game {
     }
 
     public void submitPlayerHand(int playerId, List<MovementCard> movementCardList) throws InvalidSubmittedHandException, InvalidPlayerStateException {
-        log.info("Player " + players.get(playerId).getName() + " submitted hand: " + movementCardList + " for turn " + currentTurn);
+        log.info("PlayerId " + playerId + " submitted hand: " + movementCardList + " for turn " + currentTurn);
 
         List<MovementCard> originalPlayerHandCopy = new ArrayList<>(playersHands.get(playerId));
         for(MovementCard movementCard : movementCardList){
@@ -156,7 +155,7 @@ public class Game {
     }
 
     public boolean isReadyToProcessTurn(){
-        return playerStatusManager.readyToProcessTurn();
+        return winningPlayer == null && playerStatusManager.readyToProcessTurn();
     }
 
     public void processTurn() {
@@ -187,6 +186,10 @@ public class Game {
     }
 
     public void setupForNextTurn() {
+        if(winningPlayer != null){
+            return;
+        }
+
         log.info("Preparing for turn: " + currentTurn);
 
         this.gameState = GameState.TURN_PREPARATION;
@@ -241,7 +244,16 @@ public class Game {
                 playerStatusManager.playerGetsHand(player.getId());
                 List<MovementCard> npcPlayerCards = playersHands.get(player.getId());
 
-                List<MovementCard> selectedCards = ((NPCPlayer) player).chooseCards(npcPlayerCards);
+                List<MovementCard> npcPlayerCardsCopy = new ArrayList<>();
+                for(MovementCard movementCard : npcPlayerCards){
+                    npcPlayerCardsCopy.add(new MovementCard(movementCard));
+                }
+                List<MovementCard> selectedCards = null;
+                try {
+                    selectedCards = ((NPCPlayer) player).chooseCards(npcPlayerCardsCopy, getBoard());
+                } catch(Exception e){
+                    System.out.println();
+                }
                 submitPlayerHand(player.getId(), selectedCards);
             }
         }

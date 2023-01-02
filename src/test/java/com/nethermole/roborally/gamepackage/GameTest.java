@@ -133,6 +133,7 @@ class GameTest {
     @Test
     public void checkForWinner_checkPointPreset_returnsTrue() {
         Position winningPosition = game.getBoard().getPositionOfElement(game.getCheckPoints().get(game.getCheckPoints().size() - 1));
+        game.getPlayers().entrySet().forEach(entry -> entry.getValue().setPosition(new Position(winningPosition.getX()+1, 0)));
         game.getPlayer(0).setPosition(winningPosition);
         game.checkForWinner();
         assertThat(game.getWinningPlayer()).isEqualTo(game.getPlayer(0));

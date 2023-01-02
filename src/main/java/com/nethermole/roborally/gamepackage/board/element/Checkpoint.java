@@ -7,11 +7,11 @@ import lombok.Getter;
 public class Checkpoint extends Element{
 
     @Getter
-    private int index;
+    private int base1index;
 
     @Override
     public ElementEnum getElementEnum() {
-        String elementEnum = "CHECKPOINT" + index;
+        String elementEnum = "CHECKPOINT" + base1index;
         return ElementEnum.valueOf(elementEnum);
     }
 }

@@ -3,7 +3,8 @@ import requests
 def toChars(word):
     return [char for char in word]
 
-requests.post("http://localhost:8080/debugStart?seedIn=-5121015280827996104")
+#   ?seedIn=3960483649208205183
+requests.post("http://localhost:8080/debugStart?seedIn=3960483649208205183")
 
 go = True
 while go:

@@ -1,6 +1,6 @@
 package com.nethermole.roborally.gamepackage.player;
 
-import com.nethermole.roborally.controllers.PlayerController;
+import com.nethermole.roborally.gamepackage.board.Board;
 import com.nethermole.roborally.gamepackage.board.Direction;
 import com.nethermole.roborally.gamepackage.board.Position;
 import com.nethermole.roborally.gamepackage.board.element.Beacon;
@@ -49,9 +49,9 @@ public abstract class Player {
     }
 
     public void touchCheckpoint(Checkpoint checkpoint){
-        if(checkpoint.getIndex() - 1 == mostRecentCheckpointTouched){
-            mostRecentCheckpointTouched = checkpoint.getIndex();
-            log.info(name + " touched " + checkpoint.getElementEnum().name());
+        if(checkpoint.getBase1index() - 1 == mostRecentCheckpointTouched){
+            mostRecentCheckpointTouched = checkpoint.getBase1index();
+            log.info(getId() + " touched " + checkpoint.getElementEnum().name());
         }
     }
 
@@ -72,7 +72,7 @@ public abstract class Player {
             }
 
             @Override
-            public List<MovementCard> chooseCards(List<MovementCard> movementCards) {
+            public List<MovementCard> chooseCards(List<MovementCard> movementCards, Board board) {
                 return null;
             }
         };

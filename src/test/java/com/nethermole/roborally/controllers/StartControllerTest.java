@@ -21,12 +21,12 @@ class StartControllerTest {
     @Test
     void startGame_startsNewGame() {
         when(gameLogistics.isGameAlreadyStarted()).thenReturn(false);
-        startController.startGame(0L);
+        startController.debugStart(0L);
     }
 
     @Test
     void startGame_gameAlreadyStarted() {
         when(gameLogistics.isGameAlreadyStarted()).thenReturn(true);
-        startController.startGame(0L);
+        startController.debugStart(0L);
     }
 }

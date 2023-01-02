@@ -5,6 +5,12 @@ Play Instructions:
 3) Open Unity
 4) Play game using inputs in python
 
+
+Robot Race Instructions:
+1) Run roborally in intellj
+2) Trigger game calling /botStart in postman
+3) View game replay by opening and running Unity client
+
 ----
 
 Current Limitations:

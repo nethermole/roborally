@@ -1,8 +1,6 @@
-DONT COMMIT TILL THIS IS FIXED:
-game doesnt work beyond turn 2. or at least unity wont visualize it
-
 //Tech debt & Bugfixes
 - Players can walk over pits, as long as their end-position is not a pit
+- UI player position bounces after out-of-bounds player death
 - Deserializing board into elementEnums isn't scalable. Let's actually serialize/deserialize the board better. full json into objects, not keying off of elementenum. see conveyor elementEnums
 - Unit test code coverage to 95%
     - Includes untangling anything to refactors
@@ -14,12 +12,15 @@ game doesnt work beyond turn 2. or at least unity wont visualize it
 - Separate getting game start into from GetViewUpdateList
 - Wrap "getLogger" in a class, in case I choose to switch frameworks later
 - Verify that client is getting their specific hand, otherwise its like looking at other players hands
+- Board object has too much knowledge. (example: Bot logic implementation gets a board object, but is able to use the references to other players for info)
 
 //Features
 - Stop current game
 - Choose player starting direction
 - AI
     - Random //complete
+    - Overshoot (Tries to go HARD in the correct cardinal direction that turn. Tries to hold still if it can't do the turn.) //complete
+    - Counting (Tries to go the correct number of tiles in the correct cardinal direction that turn. Tries to hold still if it can't do the turn, or after it has reached the correct number of tiles.) //complete
     - Brute force ignores board
     - Brute force uses board (this will be fun... unfortunately copy constructors... fortunately lombok.toBuilder.build)
     - AI plugin integration (toy with AI here)
@@ -46,6 +47,6 @@ game doesnt work beyond turn 2. or at least unity wont visualize it
     - GameObject and script registry?
 
     //Modes
-    - Player is playing
+    - Player is playing //functional
     - AI is grinding
-    - Replay a gameEventLog from file
+    - Replay a gameEventLog from file   //we have from "complete in-memory object", so that's not far off

@@ -15,4 +15,10 @@ public enum Movement {
     Movement(String label){
         string = label;
     }
+
+    public static boolean isTurn(Movement movement){
+        return movement == Movement.TURN_LEFT ||
+                movement == Movement.TURN_RIGHT ||
+                movement == Movement.UTURN;
+    }
 }
