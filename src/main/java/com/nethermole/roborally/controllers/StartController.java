@@ -38,7 +38,6 @@ public class StartController {
             }
 
             gameLogistics.startGame(players, seed);
-            log.info("New game started with startPosition: " + gameLogistics.getStartInfo().getStartPosition());
         } else {
             log.info("Game in progress, no new game started");
         }
@@ -53,7 +52,6 @@ public class StartController {
         players.put(0, new HumanPlayer(0));
         players.put(1, new RandomBot(1));
         gameLogistics.startGame(players, seed);
-        log.info("New game started with startPosition: " + gameLogistics.getStartInfo().getStartPosition());
     }
 
 }

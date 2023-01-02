@@ -1,5 +1,6 @@
 package com.nethermole.roborally.gamepackage;
 
+import com.nethermole.roborally.exceptions.InvalidPlayerStateException;
 import com.nethermole.roborally.exceptions.InvalidSubmittedHandException;
 import com.nethermole.roborally.gamepackage.board.BoardFactory;
 import com.nethermole.roborally.gamepackage.board.Position;
@@ -63,26 +64,26 @@ class GameTest {
     }
 
     @Test
-    public void distributeCards() {
+    public void distributeCards() throws InvalidPlayerStateException {
         List<MovementCard> playerHand = game.getHand(0);
         assertThat(playerHand.size()).isEqualTo(Player.STARTING_HEALTH);
     }
 
     @Test
-    public void getHand_getsCardsForPlayer() {
+    public void getHand_getsCardsForPlayer() throws InvalidPlayerStateException {
         List<MovementCard> playerHand = game.getHand(0);
         assertThat(playerHand.size()).isEqualTo(Player.STARTING_HEALTH);
-        assertThat(game.getPlayerStates().get(player0)).isEqualTo(PlayerState.CHOOSING_MOVEMENT_CARDS);
+        assertThat(game.getPlayerStatusManager().getPlayerState(0)).isEqualTo(PlayerState.CHOOSING_MOVEMENT_CARDS);
     }
 
     @Test
-    public void getHand_setsPlayerState() {
+    public void getHand_setsPlayerState() throws InvalidPlayerStateException {
         game.getHand(0);
-        assertThat(game.getPlayerStates().get(0)).isEqualTo(PlayerState.CHOOSING_MOVEMENT_CARDS);
+        assertThat(game.getPlayerStatusManager().getPlayerState(0)).isEqualTo(PlayerState.CHOOSING_MOVEMENT_CARDS);
     }
 
     @Test
-    public void submitPlayerHand_resetsPlayerHand() throws InvalidSubmittedHandException {
+    public void submitPlayerHand_resetsPlayerHand() throws InvalidSubmittedHandException, InvalidPlayerStateException {
         List<MovementCard> movementCardList = new ArrayList<>();
         movementCardList.add(new MovementCard(Movement.MOVE1, 100));
 
@@ -92,7 +93,7 @@ class GameTest {
     }
 
     @Test
-    public void submitPlayerHand_setsSubmittedHand() throws InvalidSubmittedHandException {
+    public void submitPlayerHand_setsSubmittedHand() throws InvalidSubmittedHandException, InvalidPlayerStateException {
         List<MovementCard> movementCardList = new ArrayList<>();
         MovementCard movementCard = new MovementCard(Movement.MOVE1, 100);
         movementCardList.add(movementCard);
@@ -113,7 +114,7 @@ class GameTest {
     }
 
     @Test
-    public void isReadyToProcessTurn_notAllPlayersHaveSubmittedCards_returnsFalse() throws InvalidSubmittedHandException {
+    public void isReadyToProcessTurn_notAllPlayersHaveSubmittedCards_returnsFalse() throws InvalidSubmittedHandException, InvalidPlayerStateException {
         assertThat(playerList.size()).isGreaterThan(1);
 
         game.submitPlayerHand(1, new ArrayList<>());
@@ -121,7 +122,7 @@ class GameTest {
     }
 
     @Test
-    public void isReadyToProcessTurn_allPlayersHaveSubmittedCards_returnsTrue() throws InvalidSubmittedHandException {
+    public void isReadyToProcessTurn_allPlayersHaveSubmittedCards_returnsTrue() throws InvalidSubmittedHandException, InvalidPlayerStateException {
         assertThat(playerList.size()).isEqualTo(2);
 
         game.submitPlayerHand(0, new ArrayList<>());

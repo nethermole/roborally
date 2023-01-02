@@ -1,4 +1,8 @@
+DONT COMMIT TILL THIS IS FIXED:
+game doesnt work beyond turn 2. or at least unity wont visualize it
+
 //Tech debt & Bugfixes
+- Players can walk over pits, as long as their end-position is not a pit
 - Deserializing board into elementEnums isn't scalable. Let's actually serialize/deserialize the board better. full json into objects, not keying off of elementenum. see conveyor elementEnums
 - Unit test code coverage to 95%
     - Includes untangling anything to refactors

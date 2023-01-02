@@ -2,9 +2,11 @@ package com.nethermole.roborally.gamepackage;
 
 import com.nethermole.roborally.StartInfo;
 import com.nethermole.roborally.exceptions.GameNotStartedException;
+import com.nethermole.roborally.exceptions.InvalidPlayerStateException;
 import com.nethermole.roborally.exceptions.InvalidSubmittedHandException;
 import com.nethermole.roborally.gamepackage.board.Board;
 import com.nethermole.roborally.gamepackage.board.BoardFactory;
+import com.nethermole.roborally.gamepackage.board.Position;
 import com.nethermole.roborally.gamepackage.deck.GameState;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
 import com.nethermole.roborally.gamepackage.player.Player;
@@ -39,7 +41,7 @@ public class GameLogistics {
 
     @PostConstruct
     public void init() {
-        log = LogManager.getLogger(Game.class);
+        log = LogManager.getLogger(GameLogistics.class);
         viewers = new ArrayList<>();
     }
 
@@ -56,10 +58,13 @@ public class GameLogistics {
         gameBuilder.players(players);
         gameBuilder.gameLog(gameLog);
         gameBuilder.board(board);
-        gameBuilder.generateStartBeacon();
-        gameBuilder.generateCheckpoints(2);
+        Position startPosition = gameBuilder.generateStartBeacon();
+        gameBuilder.generateCheckpoints(8);
 
         game = gameBuilder.buildGame();
+
+        log.info("New game started with startPosition: " + startPosition);
+
         game.setupForNextTurn();
 
         startInfo = new StartInfo(players.values().stream().map(player -> player.snapshot()).collect(Collectors.toList()), game.getStartPosition());
@@ -94,14 +99,14 @@ public class GameLogistics {
         return gameLog.getViewstepsByTurn(turn);
     }
 
-    public List<MovementCard> getHand(int playerId) {
+    public List<MovementCard> getHand(int playerId) throws InvalidPlayerStateException {
         if (game == null) {
             return null;
         }
         return game.getHand(playerId);
     }
 
-    public void submitHand(int playerId, List<MovementCard> movementCardList) throws InvalidSubmittedHandException {
+    public void submitHand(int playerId, List<MovementCard> movementCardList) throws InvalidSubmittedHandException, InvalidPlayerStateException {
         if (game == null) {
             throw new UnsupportedOperationException("game not started yet. cant submit hand");
         }
@@ -111,14 +116,9 @@ public class GameLogistics {
         if (game.isReadyToProcessTurn()) {
             log.info("All hands received, processing turn");
             game.processTurn();
+            log.info("Turn processing complete. Setting up for next turn.");
             game.setupForNextTurn();
-            game.incrementCurrentTurn();
-            log.info("Turn processing complete");
+            log.info("Done setting up for next turn");
         }
-    }
-
-    public boolean isWaitingOnPlayer(int playerId){
-        return game.getGameState() == GameState.TURN_PREPARATION &&
-                !game.getPlayerSubmittedHands().containsKey(playerId);
     }
 }

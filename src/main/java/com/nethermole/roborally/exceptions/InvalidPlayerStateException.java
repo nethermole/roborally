@@ -1,12 +1,19 @@
 package com.nethermole.roborally.exceptions;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 public class InvalidPlayerStateException extends Exception {
+
+    int playerId;
+    String initialState;
+    String attemptedAction;
 
     @Override
     public String getMessage(){
-        return "--- InvalidSubmittedHandException ---\n" +
-                "Player:\t" + game.getPlayer(playerId).getName()+"\n" +
-                "Dealt:\t" + handDealt.toString()+"\n" +
-                "Submitted:\t" + handSubmitted.toString();
+        return "--- InvalidPlayerStateException ---\n" +
+                "PlayerId:\t" + playerId+"\n" +
+                "Initial State:\t" + initialState +"\n" +
+                "Attempted Action:\t\"" + attemptedAction + "\"";
     }
 }

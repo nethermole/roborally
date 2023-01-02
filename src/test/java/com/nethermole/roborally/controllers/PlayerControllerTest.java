@@ -1,5 +1,6 @@
 package com.nethermole.roborally.controllers;
 
+import com.nethermole.roborally.exceptions.InvalidPlayerStateException;
 import com.nethermole.roborally.exceptions.InvalidSubmittedHandException;
 import com.nethermole.roborally.gamepackage.deck.movement.Movement;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
@@ -26,12 +27,12 @@ class PlayerControllerTest {
     GameLogistics gameLogistics;
 
     @Test
-    void setCards_throwsNoException() throws InvalidSubmittedHandException {
+    void setCards_throwsNoException() throws InvalidSubmittedHandException, InvalidPlayerStateException {
         gameLogistics.submitHand(1, new ArrayList<>());
     }
 
     @Test
-    void getCards() {
+    void getCards() throws InvalidPlayerStateException {
         ArrayList<MovementCard> movementCardList = new ArrayList<>();
         movementCardList.add(new MovementCard(Movement.MOVE1, 100));
         movementCardList.add(new MovementCard(Movement.MOVE2, 200));

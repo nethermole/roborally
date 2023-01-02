@@ -49,7 +49,7 @@ class BoardTest {
         player.setPosition(new Position(5, 5));
         player.setFacing(Direction.UP);
 
-        board.move1(player);
+        board.moveForward(player, 1);
         Position position = player.getPosition();
         assertThat(position.getX()).isEqualTo(5);
         assertThat(position.getY()).isEqualTo(6);

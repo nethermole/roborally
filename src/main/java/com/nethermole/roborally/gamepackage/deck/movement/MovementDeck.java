@@ -20,6 +20,9 @@ public class MovementDeck {
     }
 
     public MovementCard drawCard() {
+        if(deck.size() <= 0){
+            throw new IllegalStateException("No movement cards left in deck");
+        }
         return deck.remove(random.nextInt(deck.size()));
     }
 

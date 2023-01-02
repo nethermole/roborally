@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nethermole.roborally.gamepackage.ViewStep;
 import com.nethermole.roborally.gamepackage.board.element.Element;
 import com.nethermole.roborally.gamepackage.board.element.ElementEnum;
+import com.nethermole.roborally.gamepackage.board.element.Pit;
 import com.nethermole.roborally.gamepackage.deck.movement.Movement;
 import com.nethermole.roborally.gamepackage.player.Player;
 import com.nethermole.roborally.gamepackage.turn.MovementMethod;
@@ -45,9 +46,14 @@ public class Board {
     public Tile getTileAtPosition(Position position) {
         Map<Integer, Tile> row = squares.get(position.getX());
         if (row == null) {
-            return null;
+            return Tile.getOutOfBounds();
         }
-        return row.get(position.getY());
+
+        Tile tile = row.get(position.getY());
+        if(tile == null){
+            return Tile.getOutOfBounds();
+        }
+        return tile;
     }
 
     public List<Map.Entry<Element, Position>> getAllElementsOfType(Class clazz){
@@ -89,16 +95,13 @@ public class Board {
         List<ViewStep> viewSteps = new ArrayList<>();
         switch (movement) {
             case MOVE1:
-                viewSteps.addAll(move1(player));
+                viewSteps.addAll(moveForward(player, 1));
                 break;
             case MOVE2:
-                viewSteps.addAll(move1(player));
-                viewSteps.addAll(move1(player));
+                viewSteps.addAll(moveForward(player, 2));
                 break;
             case MOVE3:
-                viewSteps.addAll(move1(player));
-                viewSteps.addAll(move1(player));
-                viewSteps.addAll(move1(player));
+                viewSteps.addAll(moveForward(player, 3));
                 break;
             case TURN_RIGHT:
                 viewSteps.add(turnRight(player));
@@ -110,7 +113,7 @@ public class Board {
                 viewSteps.add(uturn(player));
                 break;
             case BACKUP:
-                viewSteps.add(backup(player));
+                viewSteps.addAll(backup(player));
                 break;
             default:
                 return new ArrayList<>();
@@ -129,46 +132,28 @@ public class Board {
         return moveEvent;
     }
 
+    //TODO: LOGIC INVOLVING THIS USUALLY CHECK ENDPOSITION, NOT ENTIRE PATHWAY
     public boolean isOverPit(Position position) {
-        Map<Integer, Tile> row = squares.get(position.getX());
-        if (row == null) {
-            return true;
-        }
-        Tile tile = row.get(position.getY());
-        if (tile == null) {
-            return true;
-        }
-
-        Set<Element> elements = squares.get(position.getX()).get(position.getY()).getElements();
-        for (Element element : elements) {
-            if (element.getElementEnum() == ElementEnum.PIT) {
-                return true;
-            }
-        }
-        return false;
+        Tile tile = getTileAtPosition(position);
+        return tile.hasElement(ElementEnum.PIT);
     }
 
-    public List<ViewStep> move1(Player player) {
+    public List<ViewStep> moveForward(Player player, int distance) {
         List<ViewStep> viewSteps = new ArrayList<>();
         Position startPosition = player.getPosition();
-        Position endPosition = startPosition.moveForward1(player.getFacing());
+        Position endPosition = startPosition.moveForward(player.getFacing(), distance);
 
-        if (isWallBetween(startPosition, endPosition)) {
-            log.info(player + " hit a wall instead of move1", player.getId());
-            //TODO: nomove collision viewstep
-            return null;
-        } else {
-            player.setPosition(endPosition);
-            viewSteps.add(new RobotMoveViewStep(player, startPosition, endPosition, player.getFacing(), player.getFacing(), MovementMethod.MOVE));
-
-            if (isOverPit(player.getPosition())) {
-                viewSteps.add(resetPlayer(player));
-            }
-            return viewSteps;
+        player.setPosition(endPosition);
+        if (isOverPit(player.getPosition())) {
+            viewSteps.add(resetPlayer(player));
         }
+
+        viewSteps.add(new RobotMoveViewStep(player, startPosition, endPosition, player.getFacing(), player.getFacing(), MovementMethod.MOVE));
+        return viewSteps;
     }
 
-    public ViewStep backup(Player player) {
+    public List<ViewStep> backup(Player player) {
+        List<ViewStep> viewSteps = new ArrayList<>();
         Position startPosition = player.getPosition();
         Position endPosition = startPosition.moveBackward1(player.getFacing());
 
@@ -177,8 +162,12 @@ public class Board {
             return null;
         } else {
             player.setPosition(endPosition);
-            ViewStep viewStep = new RobotMoveViewStep(player, startPosition, endPosition, player.getFacing(), player.getFacing(), MovementMethod.MOVE);
-            return viewStep;
+            if (isOverPit(player.getPosition())) {
+                viewSteps.add(resetPlayer(player));
+            }
+
+            viewSteps.add(new RobotMoveViewStep(player, startPosition, endPosition, player.getFacing(), player.getFacing(), MovementMethod.MOVE));
+            return viewSteps;
         }
     }
 

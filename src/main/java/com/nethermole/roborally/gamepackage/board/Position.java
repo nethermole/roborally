@@ -14,20 +14,20 @@ public class Position {
         this.y = original.y;
     }
 
-    public Position moveForward1(Direction facing) {
+    public Position moveForward(Direction facing, int distance) {
         Position endPosition = new Position(x, y);
         switch (facing) {
             case UP:
-                endPosition.setY(endPosition.y + 1);
+                endPosition.setY(endPosition.y + distance);
                 break;
             case RIGHT:
-                endPosition.setX(endPosition.x + 1);
+                endPosition.setX(endPosition.x + distance);
                 break;
             case DOWN:
-                endPosition.setY(endPosition.y - 1);
+                endPosition.setY(endPosition.y - distance);
                 break;
             case LEFT:
-                endPosition.setX(endPosition.x - 1);
+                endPosition.setX(endPosition.x - distance);
                 break;
         }
         return endPosition;

@@ -12,10 +12,10 @@ class PositionTest {
     public void moveForward1() {
         position = new Position(5, 5);
 
-        Position facingUp = position.moveForward1(Direction.UP);
-        Position facingRight = position.moveForward1(Direction.RIGHT);
-        Position facingDown = position.moveForward1(Direction.DOWN);
-        Position facingLeft = position.moveForward1(Direction.LEFT);
+        Position facingUp = position.moveForward(Direction.UP, 1);
+        Position facingRight = position.moveForward(Direction.RIGHT, 1);
+        Position facingDown = position.moveForward(Direction.DOWN, 1);
+        Position facingLeft = position.moveForward(Direction.LEFT, 1);
 
         assertThat(facingUp.getX()).isEqualTo(5);
         assertThat(facingUp.getY()).isEqualTo(6);

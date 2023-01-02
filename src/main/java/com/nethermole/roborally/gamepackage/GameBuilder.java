@@ -21,7 +21,10 @@ public class GameBuilder {
     Map<Integer, Player> players;
     GameLog gameLog;
     Board board;
+
+    @Getter
     Beacon startBeacon;
+
     List<Checkpoint> checkpoints;
 
     boolean hasCalledBoardLayout;
@@ -43,7 +46,10 @@ public class GameBuilder {
         hasCalledBoardLayout = true;
     }
 
-    public void generateStartBeacon() {
+    /*
+    returns startPosition
+     */
+    public Position generateStartBeacon() {
         if (!hasCalledBoardLayout) {
             throw new UnsupportedOperationException("Must call boardLayout before generateStartBeacon");
         }
@@ -55,6 +61,7 @@ public class GameBuilder {
             player.setBeacon(startBeacon);
             player.setPosition(startPosition);
         }
+        return startPosition;
     }
 
     public void generateCheckpoints(int count) {

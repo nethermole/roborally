@@ -2,24 +2,24 @@ package com.nethermole.roborally.gamepackage;
 
 import com.nethermole.roborally.GameConstants;
 import com.nethermole.roborally.PlayerHandProcessor;
+import com.nethermole.roborally.PlayerStatusManager;
+import com.nethermole.roborally.exceptions.InvalidPlayerStateException;
 import com.nethermole.roborally.exceptions.InvalidSubmittedHandException;
 import com.nethermole.roborally.gamepackage.board.Board;
 import com.nethermole.roborally.gamepackage.board.Direction;
 import com.nethermole.roborally.gamepackage.board.Position;
-import com.nethermole.roborally.gamepackage.board.Tile;
 import com.nethermole.roborally.gamepackage.board.element.Beacon;
 import com.nethermole.roborally.gamepackage.board.element.Checkpoint;
-import com.nethermole.roborally.gamepackage.board.element.Element;
 import com.nethermole.roborally.gamepackage.deck.GameState;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementDeck;
 import com.nethermole.roborally.gamepackage.player.Player;
-import com.nethermole.roborally.gamepackage.player.PlayerState;
 import com.nethermole.roborally.gamepackage.player.bot.NPCPlayer;
 import com.nethermole.roborally.gameservice.GameLog;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -54,7 +54,7 @@ public class Game {
     private Map<Integer, List<MovementCard>> playerSubmittedHands;
 
     @Getter
-    private Map<Integer, PlayerState> playerStates;
+    private PlayerStatusManager playerStatusManager;
 
     @Getter
     private GameState gameState;
@@ -84,7 +84,7 @@ public class Game {
     void initializeFields(Map<Integer, Player> players) {
         playerSubmittedHands = new HashMap<>();
         playersHands = new HashMap<>();
-        playerStates = new HashMap<>();
+        playerStatusManager = new PlayerStatusManager();
 
         currentTurn = 0;
         maxTurn = 5000;
@@ -94,7 +94,7 @@ public class Game {
         this.players = players;
 
         for (Player player : players.values()) {
-            playerStates.put(player.getId(), PlayerState.NO_INTERACTION_YET);
+            playerStatusManager.addPlayer(player.getId());
             player.setFacing(Direction.UP);
         }
 
@@ -119,16 +119,27 @@ public class Game {
         }
     }
 
-    public List<MovementCard> getHand(int playerId) {
-        if(playerStates.get(playerId) != PlayerState.HAS_SUBMITTED_CARDS){
-            playerStates.put(playerId, PlayerState.CHOOSING_MOVEMENT_CARDS);
-        }
+    public List<MovementCard> getHand(int playerId) throws InvalidPlayerStateException {
+        //todo: guard against this better
+        for(int timeoutSeconds = 5; gameState == GameState.PROCESSING_TURN || gameState == GameState.TURN_PREPARATION; timeoutSeconds--){
+            try {
+                Thread.sleep(1000);
+            } catch(Exception e){
+                log.error("sleep() exception... how tho");
+            }
+            if(timeoutSeconds == 0){
+                log.warn("timed out getting hand for playerId: " + playerId);
+                return null;
+            }
+        };
+
+        playerStatusManager.playerGetsHand(playerId);
 
         return playersHands.get(playerId);
     }
 
-    public void submitPlayerHand(int playerId, List<MovementCard> movementCardList) throws InvalidSubmittedHandException {
-        log.info("Player " + players.get(playerId).getName() + " submitted hand: " + movementCardList);
+    public void submitPlayerHand(int playerId, List<MovementCard> movementCardList) throws InvalidSubmittedHandException, InvalidPlayerStateException {
+        log.info("Player " + players.get(playerId).getName() + " submitted hand: " + movementCardList + " for turn " + currentTurn);
 
         List<MovementCard> originalPlayerHandCopy = new ArrayList<>(playersHands.get(playerId));
         for(MovementCard movementCard : movementCardList){
@@ -138,39 +149,63 @@ public class Game {
             }
         }
 
-        playerStates.put(playerId, PlayerState.HAS_SUBMITTED_CARDS);
+        playerStatusManager.playerSubmitsHand(playerId);
+
         playersHands.put(playerId, new ArrayList<>());
         playerSubmittedHands.put(playerId, movementCardList);
     }
 
+    public boolean isReadyToProcessTurn(){
+        return playerStatusManager.readyToProcessTurn();
+    }
+
     public void processTurn() {
+        gameState = GameState.PROCESSING_TURN;
+
         PlayerHandProcessor playerHandProcessor = new PlayerHandProcessor();
         List<List<MovementCard>> organizedPlayerHands = playerHandProcessor.submitHands(playerSubmittedHands);
+        log.info("Processing turn: " + currentTurn);
         for (int i = 0; i < GameConstants.PHASES_PER_TURN; i++) {
+            log.trace("Processing turn: " + currentTurn + ", phase: " + (i+1));
             processPhase(organizedPlayerHands.get(i), playerHandProcessor);
+            log.trace("Done processing turn: " + currentTurn + ", phase: " + (i+1));
             checkForWinner();
             if(currentTurn > maxTurn){
                 winningPlayer = Player.instance();
             }
             if (winningPlayer != null) {
-                break;
+                log.info("Winning player found");
             }
         }
+        log.info("Done processing turn: " + currentTurn);
+        incrementCurrentTurn();
     }
 
     public void incrementCurrentTurn() {
+        log.info("Incrementing turn from " + currentTurn + " to " + (currentTurn+1));
         currentTurn++;
     }
 
     public void setupForNextTurn() {
+        log.info("Preparing for turn: " + currentTurn);
+
         this.gameState = GameState.TURN_PREPARATION;
+        playerStatusManager.setupForNextTurn();
+
+        movementDeck = new MovementDeck(random);
         distributeCards();
         try{
             npcPlayersSelectCards();
         } catch (InvalidSubmittedHandException e){
             log.error(e.getMessage());
             throw new IllegalStateException("npcPlayersSelectCards() submitted invalidCards");
+        } catch (InvalidPlayerStateException e){
+            log.error(e.getMessage());
+            throw new IllegalStateException("npcPlayersSelectCards() threw InvalidPlayerStateException");
         }
+
+        this.gameState = GameState.DONE_PREPARING;
+        log.info("Done preparing for turn: " + currentTurn);
     }
 
     public void processPhase(List<MovementCard> movementCards, PlayerHandProcessor playerHandProcessor) {
@@ -191,26 +226,25 @@ public class Game {
 
     public void checkForWinner() {
         for (Player player : players.values()) {
-            if(player.getMostRecentCheckpointTouched() == checkPoints.get(checkPoints.size() - 1).getIndex()){
+            if(player.getMostRecentCheckpointTouched() == checkPoints.size()){
                 winningPlayer = player;
                 log.info("Player " + player.getId() + " won the game!");
             }
         }
     }
 
-    public void npcPlayersSelectCards() throws InvalidSubmittedHandException {
+    public void npcPlayersSelectCards() throws InvalidSubmittedHandException, InvalidPlayerStateException {
+        log.info("npcPlayersSelectCards()");
+
         for (Player player : players.values()) {
             if (player instanceof NPCPlayer) {
+                playerStatusManager.playerGetsHand(player.getId());
                 List<MovementCard> npcPlayerCards = playersHands.get(player.getId());
 
                 List<MovementCard> selectedCards = ((NPCPlayer) player).chooseCards(npcPlayerCards);
                 submitPlayerHand(player.getId(), selectedCards);
             }
         }
-    }
-
-    public boolean isReadyToProcessTurn() {
-        return playerStates.values().stream().allMatch(it -> it == PlayerState.HAS_SUBMITTED_CARDS);
     }
 
     public Player getPlayer(int id) {

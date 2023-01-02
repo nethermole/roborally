@@ -1,5 +1,6 @@
 package com.nethermole.roborally.gamepackage.player;
 
+import com.nethermole.roborally.controllers.PlayerController;
 import com.nethermole.roborally.gamepackage.board.Direction;
 import com.nethermole.roborally.gamepackage.board.Position;
 import com.nethermole.roborally.gamepackage.board.element.Beacon;
@@ -9,6 +10,8 @@ import com.nethermole.roborally.gamepackage.player.bot.NPCPlayer;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -37,6 +40,8 @@ public abstract class Player {
 
     private int mostRecentCheckpointTouched;
 
+    private static Logger log = LogManager.getLogger(Player.class);
+
     public Player(int id) {
         this.id = id;
         health = STARTING_HEALTH;
@@ -46,6 +51,7 @@ public abstract class Player {
     public void touchCheckpoint(Checkpoint checkpoint){
         if(checkpoint.getIndex() - 1 == mostRecentCheckpointTouched){
             mostRecentCheckpointTouched = checkpoint.getIndex();
+            log.info(name + " touched " + checkpoint.getElementEnum().name());
         }
     }
 
