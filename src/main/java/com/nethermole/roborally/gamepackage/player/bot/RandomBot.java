@@ -5,15 +5,15 @@ import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
 
 import java.util.List;
 
-public class RandomBot extends NPCPlayer{
+public class RandomBot extends NPCPlayer {
 
-    public RandomBot(int id){
+    public RandomBot(int id) {
         super(id);
-        this.setName("RandomBot-"+id);
+        this.setName("RB-" + id);
     }
 
     @Override
     public List<MovementCard> chooseCards(List<MovementCard> movementCards, Board board) {
-        return movementCards.subList(0,5);
+        return movementCards.subList(0, 5);
     }
 }

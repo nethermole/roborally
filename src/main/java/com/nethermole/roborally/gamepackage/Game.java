@@ -76,7 +76,7 @@ public class Game {
     @Setter
     private Random random;
 
-    Game(Random random){
+    Game(Random random) {
         this.random = random;
     }
 
@@ -120,17 +120,17 @@ public class Game {
 
     public List<MovementCard> getHand(int playerId) throws InvalidPlayerStateException {
         //todo: guard against this better
-        for(int timeoutSeconds = 5; gameState == GameState.PROCESSING_TURN || gameState == GameState.TURN_PREPARATION; timeoutSeconds--){
+        for (int timeoutSeconds = 5; gameState == GameState.PROCESSING_TURN || gameState == GameState.TURN_PREPARATION; timeoutSeconds--) {
             try {
                 Thread.sleep(1000);
-            } catch(Exception e){
+            } catch (Exception e) {
                 log.error("sleep() exception... how tho");
             }
-            if(timeoutSeconds == 0){
+            if (timeoutSeconds == 0) {
                 log.warn("timed out getting hand for playerId: " + playerId);
                 return null;
             }
-        };
+        }
 
         playerStatusManager.playerGetsHand(playerId);
 
@@ -138,12 +138,15 @@ public class Game {
     }
 
     public void submitPlayerHand(int playerId, List<MovementCard> movementCardList) throws InvalidSubmittedHandException, InvalidPlayerStateException {
+        if (movementCardList.size() != 5) {
+            throw new IllegalStateException("PlayerId " + playerId + " submitted hand of size " + movementCardList.size());
+        }
         log.info("PlayerId " + playerId + " submitted hand: " + movementCardList + " for turn " + currentTurn);
 
         List<MovementCard> originalPlayerHandCopy = new ArrayList<>(playersHands.get(playerId));
-        for(MovementCard movementCard : movementCardList){
+        for (MovementCard movementCard : movementCardList) {
             boolean playerWasDealtSubmittedCard = originalPlayerHandCopy.remove(movementCard);
-            if(!playerWasDealtSubmittedCard){
+            if (!playerWasDealtSubmittedCard) {
                 throw new InvalidSubmittedHandException(playersHands.get(playerId), movementCardList, playerId, this);
             }
         }
@@ -154,7 +157,7 @@ public class Game {
         playerSubmittedHands.put(playerId, movementCardList);
     }
 
-    public boolean isReadyToProcessTurn(){
+    public boolean isReadyToProcessTurn() {
         return winningPlayer == null && playerStatusManager.readyToProcessTurn();
     }
 
@@ -165,11 +168,11 @@ public class Game {
         List<List<MovementCard>> organizedPlayerHands = playerHandProcessor.submitHands(playerSubmittedHands);
         log.info("Processing turn: " + currentTurn);
         for (int i = 0; i < GameConstants.PHASES_PER_TURN; i++) {
-            log.trace("Processing turn: " + currentTurn + ", phase: " + (i+1));
+            log.trace("Processing turn: " + currentTurn + ", phase: " + (i + 1));
             processPhase(organizedPlayerHands.get(i), playerHandProcessor);
-            log.trace("Done processing turn: " + currentTurn + ", phase: " + (i+1));
+            log.trace("Done processing turn: " + currentTurn + ", phase: " + (i + 1));
             checkForWinner();
-            if(currentTurn > maxTurn){
+            if (currentTurn > maxTurn) {
                 winningPlayer = Player.instance();
             }
             if (winningPlayer != null) {
@@ -181,12 +184,12 @@ public class Game {
     }
 
     public void incrementCurrentTurn() {
-        log.info("Incrementing turn from " + currentTurn + " to " + (currentTurn+1));
+        log.info("Incrementing turn from " + currentTurn + " to " + (currentTurn + 1));
         currentTurn++;
     }
 
     public void setupForNextTurn() {
-        if(winningPlayer != null){
+        if (winningPlayer != null) {
             return;
         }
 
@@ -197,12 +200,12 @@ public class Game {
 
         movementDeck = new MovementDeck(random);
         distributeCards();
-        try{
+        try {
             npcPlayersSelectCards();
-        } catch (InvalidSubmittedHandException e){
+        } catch (InvalidSubmittedHandException e) {
             log.error(e.getMessage());
             throw new IllegalStateException("npcPlayersSelectCards() submitted invalidCards");
-        } catch (InvalidPlayerStateException e){
+        } catch (InvalidPlayerStateException e) {
             log.error(e.getMessage());
             throw new IllegalStateException("npcPlayersSelectCards() threw InvalidPlayerStateException");
         }
@@ -219,7 +222,7 @@ public class Game {
             List<ViewStep> viewSteps = board.movePlayer(player, movementCard.getMovement());
 
             Optional checkpoint = board.getTileAtPosition(player.getPosition()).getElements().stream().filter(element -> element.getClass() == Checkpoint.class).findFirst();
-            if(checkpoint.isPresent()){
+            if (checkpoint.isPresent()) {
                 player.touchCheckpoint((Checkpoint) checkpoint.get());
             }
 
@@ -230,7 +233,7 @@ public class Game {
 
     public void checkForWinner() {
         for (Player player : players.values()) {
-            if(player.getMostRecentCheckpointTouched() == checkPoints.size()){
+            if (player.getMostRecentCheckpointTouched() == checkPoints.size()) {
                 winningPlayer = player;
                 log.info("Player " + player.getId() + " won the game!");
             }
@@ -246,14 +249,15 @@ public class Game {
                 List<MovementCard> npcPlayerCards = playersHands.get(player.getId());
 
                 List<MovementCard> npcPlayerCardsCopy = new ArrayList<>();
-                for(MovementCard movementCard : npcPlayerCards){
+                for (MovementCard movementCard : npcPlayerCards) {
                     npcPlayerCardsCopy.add(new MovementCard(movementCard));
                 }
                 List<MovementCard> selectedCards = null;
                 try {
                     selectedCards = ((NPCPlayer) player).chooseCards(npcPlayerCardsCopy, getBoard());
-                } catch(Exception e){
-                    System.out.println();
+                } catch (Exception e) {
+                    System.out.println(e.getStackTrace());
+                    return;
                 }
                 submitPlayerHand(player.getId(), selectedCards);
             }

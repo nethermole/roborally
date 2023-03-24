@@ -1,19 +1,15 @@
 package com.nethermole.roborally.gameservice;
 
 import com.nethermole.roborally.gamepackage.ViewStep;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
 public class GameLog {
 
     List<List<ViewStep>> viewStepsByTurn;
 
-    @PostConstruct
-    public void init() {
+    public GameLog() {
         viewStepsByTurn = new ArrayList<>();
     }
 

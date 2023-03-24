@@ -1,9 +1,9 @@
 package com.nethermole.roborally.controllers;
 
 import com.nethermole.roborally.exceptions.InvalidPlayerStateException;
-import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
-import com.nethermole.roborally.gamepackage.player.Player;
 import com.nethermole.roborally.gamepackage.GameLogistics;
+import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
+import com.nethermole.roborally.gameservice.GamePoolService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,30 +14,31 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @RestController
 public class PlayerController {
 
     @Autowired
-    GameLogistics gameLogistics;
+    GamePoolService gamePoolService;
 
     private static Logger log = LogManager.getLogger(PlayerController.class);
 
-    @PostMapping("/player/{id}/submitHand")
-    public String submitHand(@PathVariable("id") Integer id, @RequestBody ArrayList<MovementCard> movementCardList) {
+    @PostMapping("/game/{gameId}/player/{playerId}/submitHand")
+    public String submitHand(@PathVariable("gameId") Integer gameId, @PathVariable("playerId") Integer playerId, @RequestBody ArrayList<MovementCard> movementCardList) {
         try {
-            gameLogistics.submitHand(id, movementCardList);
-        } catch (Exception e){
+            GameLogistics gameLogistics = gamePoolService.getGameLogistics("" + gameId);
+            gameLogistics.submitHand(playerId, movementCardList);
+        } catch (Exception e) {
             return e.getMessage();
         }
         return "";
     }
 
-    @GetMapping("/player/{id}/getHand")
-    public List<MovementCard> getCards(@PathVariable("id") Integer id) throws InvalidPlayerStateException {
-        List<MovementCard> movementCards = gameLogistics.getHand(id);
+    @GetMapping("/game/{gameId}/player/{playerId}/getHand")
+    public List<MovementCard> getCards(@PathVariable("gameId") Integer gameId, @PathVariable("playerId") Integer playerId) throws InvalidPlayerStateException {
+        GameLogistics gameLogistics = gamePoolService.getGameLogistics("" + gameId);
+        List<MovementCard> movementCards = gameLogistics.getHand(playerId);
         return movementCards;
     }
 }

@@ -7,7 +7,6 @@ import com.nethermole.roborally.exceptions.InvalidSubmittedHandException;
 import com.nethermole.roborally.gamepackage.board.Board;
 import com.nethermole.roborally.gamepackage.board.BoardFactory;
 import com.nethermole.roborally.gamepackage.board.Position;
-import com.nethermole.roborally.gamepackage.deck.GameState;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
 import com.nethermole.roborally.gamepackage.player.Player;
 import com.nethermole.roborally.gameservice.GameLog;
@@ -15,16 +14,12 @@ import com.nethermole.roborally.view.AbstractView;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Service
 public class GameLogistics {
 
     private static Logger log;
@@ -36,23 +31,24 @@ public class GameLogistics {
     @Getter
     private StartInfo startInfo;
 
-    @Autowired
     GameLog gameLog;
+    Map<Integer, Player> players;
 
-    @PostConstruct
-    public void init() {
+    public GameLogistics(Map<Integer, Player> players) {
         log = LogManager.getLogger(GameLogistics.class);
+        this.players = players;
+
         viewers = new ArrayList<>();
+        gameLog = new GameLog();
     }
 
     public boolean isGameAlreadyStarted() {
         return (game != null);
     }
 
-    public void startGame(Map<Integer, Player> players, Long seed){
+    public void startGame(Long seed) {
         BoardFactory boardFactory = new BoardFactory();
         Board board = boardFactory.board_exchange();
-        board.addBoard(boardFactory.board_exchange(), 1,0);
 
         GameBuilder gameBuilder = new GameBuilder(seed);
         gameBuilder.players(players);

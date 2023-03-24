@@ -1,7 +1,6 @@
 package com.nethermole.roborally;
 
 import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
-import com.nethermole.roborally.gamepackage.player.Player;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -25,7 +24,9 @@ public class PlayerHandProcessor {
                 MovementCard movementCard = inputHands.get(player).get(i);
                 movementCardsInPhase.add(movementCard);
 
-                if(playerIdByMovementCard.containsKey(movementCard)){ throw new IllegalStateException("Duplicate card detected on card submission"); }
+                if (playerIdByMovementCard.containsKey(movementCard)) {
+                    throw new IllegalStateException("Duplicate card detected on card submission");
+                }
                 playerIdByMovementCard.put(movementCard, player);
             }
             movementCardsInPhase.sort(Comparator.comparing(MovementCard::getPriority).reversed());
@@ -34,7 +35,7 @@ public class PlayerHandProcessor {
         return movementCardsInTurn;
     }
 
-    public int getPlayerWhoSubmittedCard(MovementCard movementCard){
+    public int getPlayerWhoSubmittedCard(MovementCard movementCard) {
         return playerIdByMovementCard.get(movementCard);
     }
 

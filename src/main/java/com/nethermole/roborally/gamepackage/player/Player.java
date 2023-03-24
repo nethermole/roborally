@@ -7,7 +7,6 @@ import com.nethermole.roborally.gamepackage.board.element.Beacon;
 import com.nethermole.roborally.gamepackage.board.element.Checkpoint;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
 import com.nethermole.roborally.gamepackage.player.bot.NPCPlayer;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
@@ -15,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-@Data
 public abstract class Player {
 
     public static final int STARTING_HEALTH = 9;
@@ -31,14 +29,24 @@ public abstract class Player {
     @Setter
     private String name;
 
+    @Setter
+    @Getter
     private Direction facing;
 
+    @Setter
     @Getter
     private Position position;
 
+    @Setter
+    @Getter
     private Beacon beacon;
 
+    @Getter
     private int mostRecentCheckpointTouched;
+
+    public int getNextCheckpointIndex() {
+        return mostRecentCheckpointTouched + 1;
+    }
 
     private static Logger log = LogManager.getLogger(Player.class);
 
@@ -48,14 +56,14 @@ public abstract class Player {
         mostRecentCheckpointTouched = 0;
     }
 
-    public void touchCheckpoint(Checkpoint checkpoint){
-        if(checkpoint.getBase1index() - 1 == mostRecentCheckpointTouched){
+    public void touchCheckpoint(Checkpoint checkpoint) {
+        if (checkpoint.getBase1index() - 1 == mostRecentCheckpointTouched) {
             mostRecentCheckpointTouched = checkpoint.getBase1index();
             log.info(getId() + " touched " + checkpoint.getElementEnum().name());
         }
     }
 
-    public PlayerSnapshot snapshot(){
+    public PlayerSnapshot snapshot() {
         return new PlayerSnapshot(this);
     }
 
@@ -64,7 +72,7 @@ public abstract class Player {
         return id;
     }
 
-    public static Player instance(){
+    public static Player instance() {
         return new NPCPlayer(Integer.MAX_VALUE) {
             @Override
             public PlayerSnapshot snapshot() {
@@ -77,9 +85,6 @@ public abstract class Player {
             }
         };
     }
-
-
-
 
 
 }

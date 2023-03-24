@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class OvershootBot extends NPCPlayer{
+public class OvershootBot extends NPCPlayer {
 
-    public OvershootBot(int id){
+    public OvershootBot(int id) {
         super(id);
-        this.setName("OvershootBot-"+id);
+        this.setName("OS-" + id);
     }
 
     @Override
@@ -31,10 +31,10 @@ public class OvershootBot extends NPCPlayer{
         Direction currentFacing = getFacing();
 
         boolean turnSuccess = turnTowardsTarget(targetDirection, currentFacing, cardsToChooseFrom, cardsToSubmit);
-        if(!turnSuccess){
+        if (!turnSuccess) {
             //spin as much as possible
             List<MovementCard> turns = cardsToChooseFrom.stream().filter(MovementCard::isTurn).collect(Collectors.toList());
-            for(int i = 0; (!turns.isEmpty()) && i < 5; i++){
+            for (int i = 0; (!turns.isEmpty()) && i < 5; i++) {
                 MovementCard card = turns.remove(0);
                 submitCard(card, cardsToSubmit, cardsToChooseFrom);
             }
@@ -64,10 +64,10 @@ public class OvershootBot extends NPCPlayer{
                 submitCard(moveCards.get(0), cardsToSubmit, cardsToChooseFrom);
                 moveCards.remove(0);
             }
-            if(cardsToSubmit.size() < 5){
+            if (cardsToSubmit.size() < 5) {
                 //spin as much as possible
                 List<MovementCard> turns = cardsToChooseFrom.stream().filter(MovementCard::isTurn).collect(Collectors.toList());
-                for(int i = 0; cardsToSubmit.size() < 5; i++){
+                for (int i = 0; cardsToSubmit.size() < 5; i++) {
                     MovementCard card = turns.remove(0);
                     submitCard(card, cardsToSubmit, cardsToChooseFrom);
                 }
@@ -75,8 +75,7 @@ public class OvershootBot extends NPCPlayer{
         }
 
 
-
-        if(cardsToSubmit.size() == 5){
+        if (cardsToSubmit.size() == 5) {
             return cardsToSubmit;
         } else {
             throw new IllegalStateException("OvershootBot chose " + cardsToSubmit.size() + " cards");
@@ -84,14 +83,14 @@ public class OvershootBot extends NPCPlayer{
     }
 
     //returns whether or not we ended up facing the target
-    public boolean turnTowardsTarget(Direction targetDirection, Direction currentDirection, List<MovementCard> cardsToChooseFrom, List<MovementCard> cardsToSubmit){
+    public boolean turnTowardsTarget(Direction targetDirection, Direction currentDirection, List<MovementCard> cardsToChooseFrom, List<MovementCard> cardsToSubmit) {
         //no turn required
-        if(targetDirection == currentDirection){
+        if (targetDirection == currentDirection) {
             return true;
         }
 
         //uturn required
-        if(targetDirection == Direction.getOpposite(currentDirection)) {
+        if (targetDirection == Direction.getOpposite(currentDirection)) {
             Optional<MovementCard> uturn = cardsToChooseFrom.stream().filter(card -> card.getMovement() == Movement.UTURN).findFirst();
 
             //uturn card
@@ -132,11 +131,11 @@ public class OvershootBot extends NPCPlayer{
         }
 
         //turn right required
-        if(Direction.turnRight(currentDirection) == targetDirection){
+        if (Direction.turnRight(currentDirection) == targetDirection) {
             Optional<MovementCard> turnRight = cardsToChooseFrom.stream().filter(card -> card.getMovement() == Movement.TURN_RIGHT).findFirst();
 
             //turn right
-            if(turnRight.isPresent()){
+            if (turnRight.isPresent()) {
                 MovementCard _turnRight = turnRight.get();
 
                 cardsToChooseFrom.remove(_turnRight);
@@ -150,11 +149,11 @@ public class OvershootBot extends NPCPlayer{
         }
 
         //turn left required
-        if(Direction.turnLeft(currentDirection) == targetDirection){
+        if (Direction.turnLeft(currentDirection) == targetDirection) {
             Optional<MovementCard> turnLeft = cardsToChooseFrom.stream().filter(card -> card.getMovement() == Movement.TURN_LEFT).findFirst();
 
             //turn right
-            if(turnLeft.isPresent()){
+            if (turnLeft.isPresent()) {
                 MovementCard _turnLeft = turnLeft.get();
 
                 cardsToChooseFrom.remove(_turnLeft);
@@ -170,34 +169,34 @@ public class OvershootBot extends NPCPlayer{
         return false;
     }
 
-    public Direction getTargetDirection(Position currentPosition, Position targetPosition){
-        int xDiff = targetPosition.getX()-currentPosition.getX();
-        int yDiff = targetPosition.getY()-currentPosition.getY();
+    public Direction getTargetDirection(Position currentPosition, Position targetPosition) {
+        int xDiff = targetPosition.getX() - currentPosition.getX();
+        int yDiff = targetPosition.getY() - currentPosition.getY();
 
         Direction targetDir = Direction.RIGHT;
         int maxDiff = xDiff;
 
-        if(Math.abs(yDiff) > Math.abs(xDiff)){
+        if (Math.abs(yDiff) > Math.abs(xDiff)) {
             maxDiff = yDiff;
             targetDir = Direction.UP;
         }
-        if(maxDiff < 0){
+        if (maxDiff < 0) {
             targetDir = Direction.getOpposite(targetDir);
         }
         return targetDir;
     }
 
-    private void submitCard(MovementCard card, List<MovementCard> cardsToSubmit, List<MovementCard> cardsToChooseFrom){
+    private void submitCard(MovementCard card, List<MovementCard> cardsToSubmit, List<MovementCard> cardsToChooseFrom) {
         boolean containedFlag = cardsToChooseFrom.remove(card);
-        if(!containedFlag){
+        if (!containedFlag) {
             throw new IllegalStateException("OvershootBot submitCard containedFlag error");
         }
 
         cardsToSubmit.add(card);
     }
 
-    private void submitCards(List<MovementCard> cards, List<MovementCard> cardsToSubmit, List<MovementCard> cardsToChooseFrom){
-        for(MovementCard card : cards){
+    private void submitCards(List<MovementCard> cards, List<MovementCard> cardsToSubmit, List<MovementCard> cardsToChooseFrom) {
+        for (MovementCard card : cards) {
             submitCard(card, cardsToSubmit, cardsToChooseFrom);
         }
     }

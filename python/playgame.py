@@ -8,7 +8,7 @@ requests.post("http://localhost:8080/debugStart?seedIn=3960483649208205183")
 
 go = True
 while go:
-    cards = requests.get("http://localhost:8080/player/0/getHand").json()
+    cards = requests.get("http://localhost:8080/game/0/player/0/getHand").json()
     for i in range(len(cards)):
         print(str(i) + "    " + str(cards[i]))
     numberChoices = input("Which cards do you want?")
@@ -23,7 +23,7 @@ while go:
     for i in range(len(cardChoices)):
         print(str(cardChoices[i]))
 
-    requests.post("http://localhost:8080/player/0/submitHand", json=cardChoices)
+    requests.post("http://localhost:8080/game/0/player/0/submitHand", json=cardChoices)
 
     go = input("Press n to stop") != "n"
 

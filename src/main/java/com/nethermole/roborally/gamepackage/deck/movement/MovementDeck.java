@@ -15,13 +15,14 @@ public class MovementDeck {
         deck = createNewDeck();
     }
 
-    public int cardsLeftInDeck(){
+    public int cardsLeftInDeck() {
         return deck.size();
     }
 
     public MovementCard drawCard() {
-        if(deck.size() <= 0){
-            throw new IllegalStateException("No movement cards left in deck");
+        if (deck.size() <= 0) {
+            deck = createNewDeck();
+            //throw new IllegalStateException("No movement cards left in deck");
         }
         return deck.remove(random.nextInt(deck.size()));
     }
@@ -120,6 +121,14 @@ public class MovementDeck {
         movementCardList.add(new MovementCard(Movement.MOVE3, 820));
         movementCardList.add(new MovementCard(Movement.MOVE3, 830));
         movementCardList.add(new MovementCard(Movement.MOVE3, 840));
+
+        int initialCardlistSize = movementCardList.size();
+        for (int priorityOffset = 1; priorityOffset < 10; priorityOffset++) {
+            for (int j = 0; j < initialCardlistSize; j++) {
+                MovementCard referenceCard = movementCardList.get(j);
+                movementCardList.add(new MovementCard(referenceCard.getMovement(), referenceCard.getPriority() + priorityOffset));
+            }
+        }
 
         return movementCardList;
     }

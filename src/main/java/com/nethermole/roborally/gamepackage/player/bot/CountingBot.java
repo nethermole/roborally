@@ -12,61 +12,50 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.nethermole.roborally.gamepackage.deck.movement.Movement.BACKUP;
 import static com.nethermole.roborally.gamepackage.deck.movement.Movement.MOVE1;
 import static com.nethermole.roborally.gamepackage.deck.movement.Movement.MOVE2;
-import static com.nethermole.roborally.gamepackage.deck.movement.Movement.MOVE3;
+import static com.nethermole.roborally.gamepackage.player.bot.BotUtils.moveLookup;
 
-public class CountingBot extends NPCPlayer{
-
-    private final Map<Movement, Integer> moveLookup;
+public class CountingBot extends NPCPlayer {
 
     private static final Logger log = LogManager.getLogger(CountingBot.class);
+    private BotUtils botUtils;
 
-    public CountingBot(int id){
+    public CountingBot(int id) {
         super(id);
-        this.setName("CountingBot-" + id);
-
-        moveLookup = new HashMap<>();
-        moveLookup.put(MOVE1,  1);
-        moveLookup.put(MOVE2,  2);
-        moveLookup.put(MOVE3,  3);
-        moveLookup.put(BACKUP,  -1);
+        this.setName("C-" + id);
+        this.botUtils = new BotUtils();
     }
 
     @Override
     public List<MovementCard> chooseCards(List<MovementCard> cardsToChooseFrom, Board board) {
-        int checkpointTargetIncrementValue = 1;
-
         List<MovementCard> cardsToSubmit = new ArrayList<>();
 
         Position assumedPosition = new Position(this.getPosition());
         DirectionObject assumedFacing = new DirectionObject(getFacing());
         Position targetPosition = new Position(board.getPositionOfCheckpoint(getMostRecentCheckpointTouched() + 1));
 
-        while(cardsToSubmit.size() < 5){
+        while (cardsToSubmit.size() < 5) {
             int xDiff = Math.abs(targetPosition.getX() - assumedPosition.getX());
             int yDiff = Math.abs(targetPosition.getY() - assumedPosition.getY());
 
-            Direction targetDirection = getTargetDirection(assumedPosition, targetPosition);
+            Direction targetDirection = botUtils.getFurthestDirectionOfTarget(assumedPosition, targetPosition);
 
             boolean turnSuccess = turnTowardsTarget(targetDirection, assumedFacing, cardsToChooseFrom, cardsToSubmit, assumedFacing, assumedPosition);
-            if(!turnSuccess){
+            if (!turnSuccess) {
                 tryToNotMove(cardsToSubmit, cardsToChooseFrom, assumedFacing, assumedPosition);
             } else {
                 //add movement cards
                 int diff = xDiff;
-                if(targetDirection == Direction.UP || targetDirection == Direction.DOWN){
-                    diff= yDiff;
+                if (targetDirection == Direction.UP || targetDirection == Direction.DOWN) {
+                    diff = yDiff;
                 }
                 boolean wentExactDistance = tryToGoExactDistance(diff, cardsToSubmit, cardsToChooseFrom, assumedFacing, assumedPosition);
-                if(!wentExactDistance || (wentExactDistance && diff == 0)){
+                if (!wentExactDistance || (wentExactDistance && diff == 0)) {
                     tryToNotMove(cardsToSubmit, cardsToChooseFrom, assumedFacing, assumedPosition);
                     break;
                 }
@@ -74,7 +63,7 @@ public class CountingBot extends NPCPlayer{
         }
 
 
-        if(cardsToSubmit.size() == 5){
+        if (cardsToSubmit.size() == 5) {
             return cardsToSubmit;
         } else {
             throw new IllegalStateException("CountingBot chose " + cardsToSubmit.size() + " cards");
@@ -90,21 +79,21 @@ public class CountingBot extends NPCPlayer{
         Collections.reverse(moveCards);
 
         boolean keepLooking = true;
-        for (MovementCard movementCard; cardsToSubmit.size()<5 && moveCards.size()>0 && distance > 0 && keepLooking;) {
+        for (MovementCard movementCard; cardsToSubmit.size() < 5 && moveCards.size() > 0 && distance > 0 && keepLooking; ) {
             movementCard = null;
 
             switch (distance) {
                 case 1:
-                    for(MovementCard card : moveCards){
-                        if(card.getMovement() == MOVE1){
+                    for (MovementCard card : moveCards) {
+                        if (card.getMovement() == MOVE1) {
                             movementCard = card;
                             break;
                         }
                     }
                     break;
                 case 2:
-                    for(MovementCard card : moveCards){
-                        if(card.getMovement() == MOVE2){
+                    for (MovementCard card : moveCards) {
+                        if (card.getMovement() == MOVE2) {
                             movementCard = card;
                             break;
                         }
@@ -115,7 +104,7 @@ public class CountingBot extends NPCPlayer{
                     log.trace("moveCards.get(0) is " + movementCard);
             }
 
-            if (movementCard != null && cardsToSubmit.size()<5) {
+            if (movementCard != null && cardsToSubmit.size() < 5) {
                 distance -= moveLookup.get(movementCard.getMovement());
 
                 submitCard(movementCard, cardsToSubmit, cardsToChooseFrom, assumedFacing, assumedPosition);
@@ -128,10 +117,10 @@ public class CountingBot extends NPCPlayer{
         return distance <= 0 || cardsToSubmit.size() == 5;
     }
 
-    public void tryToNotMove(List<MovementCard> cardsToSubmit, List<MovementCard> cardsToChooseFrom, DirectionObject assumedFacing, Position assumedPosition){
+    public void tryToNotMove(List<MovementCard> cardsToSubmit, List<MovementCard> cardsToChooseFrom, DirectionObject assumedFacing, Position assumedPosition) {
         //spin as much as possible
         List<MovementCard> turns = cardsToChooseFrom.stream().filter(MovementCard::isTurn).collect(Collectors.toList());
-        while((!turns.isEmpty()) && cardsToSubmit.size() < 5){
+        while ((!turns.isEmpty()) && cardsToSubmit.size() < 5) {
             MovementCard card = turns.remove(0);
             log.trace("tryToNotMove().submitCard() : " + card);
             submitCard(card, cardsToSubmit, cardsToChooseFrom, assumedFacing, assumedPosition);
@@ -152,14 +141,14 @@ public class CountingBot extends NPCPlayer{
     }
 
     //returns whether or not we ended up facing the target
-    public boolean turnTowardsTarget(Direction targetDirection, DirectionObject currentDirection, List<MovementCard> cardsToChooseFrom, List<MovementCard> cardsToSubmit, DirectionObject assumedFacing, Position assumedPosition){
+    public boolean turnTowardsTarget(Direction targetDirection, DirectionObject currentDirection, List<MovementCard> cardsToChooseFrom, List<MovementCard> cardsToSubmit, DirectionObject assumedFacing, Position assumedPosition) {
         //no turn required
-        if(targetDirection == currentDirection.getDirection()){
+        if (targetDirection == currentDirection.getDirection()) {
             return true;
         }
 
         //uturn required
-        if(targetDirection == Direction.getOpposite(currentDirection.getDirection())) {
+        if (targetDirection == Direction.getOpposite(currentDirection.getDirection())) {
             Optional<MovementCard> uturn = cardsToChooseFrom.stream().filter(card -> card.getMovement() == Movement.UTURN).findFirst();
 
             //uturn card
@@ -200,11 +189,11 @@ public class CountingBot extends NPCPlayer{
         }
 
         //turn right required
-        if(Direction.turnRight(currentDirection.getDirection()) == targetDirection){
+        if (Direction.turnRight(currentDirection.getDirection()) == targetDirection) {
             Optional<MovementCard> turnRight = cardsToChooseFrom.stream().filter(card -> card.getMovement() == Movement.TURN_RIGHT).findFirst();
 
             //turn right
-            if(turnRight.isPresent()){
+            if (turnRight.isPresent()) {
                 MovementCard _turnRight = turnRight.get();
 
                 cardsToChooseFrom.remove(_turnRight);
@@ -218,11 +207,11 @@ public class CountingBot extends NPCPlayer{
         }
 
         //turn left required
-        if(Direction.turnLeft(currentDirection.getDirection()) == targetDirection){
+        if (Direction.turnLeft(currentDirection.getDirection()) == targetDirection) {
             Optional<MovementCard> turnLeft = cardsToChooseFrom.stream().filter(card -> card.getMovement() == Movement.TURN_LEFT).findFirst();
 
             //turn right
-            if(turnLeft.isPresent()){
+            if (turnLeft.isPresent()) {
                 MovementCard _turnLeft = turnLeft.get();
 
                 cardsToChooseFrom.remove(_turnLeft);
@@ -238,31 +227,14 @@ public class CountingBot extends NPCPlayer{
         return false;
     }
 
-    public Direction getTargetDirection(Position currentPosition, Position targetPosition){
-        int xDiff = targetPosition.getX()-currentPosition.getX();
-        int yDiff = targetPosition.getY()-currentPosition.getY();
-
-        Direction targetDir = Direction.RIGHT;
-        int maxDiff = xDiff;
-
-        if(Math.abs(yDiff) > Math.abs(xDiff)){
-            maxDiff = yDiff;
-            targetDir = Direction.UP;
-        }
-        if(maxDiff < 0){
-            targetDir = Direction.getOpposite(targetDir);
-        }
-        return targetDir;
-    }
-
-    private void submitCard(MovementCard card, List<MovementCard> cardsToSubmit, List<MovementCard> cardsToChooseFrom, DirectionObject assumedFacing, Position assumedPosition){
-        if(cardsToSubmit.size() == 5){
+    private void submitCard(MovementCard card, List<MovementCard> cardsToSubmit, List<MovementCard> cardsToChooseFrom, DirectionObject assumedFacing, Position assumedPosition) {
+        if (cardsToSubmit.size() == 5) {
             log.trace("Hand submission full, not submitting " + card);
             return;
         }
 
         boolean containedFlag = cardsToChooseFrom.remove(card);
-        if(!containedFlag){
+        if (!containedFlag) {
             throw new IllegalStateException("CountingBot submitCard containedFlag error");
         }
 
@@ -270,12 +242,20 @@ public class CountingBot extends NPCPlayer{
         adjustMovement(assumedFacing, assumedPosition, moveLookup.getOrDefault(card.getMovement(), 0));
     }
 
-    private void adjustMovement(DirectionObject assumedFacing, Position assumedPosition, int dist){
-        switch(assumedFacing.getDirection()){
-            case UP: assumedPosition.setY(assumedPosition.getY()+dist); break;
-            case RIGHT: assumedPosition.setX(assumedPosition.getX()+dist); break;
-            case DOWN: assumedPosition.setY(assumedPosition.getY()-dist); break;
-            case LEFT: assumedPosition.setX(assumedPosition.getX()-dist); break;
+    private void adjustMovement(DirectionObject assumedFacing, Position assumedPosition, int dist) {
+        switch (assumedFacing.getDirection()) {
+            case UP:
+                assumedPosition.setY(assumedPosition.getY() + dist);
+                break;
+            case RIGHT:
+                assumedPosition.setX(assumedPosition.getX() + dist);
+                break;
+            case DOWN:
+                assumedPosition.setY(assumedPosition.getY() - dist);
+                break;
+            case LEFT:
+                assumedPosition.setX(assumedPosition.getX() - dist);
+                break;
         }
     }
 }
