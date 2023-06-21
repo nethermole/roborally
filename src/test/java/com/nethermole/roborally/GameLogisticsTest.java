@@ -38,7 +38,7 @@ class GameLogisticsTest {
 
     @Test
     public void startGame() throws Exception {
-        gameLogistics.startGame((new Random()).nextLong());
+        gameLogistics.startGameWithDefaultBoard((new Random()).nextLong());
         assertThat(gameLogistics.getGame().getPlayers()).containsValue(player0);
     }
 

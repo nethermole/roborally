@@ -48,7 +48,7 @@ class BoardControllerTest {
 
     @Test
     public void getBoard_getsBoard() throws Exception {
-        gameLogistics.startGame((new Random()).nextLong());
+        gameLogistics.startGameWithDefaultBoard((new Random()).nextLong());
 
         String result = boardController.getBoard(0);
         assertThat(result).contains("{\"players\":[],\"squares\":{\"0\":{\"0\":{\"elements\":[{");

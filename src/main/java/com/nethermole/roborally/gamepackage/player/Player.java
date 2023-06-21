@@ -12,7 +12,9 @@ import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.awt.Color;
 import java.util.List;
+import java.util.Random;
 
 public abstract class Player {
 
@@ -44,6 +46,10 @@ public abstract class Player {
     @Getter
     private int mostRecentCheckpointTouched;
 
+    @Getter
+    @Setter
+    private Color color;
+
     public int getNextCheckpointIndex() {
         return mostRecentCheckpointTouched + 1;
     }
@@ -52,6 +58,7 @@ public abstract class Player {
 
     public Player(int id) {
         this.id = id;
+        this.color = new Color((new Random()).nextInt(255), (new Random()).nextInt(255), (new Random()).nextInt(255));
         health = STARTING_HEALTH;
         mostRecentCheckpointTouched = 0;
     }
@@ -85,6 +92,4 @@ public abstract class Player {
             }
         };
     }
-
-
 }

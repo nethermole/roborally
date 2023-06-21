@@ -212,8 +212,8 @@ public class Board {
         if(element.isPresent()){
             return element.get().getValue();
         } else {
-            log.warn("Position not found for checkpoint"+checkpointIndex);
-            throw null;
+            log.trace("Position not found for checkpoint"+checkpointIndex);
+            return null;
         }
     }
 

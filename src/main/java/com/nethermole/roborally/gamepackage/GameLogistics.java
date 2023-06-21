@@ -18,12 +18,16 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class GameLogistics {
 
     private static Logger log;
     private List<AbstractView> viewers;
+
+    @Getter
+    String uuid;
 
     @Getter
     private Game game;
@@ -37,6 +41,8 @@ public class GameLogistics {
     public GameLogistics(Map<Integer, Player> players) {
         log = LogManager.getLogger(GameLogistics.class);
         this.players = players;
+        this.uuid = UUID.randomUUID().toString();
+        log.info("Created new bot game with UUID="+uuid);
 
         viewers = new ArrayList<>();
         gameLog = new GameLog();
@@ -46,16 +52,18 @@ public class GameLogistics {
         return (game != null);
     }
 
-    public void startGame(Long seed) {
+    public void startGameWithDefaultBoard(Long seed){
         BoardFactory boardFactory = new BoardFactory();
-        Board board = boardFactory.board_exchange();
+        startGame(seed, boardFactory.board_exchange());
+    }
 
+    public void startGame(Long seed, Board board) {
         GameBuilder gameBuilder = new GameBuilder(seed);
         gameBuilder.players(players);
         gameBuilder.gameLog(gameLog);
         gameBuilder.board(board);
         Position startPosition = gameBuilder.generateStartBeacon();
-        gameBuilder.generateCheckpoints(8);
+        gameBuilder.generateCheckpoints(20);
 
         game = gameBuilder.buildGame();
 
@@ -66,13 +74,6 @@ public class GameLogistics {
         startInfo = new StartInfo(players.values().stream().map(player -> player.snapshot()).collect(Collectors.toList()), game.getStartPosition());
 
         viewers = new ArrayList<>();
-    }
-
-    public void stopGame() {
-        for (AbstractView view : viewers) {
-            view.stopViewing();
-        }
-        game = null;
     }
 
     public Board getBoard() throws GameNotStartedException {

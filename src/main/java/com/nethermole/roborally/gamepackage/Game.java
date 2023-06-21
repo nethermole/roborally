@@ -15,6 +15,7 @@ import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementDeck;
 import com.nethermole.roborally.gamepackage.player.Player;
 import com.nethermole.roborally.gamepackage.player.bot.NPCPlayer;
+import com.nethermole.roborally.gamepackage.player.bot.TurnRateLimiterBot;
 import com.nethermole.roborally.gameservice.GameLog;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -259,7 +260,12 @@ public class Game {
                     System.out.println(e.getStackTrace());
                     return;
                 }
-                submitPlayerHand(player.getId(), selectedCards);
+
+                if(!(player instanceof TurnRateLimiterBot)){
+                    submitPlayerHand(player.getId(), selectedCards);
+                } else {
+                    playerStatusManager.playerSubmitsHand(player.getId());
+                }
             }
         }
     }
