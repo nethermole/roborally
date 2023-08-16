@@ -1,5 +1,6 @@
 package com.nethermole.roborally.gamepackage.board;
 
+import com.nethermole.roborally.gamepackage.deck.movement.Movement;
 import com.nethermole.roborally.gamepackage.player.HumanPlayer;
 import com.nethermole.roborally.gamepackage.player.Player;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +25,8 @@ class MovementCalculatorTest {
         player.setPosition(new Position(5, 5));
         player.setFacing(Direction.UP);
 
-        board.moveForward(player, 1);
+        board.addPlayer(player);
+        board.movePlayer(player, Movement.MOVE1);
         Position position = player.getPosition();
         assertThat(position.getX()).isEqualTo(5);
         assertThat(position.getY()).isEqualTo(6);
@@ -48,7 +50,9 @@ class MovementCalculatorTest {
         Player player1 = new HumanPlayer(1);
         player1.setPosition(new Position(5,6));
 
-        board.moveForward(player0, 1);
+        board.addPlayer(player0);
+        board.addPlayer(player1);
+        board.movePlayer(player0, Movement.MOVE1);
 
         assertThat(player0.getPosition().getX()).isEqualTo(5);
         assertThat(player0.getPosition().getY()).isEqualTo(6);
@@ -73,7 +77,10 @@ class MovementCalculatorTest {
         Player player2 = new HumanPlayer(1);
         player2.setPosition(new Position(5,7));
 
-        board.moveForward(player0, 1);
+        board.addPlayer(player0);
+        board.addPlayer(player1);
+        board.addPlayer(player2);
+        board.movePlayer(player0, Movement.MOVE1);
 
         assertThat(player0.getPosition().getX()).isEqualTo(5);
         assertThat(player0.getPosition().getY()).isEqualTo(5);

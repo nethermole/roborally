@@ -9,6 +9,7 @@ import com.nethermole.roborally.gamepackage.board.BoardFactory;
 import com.nethermole.roborally.gamepackage.board.Position;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
 import com.nethermole.roborally.gamepackage.player.Player;
+import com.nethermole.roborally.gamepackage.viewStep.ViewStep;
 import com.nethermole.roborally.gameservice.GameLog;
 import com.nethermole.roborally.view.AbstractView;
 import lombok.Getter;
@@ -54,7 +55,11 @@ public class GameLogistics {
 
     public void startGameWithDefaultBoard(Long seed){
         BoardFactory boardFactory = new BoardFactory();
-        startGame(seed, boardFactory.board_exchange());
+        Board board = boardFactory.board_exchange();
+        for(Player player : players.values()){
+            board.addPlayer(player);
+        }
+        startGame(seed, board);
     }
 
     public void startGame(Long seed, Board board) {

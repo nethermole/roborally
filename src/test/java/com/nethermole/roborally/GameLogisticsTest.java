@@ -8,9 +8,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,12 +22,13 @@ class GameLogisticsTest {
 
     GameLogistics gameLogistics;
     Player player0;
+    Map<Integer, Player> players;
 
     @BeforeEach
     public void setup() {
         player0 = new HumanPlayer(0);
 
-        Map<Integer, Player> players = new HashMap<>();
+        players = new HashMap<>();
         players.put(0, player0);
 
         gameLogistics = new GameLogistics(players);

@@ -51,7 +51,7 @@ class BoardControllerTest {
         gameLogistics.startGameWithDefaultBoard((new Random()).nextLong());
 
         String result = boardController.getBoard(0);
-        assertThat(result).contains("{\"players\":[],\"squares\":{\"0\":{\"0\":{\"elements\":[{");
+        assertThat(result).contains("{\"players\":[{\"id\":0,\"health\":9,\"name\":\"");
     }
 
     @Test

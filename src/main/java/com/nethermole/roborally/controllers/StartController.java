@@ -1,6 +1,5 @@
 package com.nethermole.roborally.controllers;
 
-import com.nethermole.roborally.exceptions.GameNotStartedException;
 import com.nethermole.roborally.gamepackage.GameLogistics;
 import com.nethermole.roborally.gamepackage.board.Board;
 import com.nethermole.roborally.gamepackage.board.BoardFactory;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -68,17 +66,17 @@ public class StartController {
 
         gameLogistics.startGameWithDefaultBoard(seed);
 
-        try {
-            BasicView basicView = new BasicView(5);
-            basicView.setBoard(gameLogistics.getBoard());
-            for (Player player : players.values()) {
-                basicView.getWindow().getCanvas().addPlayer(player);
-            }
-            Thread thread = new Thread(basicView);
-            thread.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            BasicView basicView = new BasicView(5);
+//            basicView.setBoard(gameLogistics.getBoard());
+//            for (Player player : players.values()) {
+//                basicView.getWindow().getCanvas().addPlayer(player);
+//            }
+//            Thread thread = new Thread(basicView);
+//            thread.start();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         while (gameLogistics.getGame().isReadyToProcessTurn()) {
             gameLogistics.getGame().processTurn();
@@ -130,6 +128,9 @@ public class StartController {
             }
         }
 
+        for(Player player : players.values()){
+            board.addPlayer(player);
+        }
         gameLogistics.startGame(seed, board);
 
         try {

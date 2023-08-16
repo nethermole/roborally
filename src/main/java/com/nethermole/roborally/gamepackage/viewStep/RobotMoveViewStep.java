@@ -1,6 +1,6 @@
-package com.nethermole.roborally.gamepackage.turn;
+package com.nethermole.roborally.gamepackage.viewStep;
 
-import com.nethermole.roborally.gamepackage.ViewStep;
+import com.nethermole.roborally.gamepackage.turn.MovementMethod;
 import com.nethermole.roborally.gamepackage.board.Direction;
 import com.nethermole.roborally.gamepackage.board.Position;
 import com.nethermole.roborally.gamepackage.player.Player;
@@ -15,6 +15,7 @@ public class RobotMoveViewStep extends ViewStep {
     Direction endFacing;
     MovementMethod movementMethod;
 
+    //todo: differentiate between turning and moving viewsteptypes?
     public RobotMoveViewStep(Player player, Position startPosition, Position endPosition, Direction startFacing, Direction endFacing, MovementMethod movementMethod) {
         this.setTypeName("RobotMoveViewStep");
 

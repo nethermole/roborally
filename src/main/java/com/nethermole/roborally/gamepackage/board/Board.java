@@ -1,14 +1,14 @@
 package com.nethermole.roborally.gamepackage.board;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.nethermole.roborally.gamepackage.ViewStep;
+import com.nethermole.roborally.gamepackage.viewStep.ViewStep;
 import com.nethermole.roborally.gamepackage.board.element.Checkpoint;
 import com.nethermole.roborally.gamepackage.board.element.Element;
 import com.nethermole.roborally.gamepackage.board.element.ElementEnum;
 import com.nethermole.roborally.gamepackage.deck.movement.Movement;
 import com.nethermole.roborally.gamepackage.player.Player;
 import com.nethermole.roborally.gamepackage.turn.MovementMethod;
-import com.nethermole.roborally.gamepackage.turn.RobotMoveViewStep;
+import com.nethermole.roborally.gamepackage.viewStep.RobotMoveViewStep;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,6 +30,7 @@ public class Board {
     private Map<Integer, Map<Integer, Tile>> squares;
 
     private Map<Element, Position> elementPositions;
+    private MovementCalculator movementCalculator;
 
     public Board(int boardHeight, int boardWidth) {
         elementPositions = new HashMap<>();
@@ -41,6 +42,7 @@ public class Board {
             }
         }
         players = new ArrayList<>();
+        movementCalculator = new MovementCalculator();
     }
 
     public Tile getTileAtPosition(Position position) {
@@ -92,16 +94,19 @@ public class Board {
 
     //break this out into a movement logic class
     public List<ViewStep> movePlayer(Player player, Movement movement) {
+        if(!players.contains(player)){
+            throw new RuntimeException("Board doesn't contain player");
+        }
         List<ViewStep> viewSteps = new ArrayList<>();
         switch (movement) {
             case MOVE1:
-                viewSteps.addAll(moveForward(player, 1));
+                viewSteps.addAll(movementCalculator.move1(player, this));
                 break;
             case MOVE2:
-                viewSteps.addAll(moveForward(player, 2));
+                viewSteps.addAll(movementCalculator.move2(player, this));
                 break;
             case MOVE3:
-                viewSteps.addAll(moveForward(player, 3));
+                viewSteps.addAll(movementCalculator.move3(player, this));
                 break;
             case TURN_RIGHT:
                 viewSteps.add(turnRight(player));
@@ -132,24 +137,30 @@ public class Board {
         return moveEvent;
     }
 
+    public void pushPushables(Position current, Position newPos){
+        for(Player player : players){
+            if(player.getPosition().equals(current)){
+                player.setPosition(newPos);
+                log.info("Player " + player.getId() + " was pushed from " + current + " to " + newPos);
+            }
+        }
+    }
+
+    public boolean tileContainsAnyPlayer(Position position){
+        return players.stream().anyMatch(player -> player.getPosition().equals(position));
+    }
+
+    public boolean tileCanBePushedInto(Position position){
+        if(tileContainsAnyPlayer(position)){
+            return false;
+        }
+        return true;
+    }
+
     //TODO: LOGIC INVOLVING THIS USUALLY CHECK ENDPOSITION, NOT ENTIRE PATHWAY
     public boolean isOverPit(Position position) {
         Tile tile = getTileAtPosition(position);
         return tile.hasElement(ElementEnum.PIT);
-    }
-
-    public List<ViewStep> moveForward(Player player, int distance) {
-        List<ViewStep> viewSteps = new ArrayList<>();
-        Position startPosition = player.getPosition();
-        Position endPosition = startPosition.moveForward(player.getFacing(), distance);
-
-        player.setPosition(endPosition);
-        if (isOverPit(player.getPosition())) {
-            viewSteps.add(resetPlayer(player));
-        }
-
-        viewSteps.add(new RobotMoveViewStep(player, startPosition, endPosition, player.getFacing(), player.getFacing(), MovementMethod.MOVE));
-        return viewSteps;
     }
 
     public List<ViewStep> backup(Player player) {

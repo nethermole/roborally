@@ -1,6 +1,7 @@
 package com.nethermole.roborally.gamepackage;
 
 import com.nethermole.roborally.gamepackage.player.Player;
+import com.nethermole.roborally.gamepackage.viewStep.ViewStep;
 
 public class GameEndViewStep extends ViewStep {
 

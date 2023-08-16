@@ -3,6 +3,7 @@ package com.nethermole.roborally.gamepackage.board;
 import com.nethermole.roborally.gamepackage.board.element.Beacon;
 import com.nethermole.roborally.gamepackage.board.element.Pit;
 import com.nethermole.roborally.gamepackage.board.element.Wall;
+import com.nethermole.roborally.gamepackage.deck.movement.Movement;
 import com.nethermole.roborally.gamepackage.player.HumanPlayer;
 import com.nethermole.roborally.gamepackage.player.Player;
 import com.nethermole.roborally.gamepackage.player.bot.RandomBot;
@@ -48,8 +49,9 @@ class BoardTest {
         Player player = new HumanPlayer(0);
         player.setPosition(new Position(5, 5));
         player.setFacing(Direction.UP);
+        board.addPlayer(player);
 
-        board.moveForward(player, 1);
+        board.movePlayer(player, Movement.MOVE1);
         Position position = player.getPosition();
         assertThat(position.getX()).isEqualTo(5);
         assertThat(position.getY()).isEqualTo(6);

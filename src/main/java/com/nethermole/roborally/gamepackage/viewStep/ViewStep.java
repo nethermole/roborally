@@ -1,4 +1,4 @@
-package com.nethermole.roborally.gamepackage;
+package com.nethermole.roborally.gamepackage.viewStep;
 
 import lombok.Getter;
 import lombok.Setter;

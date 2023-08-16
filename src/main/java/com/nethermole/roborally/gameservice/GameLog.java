@@ -1,6 +1,6 @@
 package com.nethermole.roborally.gameservice;
 
-import com.nethermole.roborally.gamepackage.ViewStep;
+import com.nethermole.roborally.gamepackage.viewStep.ViewStep;
 
 import java.util.ArrayList;
 import java.util.List;
