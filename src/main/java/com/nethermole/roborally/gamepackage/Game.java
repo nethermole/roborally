@@ -178,6 +178,9 @@ public class Game {
             }
             if (winningPlayer != null) {
                 log.info("Winning player found");
+
+                gameLog.dumpToFile();
+                break;
             }
         }
         log.info("Done processing turn: " + currentTurn);
@@ -237,6 +240,7 @@ public class Game {
             if (player.getMostRecentCheckpointTouched() == checkPoints.size()) {
                 winningPlayer = player;
                 log.info("Player " + player.getId() + " won the game!");
+                break;
             }
         }
     }
