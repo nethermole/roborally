@@ -73,7 +73,7 @@ public class PlayerStatusManager {
         playerStates.entrySet().forEach(entry -> entry.setValue(NEEDS_TO_GET_HAND));
     }
 
-    public boolean readyToProcessTurn() {
+    public boolean allPlayersHaveSubmittedHands() {
         return playerStates.values().stream().allMatch(it -> it == PlayerState.HAS_SUBMITTED_CARDS);
     }
 

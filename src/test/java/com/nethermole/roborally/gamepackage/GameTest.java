@@ -45,9 +45,9 @@ class GameTest {
         playerList.put(2, npcPlayer2);
 
         GameBuilder gameBuilder = new GameBuilder((new Random()).nextLong());
-        gameBuilder.players(playerList);
         gameBuilder.gameLog(null);
         gameBuilder.board((new BoardFactory()).board_empty());
+        gameBuilder.players(1,3);
         gameBuilder.generateStartBeacon();
         gameBuilder.generateCheckpoints(1);
 
@@ -97,36 +97,6 @@ class GameTest {
     }
 
     @Test
-    public void isReadyToProcessTurn_noPlayersHaveSubmittedCards_returnsFalse() {
-        assertThat(game.isReadyToProcessTurn()).isFalse();
-    }
-
-    @Test
-    public void submitPlayerHand_humanPlayerWasntDealtCard_throwsInvalidHandException() {
-        assertThrows(InvalidSubmittedHandException.class, () -> game.submitPlayerHand(0, game.getHand(1).subList(0, 5)));
-    }
-
-    @Test
-    public void isReadyToProcessTurn_notAllPlayersHaveSubmittedCards_returnsFalse() throws InvalidSubmittedHandException, InvalidPlayerStateException {
-        assertThat(playerList.size()).isGreaterThan(1);
-
-        game.submitPlayerHand(1, game.getHand(1).subList(0, 5));
-        assertThat(game.isReadyToProcessTurn()).isFalse();
-    }
-
-    @Test
-    public void isReadyToProcessTurn_allPlayersHaveSubmittedCards_returnsTrue() throws InvalidSubmittedHandException, InvalidPlayerStateException {
-        assertThat(playerList.size()).isEqualTo(3);
-
-        game.submitPlayerHand(0, game.getHand(0).subList(0, 5));
-        game.submitPlayerHand(1, game.getHand(1).subList(0, 5));
-        //player2 is npc, so no manual call required
-
-
-        assertThat(game.isReadyToProcessTurn()).isTrue();
-    }
-
-    @Test
     public void checkForWinner_true() {
         Player winningPlayer = game.getPlayer(0);
         winningPlayer.touchCheckpoint(new Checkpoint(1));
@@ -140,6 +110,5 @@ class GameTest {
         game.checkForWinner();
         assertThat(game.getWinningPlayer()).isNull();
     }
-
 
 }

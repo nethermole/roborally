@@ -1,6 +1,6 @@
 package com.nethermole.roborally.gamepackage.deck;
 
-public enum GameState {
+public enum PhaseInTurnCycle {
     STARTING,
     TURN_PREPARATION,
     DONE_PREPARING,

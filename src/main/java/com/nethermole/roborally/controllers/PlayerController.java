@@ -1,6 +1,7 @@
 package com.nethermole.roborally.controllers;
 
 import com.nethermole.roborally.exceptions.InvalidPlayerStateException;
+import com.nethermole.roborally.exceptions.ThisShouldntHappenException;
 import com.nethermole.roborally.gamepackage.GameLogistics;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
 import com.nethermole.roborally.gameservice.GamePoolService;
@@ -36,7 +37,7 @@ public class PlayerController {
     }
 
     @GetMapping("/game/{gameId}/player/{playerId}/getHand")
-    public List<MovementCard> getCards(@PathVariable("gameId") Integer gameId, @PathVariable("playerId") Integer playerId) throws InvalidPlayerStateException {
+    public List<MovementCard> getCards(@PathVariable("gameId") Integer gameId, @PathVariable("playerId") Integer playerId) throws InvalidPlayerStateException, ThisShouldntHappenException {
         GameLogistics gameLogistics = gamePoolService.getGameLogistics("" + gameId);
         List<MovementCard> movementCards = gameLogistics.getHand(playerId);
         return movementCards;
