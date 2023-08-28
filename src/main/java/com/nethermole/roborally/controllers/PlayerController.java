@@ -25,6 +25,17 @@ public class PlayerController {
 
     private static Logger log = LogManager.getLogger(PlayerController.class);
 
+    @PostMapping("/game/{gameId}/start")
+    public void startGame(@PathVariable("gameId") String gameId){
+        gamePoolService.getGameLogistics(gameId).startGameWithDefaultBoard();
+    }
+
+    @PostMapping("/game/{gameId}/join")
+    public String joinGame(@PathVariable("gameId") String gameId){
+        String connectedPlayerId = gamePoolService.joinHumanPlayer(gameId);
+        return connectedPlayerId;
+    }
+
     @PostMapping("/game/{gameId}/player/{playerId}/submitHand")
     public String submitHand(@PathVariable("gameId") Integer gameId, @PathVariable("playerId") Integer playerId, @RequestBody ArrayList<MovementCard> movementCardList) {
         try {

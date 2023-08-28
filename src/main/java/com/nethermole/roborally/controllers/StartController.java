@@ -1,15 +1,7 @@
 package com.nethermole.roborally.controllers;
 
 import com.nethermole.roborally.gamepackage.GameConfig;
-import com.nethermole.roborally.gamepackage.GameLogistics;
-import com.nethermole.roborally.gamepackage.board.Board;
-import com.nethermole.roborally.gamepackage.board.BoardFactory;
-import com.nethermole.roborally.gamepackage.player.Player;
-import com.nethermole.roborally.gamepackage.player.bot.CountingBot;
-import com.nethermole.roborally.gamepackage.player.bot.MinimalTurnBot;
-import com.nethermole.roborally.gamepackage.player.bot.TurnRateLimiterBot;
 import com.nethermole.roborally.gameservice.GamePoolService;
-import com.nethermole.roborally.view.BasicView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
 
 @RestController
 public class StartController {
@@ -32,13 +20,13 @@ public class StartController {
 
     @PostMapping("/playerStart")
     public String playerStart(@RequestParam(required = false) Long seedIn, @RequestBody GameConfig gameConfig) {
-        String gameId = gamePoolService.startPlayerGame(seedIn, gameConfig);
+        String gameId = gamePoolService.createPlayerGame(seedIn, gameConfig);
         return gameId;
     }
 
     @PostMapping("/botStart")
     public String botStart(@RequestParam(required = false) Long seedIn) {
-        String gameId = gamePoolService.startBotGame(seedIn);
+        String gameId = gamePoolService.createBotGame(seedIn);
         return gameId;
     }
 

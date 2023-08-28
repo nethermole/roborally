@@ -20,7 +20,7 @@ import java.util.Random;
 public class GamePoolService {
     private static Logger log = LogManager.getLogger(GamePoolService.class);
 
-    public Map<String, GameLogistics> gamePool;
+    private Map<String, GameLogistics> gamePool;
     public static int count = 0;
 
     @PostConstruct
@@ -35,7 +35,7 @@ public class GamePoolService {
         return gamePool.get(gameId);
     }
 
-    public String startPlayerGame(Long seedIn, GameConfig gameConfig) {
+    public String createPlayerGame(Long seedIn, GameConfig gameConfig) {
         long seed = seedIn != null ? seedIn : (new Random()).nextLong();
         log.info("startPlayerGame(" + seed + ") called");
 
@@ -46,7 +46,12 @@ public class GamePoolService {
         return gameId;
     }
 
-    public String startBotGame(Long seedIn) {
+    public String joinHumanPlayer(String gameId){
+        String connectedPlayerId = gamePool.get(gameId).addPlayer();
+        return connectedPlayerId;
+    }
+
+    public String createBotGame(Long seedIn) {
         long seed = seedIn != null ? seedIn : (new Random()).nextLong();
         log.info("startBotGame(" + seed + ") called");
 

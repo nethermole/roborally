@@ -17,11 +17,11 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class GameLogistics {
 
@@ -50,6 +50,8 @@ public class GameLogistics {
     private Long seed;
     private GameConfig gameConfig;
 
+    Map<String, Integer> connectedPlayerIdMap;
+
     public GameLogistics(Long seed, GameConfig gameConfig) {
         gameLog = new GameLog();        //todo: this line will be removed
 
@@ -58,11 +60,23 @@ public class GameLogistics {
 
         this.uuid = UUID.randomUUID().toString();
 
+        connectedPlayerIdMap = new HashMap<>();
+
         log.info("GameLogistics - Creating new game. Seed=" + seed + ", gameConfig=" + gameConfig);
         gamestateVerifier = new GamestateVerifier();
         rulesFollowedVerifier = new RulesFollowedVerifier();
 
         log.info("GameLogistics - Game created with UUID=" + uuid);
+    }
+
+    public String addPlayer(){
+        if(connectedPlayerIdMap.size() < gameConfig.humanPlayers){
+            String connectedPlayerId = UUID.randomUUID().toString();
+            connectedPlayerIdMap.put(connectedPlayerId, connectedPlayerIdMap.size());
+            return connectedPlayerId;
+        } else {
+            return "addPlayer - Unable to connect. Lobby may be full";
+        }
     }
 
     public boolean isGameAlreadyStarted() {
@@ -133,8 +147,5 @@ public class GameLogistics {
         } else {
             throw new InvalidSubmittedHandException(game.getHand(playerId), movementCardList, playerId, game);
         }
-
-        //todo: still not really where the turn queueing belongs. probably not in submitHand though...?
-        tryProcessTurn();
     }
 }
