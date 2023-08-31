@@ -11,6 +11,8 @@ import java.util.Map;
 @Data
 public class GameReport {
 
+    //Use unique gamereport hash to update view?
+
     String gameUUID;
     List<String> playerIDs;
     Map<String, String> playerNames;

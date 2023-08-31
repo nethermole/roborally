@@ -50,3 +50,5 @@
     - Player is playing //functional
     - AI is grinding
     - Replay a gameEventLog from file   //we have from "complete in-memory object", so that's not far off
+
+Upgrade to newer java
