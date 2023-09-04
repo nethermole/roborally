@@ -34,7 +34,7 @@ public class GameBuilder {
 
     boolean hasCalledBoardLayout;
 
-    GameBuilder(Long seed) {
+    public GameBuilder(Long seed) {
         this.random = new Random(seed);
     }
 

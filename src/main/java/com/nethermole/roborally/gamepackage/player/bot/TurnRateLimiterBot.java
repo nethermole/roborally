@@ -13,7 +13,7 @@ public class TurnRateLimiterBot extends NPCPlayer {
 
     public TurnRateLimiterBot(int id) {
         super(id);
-        this.setName("RB-" + id);
+        this.setDisplayName("RB-" + id);
     }
 
     @Override

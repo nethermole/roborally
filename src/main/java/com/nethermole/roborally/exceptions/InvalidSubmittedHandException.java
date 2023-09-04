@@ -17,7 +17,7 @@ public class InvalidSubmittedHandException extends Exception {
     @Override
     public String getMessage(){
         return "--- InvalidSubmittedHandException ---\n" +
-                "Player:\t" + game.getPlayer(playerId).getName()+"\n" +
+                "Player:\t" + game.getPlayer(playerId).getDisplayName()+"\n" +
                 "Dealt:\t" + handDealt.toString()+"\n" +
                 "Submitted:\t" + handSubmitted.toString();
     }

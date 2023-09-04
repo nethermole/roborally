@@ -14,14 +14,13 @@ import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Random;
+import java.util.UUID;
 
 @Service
 public class GamePoolService {
     private static Logger log = LogManager.getLogger(GamePoolService.class);
 
     private Map<String, GameLogistics> gamePool;
-    public static int count = 0;
 
     @PostConstruct
     public void init() {
@@ -35,40 +34,22 @@ public class GamePoolService {
         return gamePool.get(gameId);
     }
 
-    public String createPlayerGame(Long seedIn, GameConfig gameConfig) {
-        long seed = seedIn != null ? seedIn : (new Random()).nextLong();
-        log.info("startPlayerGame(" + seed + ") called");
-
-        GameLogistics gameLogistics = new GameLogistics(seed, gameConfig);
-        gameLogistics.startGameWithDefaultBoard();
+    public String createGame(GameConfig gameConfig) {
+        GameLogistics gameLogistics = new GameLogistics(gameConfig);
+        gameLogistics.createGameWithDefaultBoard();
 
         String gameId = addGameLogisticsToPool(gameLogistics);
         return gameId;
     }
 
-    public String joinHumanPlayer(String gameId){
+    public String joinHumanPlayer(String gameId) {
         String connectedPlayerId = gamePool.get(gameId).addPlayer();
         return connectedPlayerId;
     }
 
-    public String createBotGame(Long seedIn) {
-        long seed = seedIn != null ? seedIn : (new Random()).nextLong();
-        log.info("startBotGame(" + seed + ") called");
-
-        GameLogistics gameLogistics = new GameLogistics(seed, GameConfig.standardBot4Player);
-        gameLogistics.startGameWithDefaultBoard();
-
-        String gameId = addGameLogisticsToPool(gameLogistics);
-        return gameId;
-    }
-
     private String addGameLogisticsToPool(GameLogistics gameLogistics) {
-        //todo: something something threadsafe count?
-        String id = "" + count;
-        count++;
-
+        String id = UUID.randomUUID().toString();
         gamePool.put(id, gameLogistics);
-
         return id;
     }
 

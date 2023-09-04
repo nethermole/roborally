@@ -15,7 +15,7 @@ public class RulesFollowedVerifier {
         return  isPlayerReadyToSubmitHand(playerId, game) &&
                 isHandCorrectSize(movementCardList, game) &&
                 doesHandContainNoDuplicateCards(movementCardList) &&
-                wasPlayerDealtEveryCard(playerId, movementCardList, game);
+                playerWasDealtEveryCard(playerId, movementCardList, game);
     }
 
     public boolean isPlayerReadyToSubmitHand(int playerId, Game game){
@@ -36,7 +36,6 @@ public class RulesFollowedVerifier {
 
     public boolean isHandCorrectSize(List<MovementCard> movementCardList, Game game){
         //todo: worry about smaller hands for when players have had too much damage dealt
-
         if(movementCardList.size() != game.getGameConfig().getMaxHandSize()) {
             return false;
         }
@@ -44,9 +43,9 @@ public class RulesFollowedVerifier {
         return true;
     }
 
-    public boolean wasPlayerDealtEveryCard(int playerId, List<MovementCard> movementCardList, Game game){
+    public boolean playerWasDealtEveryCard(int playerId, List<MovementCard> movementCardList, Game game){
         Map<MovementCard, Integer> cardsDealt = game.getCardsDealt();
-        return movementCardList.stream().anyMatch(
+        return movementCardList.stream().noneMatch(
                 card -> cardsDealt.get(card) != playerId
         );
     }

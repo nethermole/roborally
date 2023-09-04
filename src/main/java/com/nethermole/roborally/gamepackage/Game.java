@@ -95,6 +95,7 @@ public class Game {
     void initializeFields(Map<Integer, Player> players) {
         playerSubmittedHands = new HashMap<>();
         playersHands = new HashMap<>();
+        cardsDealt = new HashMap<>();
         playerStatusManager = new PlayerStatusManager();
 
         currentTurn = 0;
@@ -124,7 +125,10 @@ public class Game {
         for (Integer playerId : playersHands.keySet()) {
             List<MovementCard> hand = new ArrayList<>();
             for (int i = 0; i < players.get(playerId).getHealth(); i++) {
-                hand.add(movementDeck.drawCard());
+                MovementCard movementCard = movementDeck.drawCard();
+                hand.add(movementCard);
+
+                cardsDealt.put(movementCard, playerId);
             }
             playersHands.put(playerId, hand);
         }
@@ -204,6 +208,8 @@ public class Game {
         if (winningPlayer != null) {
             return;
         }
+
+        cardsDealt = new HashMap<>();
 
         log.info("Preparing for turn: " + currentTurn);
 

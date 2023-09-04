@@ -1,5 +1,7 @@
 package com.nethermole.roborally.gamepackage;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nethermole.roborally.StartInfo;
 import com.nethermole.roborally.exceptions.GameNotStartedException;
 import com.nethermole.roborally.exceptions.InvalidPlayerStateException;
@@ -9,12 +11,13 @@ import com.nethermole.roborally.gamepackage.board.Board;
 import com.nethermole.roborally.gamepackage.board.BoardFactory;
 import com.nethermole.roborally.gamepackage.board.Position;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
+import com.nethermole.roborally.gamepackage.player.HumanPlayer;
+import com.nethermole.roborally.gamepackage.player.Player;
 import com.nethermole.roborally.gameservice.GameLog;
 import com.nethermole.roborally.gameservice.GameReport;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,33 +49,35 @@ public class GameLogistics {
     @Getter
     RulesFollowedVerifier rulesFollowedVerifier;
 
-    //Start Info
-    private Long seed;
     private GameConfig gameConfig;
 
-    Map<String, Integer> connectedPlayerIdMap;
+    Map<String, Player> connectedPlayerMap;
 
-    public GameLogistics(Long seed, GameConfig gameConfig) {
+    public GameLogistics(GameConfig gameConfig) {
         gameLog = new GameLog();        //todo: this line will be removed
 
-        this.seed = seed;
         this.gameConfig = gameConfig;
 
         this.uuid = UUID.randomUUID().toString();
 
-        connectedPlayerIdMap = new HashMap<>();
+        connectedPlayerMap = new HashMap<>();
 
-        log.info("GameLogistics - Creating new game. Seed=" + seed + ", gameConfig=" + gameConfig);
+        //todo: handle the exception nonsense
+        try {
+            log.info("GameLogistics - Creating new game. GameConfig=" + (new ObjectMapper().writeValueAsString(gameConfig)));
+        } catch (JsonProcessingException e) {
+            log.error("GameLogistics() log failure 71 remove this log probably");
+        }
         gamestateVerifier = new GamestateVerifier();
         rulesFollowedVerifier = new RulesFollowedVerifier();
 
         log.info("GameLogistics - Game created with UUID=" + uuid);
     }
 
-    public String addPlayer(){
-        if(connectedPlayerIdMap.size() < gameConfig.humanPlayers){
+    public String addPlayer() {
+        if (connectedPlayerMap.size() < gameConfig.humanPlayers) {
             String connectedPlayerId = UUID.randomUUID().toString();
-            connectedPlayerIdMap.put(connectedPlayerId, connectedPlayerIdMap.size());
+            connectedPlayerMap.put(connectedPlayerId, new HumanPlayer(connectedPlayerMap.size()));
             return connectedPlayerId;
         } else {
             return "addPlayer - Unable to connect. Lobby may be full";
@@ -83,12 +88,12 @@ public class GameLogistics {
         return (game != null);
     }
 
-    public void startGameWithDefaultBoard() {
+    public void createGameWithDefaultBoard() {
         BoardFactory boardFactory = new BoardFactory();
-        startGame(seed, boardFactory.board_exchange());
+        createGame(gameConfig.getGameSeed(), boardFactory.board_exchange());
     }
 
-    public void startGame(Long seed, Board board) {
+    public void createGame(Long seed, Board board) {
         GameBuilder gameBuilder = new GameBuilder(seed);
         gameBuilder.players(gameConfig.humanPlayers, gameConfig.botPlayers);
         gameBuilder.gameLog(gameLog);
@@ -99,13 +104,16 @@ public class GameLogistics {
         gameBuilder.generateCheckpoints(20);
 
         game = gameBuilder.buildGame();
+        game.setGameConfig(gameConfig);
 
-        log.info("New game started with startPosition: " + startPosition);
-
-        game.setupForNextTurn();
-
+        log.info("New game created with startPosition: " + startPosition);
         startInfo = new StartInfo(game.getPlayers().values().stream().map(player -> player.snapshot()).collect(Collectors.toList()), game.getStartPosition());
     }
+
+    public void startGame() {
+        game.setupForNextTurn();
+    }
+
 
     public Board getBoard() throws GameNotStartedException {
         if (game == null) {
@@ -122,11 +130,12 @@ public class GameLogistics {
         return gameLog.getViewstepsByTurn(turn);
     }
 
-    public List<MovementCard> getHand(int playerId) throws InvalidPlayerStateException, ThisShouldntHappenException {
+    public List<MovementCard> getHand(String connectedPlayerId) throws InvalidPlayerStateException, ThisShouldntHappenException {
         if (game == null) {
             throw new ThisShouldntHappenException("getHand - How would a client have the gameId for a null game?");
         }
 
+        int playerId = connectedPlayerMap.get(connectedPlayerId).getId();
         return game.getHand(playerId);
     }
 
@@ -137,10 +146,12 @@ public class GameLogistics {
         }
     }
 
-    public void submitHand(int playerId, List<MovementCard> movementCardList) throws InvalidSubmittedHandException, InvalidPlayerStateException, ThisShouldntHappenException {
+    public void submitHand(String connectedPlayerId, List<MovementCard> movementCardList) throws InvalidSubmittedHandException, InvalidPlayerStateException, ThisShouldntHappenException {
         if (game == null) {
             throw new ThisShouldntHappenException("submitHand - How would a client have the gameId for a null game?");
         }
+
+        int playerId = connectedPlayerMap.get(connectedPlayerId).getId();
 
         if (rulesFollowedVerifier.isValidHand(playerId, movementCardList, game)) {
             game.submitPlayerHand(playerId, movementCardList);

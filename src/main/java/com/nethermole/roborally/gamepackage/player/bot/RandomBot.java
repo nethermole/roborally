@@ -9,7 +9,7 @@ public class RandomBot extends NPCPlayer {
 
     public RandomBot(int id) {
         super(id);
-        this.setName("RB-" + id);
+        this.setDisplayName("RB-" + id);
     }
 
     @Override

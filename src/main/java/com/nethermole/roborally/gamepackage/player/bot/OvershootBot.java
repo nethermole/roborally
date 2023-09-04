@@ -17,7 +17,7 @@ public class OvershootBot extends NPCPlayer {
 
     public OvershootBot(int id) {
         super(id);
-        this.setName("OS-" + id);
+        this.setDisplayName("OS-" + id);
     }
 
     @Override

@@ -10,7 +10,7 @@ public class PlayerSnapshot extends Player {
         this.setBeacon(reference.getBeacon());
         this.setFacing(reference.getFacing());
         this.setPosition(reference.getPosition());
-        this.setName(reference.getName());
+        this.setDisplayName(reference.getDisplayName());
     }
 
     @Override

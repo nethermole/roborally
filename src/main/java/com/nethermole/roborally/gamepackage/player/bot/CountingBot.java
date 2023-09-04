@@ -27,7 +27,7 @@ public class CountingBot extends NPCPlayer {
 
     public CountingBot(int id) {
         super(id);
-        this.setName("C-" + id);
+        this.setDisplayName("C-" + id);
         this.botUtils = new BotUtils();
     }
 

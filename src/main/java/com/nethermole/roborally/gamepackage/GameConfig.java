@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Random;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,14 +18,23 @@ public class GameConfig {
     //Start Info
     int humanPlayers;
     int botPlayers;
+    Long gameSeed;
 
     //Standard config
-    @JsonIgnore
     private int maxHandSize;
 
     public GameConfig(int humanPlayers, int botPlayers){
         this.humanPlayers = humanPlayers;
         this.botPlayers = botPlayers;
+        this.gameSeed = (new Random()).nextLong();
+
+        maxHandSize = 5;
+    }
+
+    public GameConfig(int humanPlayers, int botPlayers, Long gameSeed){
+        this.humanPlayers = humanPlayers;
+        this.botPlayers = botPlayers;
+        this.gameSeed = gameSeed;
 
         maxHandSize = 5;
     }

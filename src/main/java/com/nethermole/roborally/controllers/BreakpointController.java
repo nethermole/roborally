@@ -21,7 +21,7 @@ public class BreakpointController {
     @Autowired
     GamePoolService gamePoolService;
 
-    private static Logger log = LogManager.getLogger(StartController.class);
+    private static Logger log = LogManager.getLogger(GameController.class);
 
     @GetMapping("/debug/{id}")
     public void debug(@PathVariable("id") String id) {

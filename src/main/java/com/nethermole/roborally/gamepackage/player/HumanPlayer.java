@@ -9,6 +9,6 @@ public class HumanPlayer extends Player {
 
         //below is temporary until managed by a different object
         this.setFacing(Direction.UP);
-        this.setName("Human");
+        this.setDisplayName("Human");
     }
 }
