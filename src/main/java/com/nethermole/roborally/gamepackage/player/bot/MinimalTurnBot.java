@@ -20,7 +20,7 @@ public class MinimalTurnBot extends NPCPlayer {
 
     public MinimalTurnBot(int id) {
         super(id);
-        this.setName("M-" + id);
+        this.setDisplayName("M-" + id);
         this.botUtils = new BotUtils();
     }
 

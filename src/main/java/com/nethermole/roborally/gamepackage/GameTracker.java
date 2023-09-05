@@ -20,4 +20,5 @@ public class GameTracker {
 
         gamesById = new HashMap<>();
     }
+
 }

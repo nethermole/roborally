@@ -18,6 +18,7 @@ import java.util.Random;
 
 public abstract class Player {
 
+    //todo: move to gameconfig
     public static final int STARTING_HEALTH = 9;
 
     @Getter
@@ -25,11 +26,11 @@ public abstract class Player {
 
     @Getter
     @Setter
-    private int health;
+    private String displayName;
 
     @Getter
     @Setter
-    private String name;
+    private int health;
 
     @Setter
     @Getter

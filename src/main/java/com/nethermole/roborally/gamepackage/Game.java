@@ -10,13 +10,14 @@ import com.nethermole.roborally.gamepackage.board.Direction;
 import com.nethermole.roborally.gamepackage.board.Position;
 import com.nethermole.roborally.gamepackage.board.element.Beacon;
 import com.nethermole.roborally.gamepackage.board.element.Checkpoint;
-import com.nethermole.roborally.gamepackage.deck.GameState;
+import com.nethermole.roborally.gamepackage.deck.PhaseInTurnCycle;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementDeck;
 import com.nethermole.roborally.gamepackage.player.Player;
 import com.nethermole.roborally.gamepackage.player.bot.NPCPlayer;
 import com.nethermole.roborally.gamepackage.player.bot.TurnRateLimiterBot;
 import com.nethermole.roborally.gameservice.GameLog;
+import com.nethermole.roborally.gameservice.GameReport;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,6 +34,13 @@ import java.util.Random;
 @NoArgsConstructor
 public class Game {
 
+    @Getter
+    @Setter
+    private GameConfig gameConfig;
+
+    @Getter
+    Map<MovementCard, Integer> cardsDealt;
+
     private static Logger log = LogManager.getLogger(Game.class);
 
     @Getter
@@ -40,6 +48,9 @@ public class Game {
 
     @Setter
     private GameLog gameLog;
+
+    @Setter
+    private GameReport gameReport;
 
     @Getter
     @Setter
@@ -57,7 +68,7 @@ public class Game {
     private PlayerStatusManager playerStatusManager;
 
     @Getter
-    private GameState gameState;
+    private PhaseInTurnCycle phaseInTurnCycle;
 
     @Setter
     private Beacon startBeacon;
@@ -84,12 +95,13 @@ public class Game {
     void initializeFields(Map<Integer, Player> players) {
         playerSubmittedHands = new HashMap<>();
         playersHands = new HashMap<>();
+        cardsDealt = new HashMap<>();
         playerStatusManager = new PlayerStatusManager();
 
         currentTurn = 0;
         maxTurn = 5000;
 
-        gameState = GameState.STARTING;
+        phaseInTurnCycle = PhaseInTurnCycle.STARTING;
         movementDeck = new MovementDeck(random);
         this.players = players;
 
@@ -113,7 +125,10 @@ public class Game {
         for (Integer playerId : playersHands.keySet()) {
             List<MovementCard> hand = new ArrayList<>();
             for (int i = 0; i < players.get(playerId).getHealth(); i++) {
-                hand.add(movementDeck.drawCard());
+                MovementCard movementCard = movementDeck.drawCard();
+                hand.add(movementCard);
+
+                cardsDealt.put(movementCard, playerId);
             }
             playersHands.put(playerId, hand);
         }
@@ -121,7 +136,7 @@ public class Game {
 
     public List<MovementCard> getHand(int playerId) throws InvalidPlayerStateException {
         //todo: guard against this better
-        for (int timeoutSeconds = 5; gameState == GameState.PROCESSING_TURN || gameState == GameState.TURN_PREPARATION; timeoutSeconds--) {
+        for (int timeoutSeconds = 5; phaseInTurnCycle == PhaseInTurnCycle.PROCESSING_TURN || phaseInTurnCycle == PhaseInTurnCycle.TURN_PREPARATION; timeoutSeconds--) {
             try {
                 Thread.sleep(1000);
             } catch (Exception e) {
@@ -158,12 +173,8 @@ public class Game {
         playerSubmittedHands.put(playerId, movementCardList);
     }
 
-    public boolean isReadyToProcessTurn() {
-        return winningPlayer == null && playerStatusManager.readyToProcessTurn();
-    }
-
     public void processTurn() {
-        gameState = GameState.PROCESSING_TURN;
+        phaseInTurnCycle = PhaseInTurnCycle.PROCESSING_TURN;
 
         PlayerHandProcessor playerHandProcessor = new PlayerHandProcessor();
         List<List<MovementCard>> organizedPlayerHands = playerHandProcessor.submitHands(playerSubmittedHands);
@@ -180,6 +191,7 @@ public class Game {
                 log.info("Winning player found");
 
                 gameLog.dumpToFile();
+                gameReport.dumpToFile();
                 break;
             }
         }
@@ -197,9 +209,11 @@ public class Game {
             return;
         }
 
+        cardsDealt = new HashMap<>();
+
         log.info("Preparing for turn: " + currentTurn);
 
-        this.gameState = GameState.TURN_PREPARATION;
+        this.phaseInTurnCycle = PhaseInTurnCycle.TURN_PREPARATION;
         playerStatusManager.setupForNextTurn();
 
         movementDeck = new MovementDeck(random);
@@ -214,7 +228,7 @@ public class Game {
             throw new IllegalStateException("npcPlayersSelectCards() threw InvalidPlayerStateException");
         }
 
-        this.gameState = GameState.DONE_PREPARING;
+        this.phaseInTurnCycle = PhaseInTurnCycle.DONE_PREPARING;
         log.info("Done preparing for turn: " + currentTurn);
     }
 
@@ -265,7 +279,7 @@ public class Game {
                     return;
                 }
 
-                if(!(player instanceof TurnRateLimiterBot)){
+                if (!(player instanceof TurnRateLimiterBot)) {
                     submitPlayerHand(player.getId(), selectedCards);
                 } else {
                     playerStatusManager.playerSubmitsHand(player.getId());

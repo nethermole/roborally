@@ -1,21 +1,26 @@
 package com.nethermole.roborally.gamepackage;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nethermole.roborally.StartInfo;
 import com.nethermole.roborally.exceptions.GameNotStartedException;
 import com.nethermole.roborally.exceptions.InvalidPlayerStateException;
 import com.nethermole.roborally.exceptions.InvalidSubmittedHandException;
+import com.nethermole.roborally.exceptions.ThisShouldntHappenException;
 import com.nethermole.roborally.gamepackage.board.Board;
 import com.nethermole.roborally.gamepackage.board.BoardFactory;
 import com.nethermole.roborally.gamepackage.board.Position;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
+import com.nethermole.roborally.gamepackage.player.HumanPlayer;
 import com.nethermole.roborally.gamepackage.player.Player;
 import com.nethermole.roborally.gameservice.GameLog;
-import com.nethermole.roborally.view.AbstractView;
+import com.nethermole.roborally.gameservice.GameReport;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -23,8 +28,7 @@ import java.util.stream.Collectors;
 
 public class GameLogistics {
 
-    private static Logger log;
-    private List<AbstractView> viewers;
+    private static Logger log = LogManager.getLogger(GameLogistics.class);
 
     @Getter
     String uuid;
@@ -36,45 +40,80 @@ public class GameLogistics {
     private StartInfo startInfo;
 
     GameLog gameLog;
-    Map<Integer, Player> players;
+    GameReport gameReport;
 
-    public GameLogistics(Map<Integer, Player> players) {
-        log = LogManager.getLogger(GameLogistics.class);
-        this.players = players;
+
+    @Getter
+    GamestateVerifier gamestateVerifier;
+
+    @Getter
+    RulesFollowedVerifier rulesFollowedVerifier;
+
+    private GameConfig gameConfig;
+
+    Map<String, Player> connectedPlayerMap;
+
+    public GameLogistics(GameConfig gameConfig) {
+        gameLog = new GameLog();        //todo: this line will be removed
+
+        this.gameConfig = gameConfig;
+
         this.uuid = UUID.randomUUID().toString();
-        log.info("Created new bot game with UUID="+uuid);
 
-        viewers = new ArrayList<>();
-        gameLog = new GameLog();
+        connectedPlayerMap = new HashMap<>();
+
+        //todo: handle the exception nonsense
+        try {
+            log.info("GameLogistics - Creating new game. GameConfig=" + (new ObjectMapper().writeValueAsString(gameConfig)));
+        } catch (JsonProcessingException e) {
+            log.error("GameLogistics() log failure 71 remove this log probably");
+        }
+        gamestateVerifier = new GamestateVerifier();
+        rulesFollowedVerifier = new RulesFollowedVerifier();
+
+        log.info("GameLogistics - Game created with UUID=" + uuid);
+    }
+
+    public String addPlayer() {
+        if (connectedPlayerMap.size() < gameConfig.humanPlayers) {
+            String connectedPlayerId = UUID.randomUUID().toString();
+            connectedPlayerMap.put(connectedPlayerId, new HumanPlayer(connectedPlayerMap.size()));
+            return connectedPlayerId;
+        } else {
+            return "addPlayer - Unable to connect. Lobby may be full";
+        }
     }
 
     public boolean isGameAlreadyStarted() {
         return (game != null);
     }
 
-    public void startGameWithDefaultBoard(Long seed){
+    public void createGameWithDefaultBoard() {
         BoardFactory boardFactory = new BoardFactory();
-        startGame(seed, boardFactory.board_exchange());
+        createGame(gameConfig.getGameSeed(), boardFactory.board_exchange());
     }
 
-    public void startGame(Long seed, Board board) {
+    public void createGame(Long seed, Board board) {
         GameBuilder gameBuilder = new GameBuilder(seed);
-        gameBuilder.players(players);
+        gameBuilder.players(gameConfig.humanPlayers, gameConfig.botPlayers);
         gameBuilder.gameLog(gameLog);
         gameBuilder.board(board);
+        gameBuilder.gameRules(new RulesFollowedVerifier());
+
         Position startPosition = gameBuilder.generateStartBeacon();
         gameBuilder.generateCheckpoints(20);
 
         game = gameBuilder.buildGame();
+        game.setGameConfig(gameConfig);
 
-        log.info("New game started with startPosition: " + startPosition);
-
-        game.setupForNextTurn();
-
-        startInfo = new StartInfo(players.values().stream().map(player -> player.snapshot()).collect(Collectors.toList()), game.getStartPosition());
-
-        viewers = new ArrayList<>();
+        log.info("New game created with startPosition: " + startPosition);
+        startInfo = new StartInfo(game.getPlayers().values().stream().map(player -> player.snapshot()).collect(Collectors.toList()), game.getStartPosition());
     }
+
+    public void startGame() {
+        game.setupForNextTurn();
+    }
+
 
     public Board getBoard() throws GameNotStartedException {
         if (game == null) {
@@ -85,37 +124,39 @@ public class GameLogistics {
     }
 
     public List<ViewStep> getViewstepsByTurn(int turn) {
-        //todo: this
-//        if(game.getWinningPlayer() != null){
-//            return Arrays.asList(new GameEndViewStep(game.getWinningPlayer()));
-//        }
-
         if (game == null || turn >= game.getCurrentTurn()) {
             return new ArrayList<>();
         }
         return gameLog.getViewstepsByTurn(turn);
     }
 
-    public List<MovementCard> getHand(int playerId) throws InvalidPlayerStateException {
+    public List<MovementCard> getHand(String connectedPlayerId) throws InvalidPlayerStateException, ThisShouldntHappenException {
         if (game == null) {
-            return null;
+            throw new ThisShouldntHappenException("getHand - How would a client have the gameId for a null game?");
         }
+
+        int playerId = connectedPlayerMap.get(connectedPlayerId).getId();
         return game.getHand(playerId);
     }
 
-    public void submitHand(int playerId, List<MovementCard> movementCardList) throws InvalidSubmittedHandException, InvalidPlayerStateException {
+    public void tryProcessTurn() {
+        if (gamestateVerifier.isGameReadyToProcessTurn(game)) {
+            game.processTurn();
+            game.setupForNextTurn();
+        }
+    }
+
+    public void submitHand(String connectedPlayerId, List<MovementCard> movementCardList) throws InvalidSubmittedHandException, InvalidPlayerStateException, ThisShouldntHappenException {
         if (game == null) {
-            throw new UnsupportedOperationException("game not started yet. cant submit hand");
+            throw new ThisShouldntHappenException("submitHand - How would a client have the gameId for a null game?");
         }
 
-        game.submitPlayerHand(playerId, movementCardList);
+        int playerId = connectedPlayerMap.get(connectedPlayerId).getId();
 
-        if (game.isReadyToProcessTurn()) {
-            log.info("All hands received, processing turn");
-            game.processTurn();
-            log.info("Turn processing complete. Setting up for next turn.");
-            game.setupForNextTurn();
-            log.info("Done setting up for next turn");
+        if (rulesFollowedVerifier.isValidHand(playerId, movementCardList, game)) {
+            game.submitPlayerHand(playerId, movementCardList);
+        } else {
+            throw new InvalidSubmittedHandException(game.getHand(playerId), movementCardList, playerId, game);
         }
     }
 }

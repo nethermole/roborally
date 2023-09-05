@@ -1,6 +1,9 @@
 package com.nethermole.roborally.controllers;
 
+import com.nethermole.roborally.controllers.requestObjects.APIRequestPlayerSubmitHand;
+import com.nethermole.roborally.controllers.responseObjects.APIResponsePlayerGetHand;
 import com.nethermole.roborally.exceptions.InvalidPlayerStateException;
+import com.nethermole.roborally.exceptions.ThisShouldntHappenException;
 import com.nethermole.roborally.gamepackage.GameLogistics;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
 import com.nethermole.roborally.gameservice.GamePoolService;
@@ -13,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -24,11 +26,18 @@ public class PlayerController {
 
     private static Logger log = LogManager.getLogger(PlayerController.class);
 
+
+    @PostMapping("/game/{gameId}/join")
+    public String joinGame(@PathVariable("gameId") String gameId){
+        String connectedPlayerId = gamePoolService.joinHumanPlayer(gameId);
+        return connectedPlayerId;
+    }
+
     @PostMapping("/game/{gameId}/player/{playerId}/submitHand")
-    public String submitHand(@PathVariable("gameId") Integer gameId, @PathVariable("playerId") Integer playerId, @RequestBody ArrayList<MovementCard> movementCardList) {
+    public String submitHand(@PathVariable("gameId") String gameId, @PathVariable("playerId") String playerId, @RequestBody APIRequestPlayerSubmitHand apIrequestPlayerSubmitHand) {
         try {
             GameLogistics gameLogistics = gamePoolService.getGameLogistics("" + gameId);
-            gameLogistics.submitHand(playerId, movementCardList);
+            gameLogistics.submitHand(playerId, apIrequestPlayerSubmitHand.getMovementCards());
         } catch (Exception e) {
             return e.getMessage();
         }
@@ -36,9 +45,9 @@ public class PlayerController {
     }
 
     @GetMapping("/game/{gameId}/player/{playerId}/getHand")
-    public List<MovementCard> getCards(@PathVariable("gameId") Integer gameId, @PathVariable("playerId") Integer playerId) throws InvalidPlayerStateException {
+    public APIResponsePlayerGetHand getHand(@PathVariable("gameId") String gameId, @PathVariable("playerId") String playerId) throws InvalidPlayerStateException, ThisShouldntHappenException {
         GameLogistics gameLogistics = gamePoolService.getGameLogistics("" + gameId);
         List<MovementCard> movementCards = gameLogistics.getHand(playerId);
-        return movementCards;
+        return new APIResponsePlayerGetHand(movementCards);
     }
 }
