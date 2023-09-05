@@ -1,7 +1,7 @@
 package com.nethermole.roborally.controllers;
 
-import com.nethermole.roborally.controllers.requestObjects.APIrequestPlayerSubmitHand;
-import com.nethermole.roborally.controllers.responseObjects.APIresponsePlayerGetHand;
+import com.nethermole.roborally.controllers.requestObjects.APIRequestPlayerSubmitHand;
+import com.nethermole.roborally.controllers.responseObjects.APIResponsePlayerGetHand;
 import com.nethermole.roborally.exceptions.InvalidPlayerStateException;
 import com.nethermole.roborally.exceptions.ThisShouldntHappenException;
 import com.nethermole.roborally.gamepackage.GameLogistics;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -35,7 +34,7 @@ public class PlayerController {
     }
 
     @PostMapping("/game/{gameId}/player/{playerId}/submitHand")
-    public String submitHand(@PathVariable("gameId") String gameId, @PathVariable("playerId") String playerId, @RequestBody APIrequestPlayerSubmitHand apIrequestPlayerSubmitHand) {
+    public String submitHand(@PathVariable("gameId") String gameId, @PathVariable("playerId") String playerId, @RequestBody APIRequestPlayerSubmitHand apIrequestPlayerSubmitHand) {
         try {
             GameLogistics gameLogistics = gamePoolService.getGameLogistics("" + gameId);
             gameLogistics.submitHand(playerId, apIrequestPlayerSubmitHand.getMovementCards());
@@ -46,9 +45,9 @@ public class PlayerController {
     }
 
     @GetMapping("/game/{gameId}/player/{playerId}/getHand")
-    public APIresponsePlayerGetHand getHand(@PathVariable("gameId") String gameId, @PathVariable("playerId") String playerId) throws InvalidPlayerStateException, ThisShouldntHappenException {
+    public APIResponsePlayerGetHand getHand(@PathVariable("gameId") String gameId, @PathVariable("playerId") String playerId) throws InvalidPlayerStateException, ThisShouldntHappenException {
         GameLogistics gameLogistics = gamePoolService.getGameLogistics("" + gameId);
         List<MovementCard> movementCards = gameLogistics.getHand(playerId);
-        return new APIresponsePlayerGetHand(movementCards);
+        return new APIResponsePlayerGetHand(movementCards);
     }
 }

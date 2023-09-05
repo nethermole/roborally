@@ -10,6 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class APIrequestPlayerSubmitHand {
+public class APIRequestPlayerSubmitHand {
     List<MovementCard> movementCards;
 }

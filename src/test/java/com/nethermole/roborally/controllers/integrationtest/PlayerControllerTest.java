@@ -2,8 +2,8 @@ package com.nethermole.roborally.controllers.integrationtest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nethermole.roborally.controllers.requestObjects.APIrequestPlayerSubmitHand;
-import com.nethermole.roborally.controllers.responseObjects.APIresponsePlayerGetHand;
+import com.nethermole.roborally.controllers.requestObjects.APIRequestPlayerSubmitHand;
+import com.nethermole.roborally.controllers.responseObjects.APIResponsePlayerGetHand;
 import com.nethermole.roborally.gamepackage.GameConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,16 +59,16 @@ class PlayerControllerTest {
 
         //Get hand
         String playerGetHandUrl = baseUrl + "/game/"+gameId+"/player/"+connectedPlayerId+"/getHand";
-        APIresponsePlayerGetHand hand = restTemplate.getForObject(
+        APIResponsePlayerGetHand hand = restTemplate.getForObject(
                 playerGetHandUrl,
-                APIresponsePlayerGetHand.class
+                APIResponsePlayerGetHand.class
         );
         System.out.println("got hand: " + hand);
 
 
         //Submit hand
         String playerSubmitHandUrl = baseUrl + "/game/"+gameId+"/player/"+connectedPlayerId+"/submitHand";
-        APIrequestPlayerSubmitHand submitHand = new APIrequestPlayerSubmitHand(hand.getMovementCards().subList(0,5));
+        APIRequestPlayerSubmitHand submitHand = new APIRequestPlayerSubmitHand(hand.getMovementCards().subList(0,5));
         System.out.println("submitting hand: " + submitHand);
         ResponseEntity<String> response = restTemplate.postForEntity(
                 playerSubmitHandUrl,
@@ -81,9 +81,9 @@ class PlayerControllerTest {
         Thread.sleep(3000);
 
         //Get second hand, make sure it's different
-        APIresponsePlayerGetHand hand2 = restTemplate.getForObject(
+        APIResponsePlayerGetHand hand2 = restTemplate.getForObject(
                 playerGetHandUrl,
-                APIresponsePlayerGetHand.class
+                APIResponsePlayerGetHand.class
         );
         System.out.println("got hand2: " + hand2);
         assertThat(hand2).isNotEqualTo(hand);
