@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class OvershootBot extends NPCPlayer {
 
-    public OvershootBot(int id) {
+    public OvershootBot(String id) {
         super(id);
         this.setDisplayName("OS-" + id);
     }

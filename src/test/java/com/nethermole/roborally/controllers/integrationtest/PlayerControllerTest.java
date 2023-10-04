@@ -3,7 +3,7 @@ package com.nethermole.roborally.controllers.integrationtest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nethermole.roborally.controllers.requestObjects.APIRequestPlayerSubmitHand;
-import com.nethermole.roborally.controllers.responseObjects.APIResponsePlayerGetHand;
+import com.nethermole.roborally.controllers.responseObjects.GetHandResponse;
 import com.nethermole.roborally.gamepackage.GameConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,9 +59,9 @@ class PlayerControllerTest {
 
         //Get hand
         String playerGetHandUrl = baseUrl + "/game/"+gameId+"/player/"+connectedPlayerId+"/getHand";
-        APIResponsePlayerGetHand hand = restTemplate.getForObject(
+        GetHandResponse hand = restTemplate.getForObject(
                 playerGetHandUrl,
-                APIResponsePlayerGetHand.class
+                GetHandResponse.class
         );
         System.out.println("got hand: " + hand);
 
@@ -81,9 +81,9 @@ class PlayerControllerTest {
         Thread.sleep(3000);
 
         //Get second hand, make sure it's different
-        APIResponsePlayerGetHand hand2 = restTemplate.getForObject(
+        GetHandResponse hand2 = restTemplate.getForObject(
                 playerGetHandUrl,
-                APIResponsePlayerGetHand.class
+                GetHandResponse.class
         );
         System.out.println("got hand2: " + hand2);
         assertThat(hand2).isNotEqualTo(hand);

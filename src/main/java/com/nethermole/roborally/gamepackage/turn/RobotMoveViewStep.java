@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 public class RobotMoveViewStep extends ViewStep {
-    int robotId;
+    String robotId;
     Position startPosition;
     Position endPosition;
     Direction startFacing;

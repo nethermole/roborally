@@ -10,24 +10,24 @@ import java.util.Map;
 
 public class PlayerHandProcessor {
 
-    Map<MovementCard, Integer> playerIdByMovementCard;
+    Map<MovementCard, String> playerIdByMovementCard;
 
     public PlayerHandProcessor() {
         playerIdByMovementCard = new HashMap<>();
     }
 
-    public List<List<MovementCard>> submitHands(Map<Integer, List<MovementCard>> inputHands) {
+    public List<List<MovementCard>> submitHands(Map<String, List<MovementCard>> inputHands) {
         List<List<MovementCard>> movementCardsInTurn = new ArrayList<>();
         for (int i = 0; i < GameConstants.PHASES_PER_TURN; i++) {
             List<MovementCard> movementCardsInPhase = new ArrayList<>();
-            for (Integer player : inputHands.keySet()) {
-                MovementCard movementCard = inputHands.get(player).get(i);
+            for (String playerId : inputHands.keySet()) {
+                MovementCard movementCard = inputHands.get(playerId).get(i);
                 movementCardsInPhase.add(movementCard);
 
                 if (playerIdByMovementCard.containsKey(movementCard)) {
                     throw new IllegalStateException("Duplicate card detected on card submission");
                 }
-                playerIdByMovementCard.put(movementCard, player);
+                playerIdByMovementCard.put(movementCard, playerId);
             }
             movementCardsInPhase.sort(Comparator.comparing(MovementCard::getPriority).reversed());
             movementCardsInTurn.add(movementCardsInPhase);
@@ -35,7 +35,7 @@ public class PlayerHandProcessor {
         return movementCardsInTurn;
     }
 
-    public int getPlayerWhoSubmittedCard(MovementCard movementCard) {
+    public String getPlayerWhoSubmittedCard(MovementCard movementCard) {
         return playerIdByMovementCard.get(movementCard);
     }
 

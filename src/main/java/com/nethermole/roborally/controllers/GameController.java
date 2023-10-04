@@ -1,10 +1,14 @@
 package com.nethermole.roborally.controllers;
 
+import com.nethermole.roborally.controllers.responseObjects.CreateGameResponse;
+import com.nethermole.roborally.gameReportStorage.GameReportRepository;
 import com.nethermole.roborally.gamepackage.GameConfig;
 import com.nethermole.roborally.gameservice.GamePoolService;
+import com.nethermole.roborally.gameservice.GameReport;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,15 +23,25 @@ public class GameController {
     @Autowired
     GamePoolService gamePoolService;
 
+    @Autowired
+    GameReportRepository gameReportRepository;
+
     //todo: wrap ALL api responses in objects
     @PostMapping("/game/create")
-    public String create(@RequestBody GameConfig gameConfig) {
-        return gamePoolService.createGame(gameConfig);
+    public CreateGameResponse create(@RequestBody GameConfig gameConfig) {
+        String gameId = gamePoolService.createGame(gameConfig);
+        return new CreateGameResponse(gameId);
     }
 
     @PostMapping("/game/{gameId}/start")
     public void start(@PathVariable("gameId") String gameId) {
         gamePoolService.getGameLogistics(gameId).startGame();
+    }
+
+    @GetMapping("/game/{gameId}/report")
+    public GameReport getGameReport(@PathVariable("gameId") String gameId) {
+        GameReport gameReport = gameReportRepository.getGameReport(gameId);
+        return gameReport;
     }
 
     @Deprecated

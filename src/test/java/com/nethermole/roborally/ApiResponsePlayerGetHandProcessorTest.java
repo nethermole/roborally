@@ -31,8 +31,8 @@ class ApiResponsePlayerGetHandProcessorTest {
                 new MovementCard(Movement.UTURN, 30),
                 new MovementCard(Movement.TURN_RIGHT, 120)
         );
-        Map<Integer, List<MovementCard>> inputHands = new HashMap<>();
-        inputHands.put(0, hand);
+        Map<String, List<MovementCard>> inputHands = new HashMap<>();
+        inputHands.put("0", hand);
 
         List<List<MovementCard>> actualMovementCardsInTurn = playerHandProcessor.submitHands(inputHands);
         List<List<MovementCard>> expectedMovementCardsInTurn = Arrays.asList(
@@ -64,9 +64,9 @@ class ApiResponsePlayerGetHandProcessorTest {
                 new MovementCard(Movement.MOVE1, 620)
         );
 
-        Map<Integer, List<MovementCard>> inputHands = new HashMap<>();
-        inputHands.put(0, hand0);
-        inputHands.put(1, hand1);
+        Map<String, List<MovementCard>> inputHands = new HashMap<>();
+        inputHands.put("0", hand0);
+        inputHands.put("1", hand1);
 
         List<List<MovementCard>> actualMovementCardsInTurn = playerHandProcessor.submitHands(inputHands);
         List<List<MovementCard>> expectedMovementCardsInTurn = Arrays.asList(
@@ -98,9 +98,9 @@ class ApiResponsePlayerGetHandProcessorTest {
                 new MovementCard(Movement.MOVE1, 620)
         );
 
-        Map<Integer, List<MovementCard>> inputHands = new HashMap<>();
-        inputHands.put(0, hand0);
-        inputHands.put(1, hand1);
+        Map<String, List<MovementCard>> inputHands = new HashMap<>();
+        inputHands.put("0", hand0);
+        inputHands.put("1", hand1);
 
         assertThrows(IllegalStateException.class, () -> playerHandProcessor.submitHands(inputHands), "Duplicate card detected on card submission");
     }

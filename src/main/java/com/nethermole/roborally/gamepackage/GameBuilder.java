@@ -16,13 +16,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 public class GameBuilder {
 
     @Getter
     Random random;
 
-    Map<Integer, Player> players;
+    Map<String, Player> players;
     GameLog gameLog;
     RulesFollowedVerifier rulesFollowedVerifier;
     Board board;
@@ -41,11 +42,11 @@ public class GameBuilder {
     public void players(int numHumanPlayers, int numBots) {
         this.players = new HashMap<>();
         while (players.size() < numHumanPlayers) {
-            int playerId = players.size();
+            String playerId = UUID.randomUUID().toString();
             players.put(playerId, new HumanPlayer(playerId));
         }
         while (players.size() < numHumanPlayers + numBots) {
-            int playerId = players.size();
+            String playerId = UUID.randomUUID().toString();
             players.put(playerId, new CountingBot(playerId));
         }
     }
@@ -93,11 +94,9 @@ public class GameBuilder {
     }
 
     public Game buildGame() {
-        GameReport gameReport = new GameReport();
-
         Game game = new Game(random);
         game.setGameLog(gameLog);
-        game.setGameReport(gameReport);
+        board.setGameLog(gameLog);
         game.setBoard(board);
         game.setStartBeacon(startBeacon);
         game.setCheckPoints(checkpoints);

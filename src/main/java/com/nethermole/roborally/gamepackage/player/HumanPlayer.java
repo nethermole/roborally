@@ -4,7 +4,7 @@ import com.nethermole.roborally.gamepackage.board.Direction;
 
 public class HumanPlayer extends Player {
 
-    public HumanPlayer(int id) {
+    public HumanPlayer(String id) {
         super(id);
 
         //below is temporary until managed by a different object

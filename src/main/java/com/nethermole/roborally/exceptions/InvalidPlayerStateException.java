@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class InvalidPlayerStateException extends Exception {
 
-    int playerId;
+    String playerId;
     String initialState;
     String attemptedAction;
 

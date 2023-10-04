@@ -98,9 +98,10 @@ public class BasicView extends AbstractView implements Runnable{
 
         private void drawPlayer(Graphics graphics, Player player){
             Position position = player.getPosition();
+            Color playerColor = new Color(player.getColor().getRed(), player.getColor().getGreen(), player.getColor().getBlue());
 
             if(player.getPosition() != null){
-                graphics.setColor(player.getColor());
+                graphics.setColor(playerColor);
                 if(player instanceof TurnRateLimiterBot){
                     graphics.setColor(Color.black);
                 }
@@ -108,7 +109,7 @@ public class BasicView extends AbstractView implements Runnable{
             }
 
             Map<Integer, Color> colorRow = colorCache.getOrDefault(player.getPosition().getX(), new HashMap<>());
-            colorRow.put(player.getPosition().getY(), player.getColor());
+            colorRow.put(player.getPosition().getY(), playerColor);
             colorCache.put(player.getPosition().getX(), colorRow);
         }
     }

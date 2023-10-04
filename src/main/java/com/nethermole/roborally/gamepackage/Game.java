@@ -5,8 +5,8 @@ import com.nethermole.roborally.PlayerHandProcessor;
 import com.nethermole.roborally.PlayerStatusManager;
 import com.nethermole.roborally.exceptions.InvalidPlayerStateException;
 import com.nethermole.roborally.exceptions.InvalidSubmittedHandException;
+import com.nethermole.roborally.gameReportStorage.GameReportRepository;
 import com.nethermole.roborally.gamepackage.board.Board;
-import com.nethermole.roborally.gamepackage.board.Direction;
 import com.nethermole.roborally.gamepackage.board.Position;
 import com.nethermole.roborally.gamepackage.board.element.Beacon;
 import com.nethermole.roborally.gamepackage.board.element.Checkpoint;
@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 
 @NoArgsConstructor
 public class Game {
@@ -39,17 +40,16 @@ public class Game {
     private GameConfig gameConfig;
 
     @Getter
-    Map<MovementCard, Integer> cardsDealt;
+    Map<MovementCard, String> cardsDealt;
 
     private static Logger log = LogManager.getLogger(Game.class);
 
     @Getter
-    private Map<Integer, Player> players;
+    private Map<String, Player> players;
 
     @Setter
     private GameLog gameLog;
 
-    @Setter
     private GameReport gameReport;
 
     @Getter
@@ -59,10 +59,10 @@ public class Game {
     private MovementDeck movementDeck;
 
     @Getter
-    private Map<Integer, List<MovementCard>> playersHands;
+    private Map<String, List<MovementCard>> playersHands;
 
     @Getter
-    private Map<Integer, List<MovementCard>> playerSubmittedHands;
+    private Map<String, List<MovementCard>> playerSubmittedHands;
 
     @Getter
     private PlayerStatusManager playerStatusManager;
@@ -85,6 +85,9 @@ public class Game {
 
     private int maxTurn;
 
+    @Getter
+    private String uuid;
+
     @Setter
     private Random random;
 
@@ -92,23 +95,30 @@ public class Game {
         this.random = random;
     }
 
-    void initializeFields(Map<Integer, Player> players) {
+    void initializeFields(Map<String, Player> players) {
+        this.players = players;
+
+        uuid = UUID.randomUUID().toString();
+
+        gameReport = new GameReport();
+        gameReport.setGameUUID(uuid);
+        gameReport.setPlayers(players);
+        board.setGameReport(gameReport);
+
+        playerStatusManager = new PlayerStatusManager(new ArrayList<>(players.values()));
+
+
+
         playerSubmittedHands = new HashMap<>();
         playersHands = new HashMap<>();
         cardsDealt = new HashMap<>();
-        playerStatusManager = new PlayerStatusManager();
+
 
         currentTurn = 0;
         maxTurn = 5000;
 
         phaseInTurnCycle = PhaseInTurnCycle.STARTING;
         movementDeck = new MovementDeck(random);
-        this.players = players;
-
-        for (Player player : players.values()) {
-            playerStatusManager.addPlayer(player.getId());
-            player.setFacing(Direction.UP);
-        }
 
         //is the below necessary?
         for (Player player : players.values()) {
@@ -122,7 +132,7 @@ public class Game {
 
     public void distributeCards() {
         playerSubmittedHands = new HashMap<>();
-        for (Integer playerId : playersHands.keySet()) {
+        for (String playerId : playersHands.keySet()) {
             List<MovementCard> hand = new ArrayList<>();
             for (int i = 0; i < players.get(playerId).getHealth(); i++) {
                 MovementCard movementCard = movementDeck.drawCard();
@@ -134,7 +144,7 @@ public class Game {
         }
     }
 
-    public List<MovementCard> getHand(int playerId) throws InvalidPlayerStateException {
+    public List<MovementCard> getHand(String playerId) throws InvalidPlayerStateException {
         //todo: guard against this better
         for (int timeoutSeconds = 5; phaseInTurnCycle == PhaseInTurnCycle.PROCESSING_TURN || phaseInTurnCycle == PhaseInTurnCycle.TURN_PREPARATION; timeoutSeconds--) {
             try {
@@ -153,7 +163,7 @@ public class Game {
         return playersHands.get(playerId);
     }
 
-    public void submitPlayerHand(int playerId, List<MovementCard> movementCardList) throws InvalidSubmittedHandException, InvalidPlayerStateException {
+    public void submitPlayerHand(String playerId, List<MovementCard> movementCardList) throws InvalidSubmittedHandException, InvalidPlayerStateException {
         if (movementCardList.size() != 5) {
             throw new IllegalStateException("PlayerId " + playerId + " submitted hand of size " + movementCardList.size());
         }
@@ -173,8 +183,9 @@ public class Game {
         playerSubmittedHands.put(playerId, movementCardList);
     }
 
-    public void processTurn() {
+    public void processTurn(GameReportRepository gameReportRepository) {
         phaseInTurnCycle = PhaseInTurnCycle.PROCESSING_TURN;
+        gameReport.startNewTurn();
 
         PlayerHandProcessor playerHandProcessor = new PlayerHandProcessor();
         List<List<MovementCard>> organizedPlayerHands = playerHandProcessor.submitHands(playerSubmittedHands);
@@ -189,6 +200,8 @@ public class Game {
             }
             if (winningPlayer != null) {
                 log.info("Winning player found");
+
+                gameReportRepository.saveGameReport(gameReport);
 
                 gameLog.dumpToFile();
                 gameReport.dumpToFile();
@@ -234,10 +247,10 @@ public class Game {
 
     public void processPhase(List<MovementCard> movementCards, PlayerHandProcessor playerHandProcessor) {
         for (MovementCard movementCard : movementCards) {
-            int playerPlayerId = playerHandProcessor.getPlayerWhoSubmittedCard(movementCard);
+            String playerId = playerHandProcessor.getPlayerWhoSubmittedCard(movementCard);
 
-            Player player = players.get(playerPlayerId);
-            List<ViewStep> viewSteps = board.movePlayer(player, movementCard.getMovement());
+            Player player = players.get(playerId);
+            List<ViewStep> viewSteps = board.movePlayer(player, movementCard);
 
             Optional checkpoint = board.getTileAtPosition(player.getPosition()).getElements().stream().filter(element -> element.getClass() == Checkpoint.class).findFirst();
             if (checkpoint.isPresent()) {
@@ -275,7 +288,7 @@ public class Game {
                 try {
                     selectedCards = ((NPCPlayer) player).chooseCards(npcPlayerCardsCopy, getBoard());
                 } catch (Exception e) {
-                    System.out.println(e.getStackTrace());
+                    System.out.println(e.getMessage());
                     return;
                 }
 
@@ -288,7 +301,7 @@ public class Game {
         }
     }
 
-    public Player getPlayer(int id) {
+    public Player getPlayer(String id) {
         return players.get(id);
     }
 

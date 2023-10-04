@@ -2,14 +2,21 @@ package com.nethermole.roborally.gamepackage.board;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nethermole.roborally.gamepackage.ViewStep;
+import com.nethermole.roborally.gamepackage.action.BoardAction;
+import com.nethermole.roborally.gamepackage.action.PitKillAction;
+import com.nethermole.roborally.gamepackage.action.RobotMoveAction;
 import com.nethermole.roborally.gamepackage.board.element.Checkpoint;
 import com.nethermole.roborally.gamepackage.board.element.Element;
 import com.nethermole.roborally.gamepackage.board.element.ElementEnum;
-import com.nethermole.roborally.gamepackage.deck.movement.Movement;
+import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
+import com.nethermole.roborally.gamepackage.play.CardPlay;
 import com.nethermole.roborally.gamepackage.player.Player;
 import com.nethermole.roborally.gamepackage.turn.MovementMethod;
 import com.nethermole.roborally.gamepackage.turn.RobotMoveViewStep;
+import com.nethermole.roborally.gameservice.GameLog;
+import com.nethermole.roborally.gameservice.GameReport;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -30,6 +37,12 @@ public class Board {
     private Map<Integer, Map<Integer, Tile>> squares;
 
     private Map<Element, Position> elementPositions;
+
+    @Setter
+    private GameReport gameReport;
+
+    @Setter
+    private GameLog gameLog;
 
     public Board(int boardHeight, int boardWidth) {
         elementPositions = new HashMap<>();
@@ -91,17 +104,22 @@ public class Board {
     }
 
     //break this out into a movement logic class
-    public List<ViewStep> movePlayer(Player player, Movement movement) {
+    public List<ViewStep> movePlayer(Player player, MovementCard movementCard) {
+        CardPlay cardPlay = new CardPlay();
+        cardPlay.setPlayerId(player.getId());
+        cardPlay.setMovementCard(movementCard);
+
         List<ViewStep> viewSteps = new ArrayList<>();
-        switch (movement) {
+        switch (movementCard.getMovement()) {
             case MOVE1:
-                viewSteps.addAll(moveForward(player, 1));
+                List<BoardAction> boardActions = moveForward(player, 1);
+                cardPlay.addBoardActions(boardActions);
                 break;
             case MOVE2:
-                viewSteps.addAll(moveForward(player, 2));
+                //viewSteps.addAll(moveForward(player, 2));
                 break;
             case MOVE3:
-                viewSteps.addAll(moveForward(player, 3));
+                //viewSteps.addAll(moveForward(player, 3));
                 break;
             case TURN_RIGHT:
                 viewSteps.add(turnRight(player));
@@ -118,38 +136,44 @@ public class Board {
             default:
                 return new ArrayList<>();
         }
+        gameReport.addPlay(cardPlay);
         return viewSteps;
     }
 
-    public ViewStep resetPlayer(Player player) {
-        Position currentPosition = new Position(player.getPosition());
+    public PitKillAction pitKillPlayer(Player player, Position pitLocation) {
         Position endPosition = new Position(getPositionOfElement(player.getBeacon()));
+        player.setPosition(endPosition);
 
-        ViewStep moveEvent = new RobotMoveViewStep(player, currentPosition, endPosition, player.getFacing(), player.getFacing(), MovementMethod.PIT_DEATH);
-
-        player.setPosition(getPositionOfElement(player.getBeacon()));
+        PitKillAction pitKillAction = new PitKillAction(player.getId(), pitLocation, player.getPosition());
         log.info("Player " + player.getId() + " died. Resetting to " + player.getPosition());
-        return moveEvent;
+        return pitKillAction;
     }
 
     //TODO: LOGIC INVOLVING THIS USUALLY CHECK ENDPOSITION, NOT ENTIRE PATHWAY
-    public boolean isOverPit(Position position) {
+    public boolean isPit(Position position) {
         Tile tile = getTileAtPosition(position);
         return tile.hasElement(ElementEnum.PIT);
     }
 
-    public List<ViewStep> moveForward(Player player, int distance) {
-        List<ViewStep> viewSteps = new ArrayList<>();
+    public List<BoardAction> moveForward(Player player, int distance) {
+        List<BoardAction> boardActions = new ArrayList<>();
+
         Position startPosition = player.getPosition();
         Position endPosition = startPosition.moveForward(player.getFacing(), distance);
-
         player.setPosition(endPosition);
-        if (isOverPit(player.getPosition())) {
-            viewSteps.add(resetPlayer(player));
+
+
+        RobotMoveAction robotMoveAction = new RobotMoveAction(player.getId(), startPosition, endPosition);
+        boardActions.add(robotMoveAction);
+
+        //logic is wrong. Implement a pit-checker for every square the robot moves over
+        if (isPit(endPosition)) {
+            PitKillAction pitKillAction = pitKillPlayer(player, endPosition);
+            boardActions.add(pitKillAction);
         }
 
-        viewSteps.add(new RobotMoveViewStep(player, startPosition, endPosition, player.getFacing(), player.getFacing(), MovementMethod.MOVE));
-        return viewSteps;
+
+        return boardActions;
     }
 
     public List<ViewStep> backup(Player player) {
@@ -162,8 +186,8 @@ public class Board {
             return null;
         } else {
             player.setPosition(endPosition);
-            if (isOverPit(player.getPosition())) {
-                viewSteps.add(resetPlayer(player));
+            if (isPit(player.getPosition())) {
+                //viewSteps.add(pitKillPlayer(player));
             }
 
             viewSteps.add(new RobotMoveViewStep(player, startPosition, endPosition, player.getFacing(), player.getFacing(), MovementMethod.MOVE));

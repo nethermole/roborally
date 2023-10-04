@@ -8,7 +8,7 @@ import java.util.List;
 
 public abstract class NPCPlayer extends Player {
 
-    public NPCPlayer(int id) {
+    public NPCPlayer(String id) {
         super(id);
     }
 

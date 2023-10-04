@@ -35,9 +35,9 @@ class GameTest {
 
     @BeforeEach
     public void setup() {
-        player0 = new HumanPlayer(0);
-        player1 = new HumanPlayer(1);
-        npcPlayer2 = new RandomBot(2);
+        player0 = new HumanPlayer("0");
+        player1 = new HumanPlayer("1");
+        npcPlayer2 = new RandomBot("2");
 
         playerList = new HashMap<>();
         playerList.put(0, player0);
@@ -63,46 +63,46 @@ class GameTest {
 
     @Test
     public void distributeCards() throws InvalidPlayerStateException {
-        List<MovementCard> playerHand = game.getHand(0);
+        List<MovementCard> playerHand = game.getHand("0");
         assertThat(playerHand.size()).isEqualTo(Player.STARTING_HEALTH);
     }
 
     @Test
     public void getHand_getsCardsForPlayer() throws InvalidPlayerStateException {
-        List<MovementCard> playerHand = game.getHand(0);
+        List<MovementCard> playerHand = game.getHand("0");
         assertThat(playerHand.size()).isEqualTo(Player.STARTING_HEALTH);
-        assertThat(game.getPlayerStatusManager().getPlayerState(0)).isEqualTo(PlayerState.CHOOSING_MOVEMENT_CARDS);
+        assertThat(game.getPlayerStatusManager().getPlayerState("0")).isEqualTo(PlayerState.CHOOSING_MOVEMENT_CARDS);
     }
 
     @Test
     public void getHand_setsPlayerState() throws InvalidPlayerStateException {
-        game.getHand(0);
-        assertThat(game.getPlayerStatusManager().getPlayerState(0)).isEqualTo(PlayerState.CHOOSING_MOVEMENT_CARDS);
+        game.getHand("0");
+        assertThat(game.getPlayerStatusManager().getPlayerState("0")).isEqualTo(PlayerState.CHOOSING_MOVEMENT_CARDS);
     }
 
     @Test
     public void submitPlayerHand_resetsPlayerHand() throws InvalidSubmittedHandException, InvalidPlayerStateException {
-        List<MovementCard> movementCardList = game.getHand(0).subList(0, 5);
-        game.submitPlayerHand(0, movementCardList);
+        List<MovementCard> movementCardList = game.getHand("0").subList(0, 5);
+        game.submitPlayerHand("0", movementCardList);
 
         assertThat(game.getPlayersHands().get(player0.getId())).isEmpty();
     }
 
     @Test
     public void submitPlayerHand_setsSubmittedHand() throws InvalidSubmittedHandException, InvalidPlayerStateException {
-        List<MovementCard> movementCardList = game.getHand(0).subList(0, 5);
-        game.submitPlayerHand(0, movementCardList);
+        List<MovementCard> movementCardList = game.getHand("0").subList(0, 5);
+        game.submitPlayerHand("0", movementCardList);
 
         assertThat(game.getPlayerSubmittedHands().get(player0.getId())).isEqualTo(movementCardList);
     }
 
     @Test
     public void checkForWinner_true() {
-        Player winningPlayer = game.getPlayer(0);
+        Player winningPlayer = game.getPlayer("0");
         winningPlayer.touchCheckpoint(new Checkpoint(1));
         game.checkForWinner();
 
-        assertThat(game.getWinningPlayer()).isEqualTo(game.getPlayer(0));
+        assertThat(game.getWinningPlayer()).isEqualTo(game.getPlayer("0"));
     }
 
     @Test

@@ -20,7 +20,7 @@ class MovementCalculatorTest {
 
     @Test
     public void move1_noShove_moves1() {
-        Player player = new HumanPlayer(0);
+        Player player = new HumanPlayer("0");
         player.setPosition(new Position(5, 5));
         player.setFacing(Direction.UP);
 

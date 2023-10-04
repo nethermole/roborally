@@ -1,7 +1,7 @@
 package com.nethermole.roborally.controllers;
 
 import com.nethermole.roborally.controllers.requestObjects.APIRequestPlayerSubmitHand;
-import com.nethermole.roborally.controllers.responseObjects.APIResponsePlayerGetHand;
+import com.nethermole.roborally.controllers.responseObjects.GetHandResponse;
 import com.nethermole.roborally.exceptions.InvalidPlayerStateException;
 import com.nethermole.roborally.exceptions.ThisShouldntHappenException;
 import com.nethermole.roborally.gamepackage.GameLogistics;
@@ -45,9 +45,9 @@ public class PlayerController {
     }
 
     @GetMapping("/game/{gameId}/player/{playerId}/getHand")
-    public APIResponsePlayerGetHand getHand(@PathVariable("gameId") String gameId, @PathVariable("playerId") String playerId) throws InvalidPlayerStateException, ThisShouldntHappenException {
+    public GetHandResponse getHand(@PathVariable("gameId") String gameId, @PathVariable("playerId") String playerId) throws InvalidPlayerStateException, ThisShouldntHappenException {
         GameLogistics gameLogistics = gamePoolService.getGameLogistics("" + gameId);
         List<MovementCard> movementCards = gameLogistics.getHand(playerId);
-        return new APIResponsePlayerGetHand(movementCards);
+        return new GetHandResponse(movementCards);
     }
 }

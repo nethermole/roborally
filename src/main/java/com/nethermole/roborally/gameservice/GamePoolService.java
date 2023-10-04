@@ -1,5 +1,6 @@
 package com.nethermole.roborally.gameservice;
 
+import com.nethermole.roborally.gameReportStorage.GameReportRepository;
 import com.nethermole.roborally.gamepackage.GameConfig;
 import com.nethermole.roborally.gamepackage.GameLogistics;
 import com.nethermole.roborally.gamepackage.board.Board;
@@ -8,19 +9,22 @@ import com.nethermole.roborally.view.BasicView;
 import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.UUID;
 
 @Service
 public class GamePoolService {
     private static Logger log = LogManager.getLogger(GamePoolService.class);
 
     private Map<String, GameLogistics> gamePool;
+
+    @Autowired
+    GameReportRepository gameReportRepository;
 
     @PostConstruct
     public void init() {
@@ -38,8 +42,11 @@ public class GamePoolService {
         GameLogistics gameLogistics = new GameLogistics(gameConfig);
         gameLogistics.createGameWithDefaultBoard();
 
-        String gameId = addGameLogisticsToPool(gameLogistics);
-        return gameId;
+        addGameLogisticsToPool(gameLogistics);
+
+        addBasicView(gameLogistics.getGame().getUuid());
+
+        return gameLogistics.getGame().getUuid();
     }
 
     public String joinHumanPlayer(String gameId) {
@@ -47,10 +54,8 @@ public class GamePoolService {
         return connectedPlayerId;
     }
 
-    private String addGameLogisticsToPool(GameLogistics gameLogistics) {
-        String id = UUID.randomUUID().toString();
-        gamePool.put(id, gameLogistics);
-        return id;
+    private void addGameLogisticsToPool(GameLogistics gameLogistics) {
+        gamePool.put(gameLogistics.getGame().getUuid(), gameLogistics);
     }
 
     //todo: make this live near the views
@@ -87,14 +92,14 @@ public class GamePoolService {
             Iterator<GameLogistics> gameLogisticsIterator = null;
 
             while (System.currentTimeMillis() < start + MAX_DURATION_MINS * 60 * 1000) {
-                if (System.currentTimeMillis() % 250 == 0) {
+                if (System.currentTimeMillis() % 10 == 0) {
                     if (gameLogisticsIterator == null) {
                         gameLogisticsIterator = gamePool.values().iterator();
                     }
 
                     if (gameLogisticsIterator.hasNext()) {
                         GameLogistics gameLogistics = gameLogisticsIterator.next();
-                        gameLogistics.tryProcessTurn();
+                        gameLogistics.tryProcessTurn(gameReportRepository);
                     } else {
                         gameLogisticsIterator = null;
                     }

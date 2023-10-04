@@ -11,7 +11,7 @@ public class TurnRateLimiterBot extends NPCPlayer {
 
     private static final Logger log = LogManager.getLogger(TurnRateLimiterBot.class);
 
-    public TurnRateLimiterBot(int id) {
+    public TurnRateLimiterBot(String id) {
         super(id);
         this.setDisplayName("RB-" + id);
     }

@@ -1,12 +1,14 @@
 package com.nethermole.roborally;
 
 import com.nethermole.roborally.exceptions.InvalidPlayerStateException;
+import com.nethermole.roborally.gamepackage.player.Player;
 import com.nethermole.roborally.gamepackage.player.PlayerState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,15 +19,16 @@ import static com.nethermole.roborally.gamepackage.player.PlayerState.NO_INTERAC
 
 public class PlayerStatusManager {
 
-    private final Map<Integer, PlayerState> playerStates;
+    private final Map<String, PlayerState> playerStates;
 
     private final static Logger log = LogManager.getLogger(PlayerStatusManager.class);
 
-    public PlayerStatusManager(){
+    public PlayerStatusManager(List<Player> players){
         playerStates = new HashMap<>();
+        players.forEach(player -> addPlayer(player.getId()));
     }
 
-    public void addPlayer(int playerId){
+    public void addPlayer(String playerId){
         if(playerStates.containsKey(playerId)){
             log.warn("PlayerStatusManager already contains id:" + playerId + ". No player added");
         } else{
@@ -34,11 +37,11 @@ public class PlayerStatusManager {
         }
     }
 
-    public PlayerState getPlayerState(int playerId){
+    public PlayerState getPlayerState(String playerId){
         return playerStates.get(playerId);
     }
 
-    public void playerGetsHand(int playerId) throws InvalidPlayerStateException {
+    public void playerGetsHand(String playerId) throws InvalidPlayerStateException {
         log.trace("playerGetsHand(" + playerId + ") ");
 
         Set<PlayerState> validInitialStates = new HashSet<>();
@@ -55,7 +58,7 @@ public class PlayerStatusManager {
         }
     }
 
-    public void playerSubmitsHand(int playerId) throws InvalidPlayerStateException {
+    public void playerSubmitsHand(String playerId) throws InvalidPlayerStateException {
         log.trace("playerSubmitsHand(" + playerId + ") ");
 
         Set<PlayerState> validInitialStates = new HashSet<>();

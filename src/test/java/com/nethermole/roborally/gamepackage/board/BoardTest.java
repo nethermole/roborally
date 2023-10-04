@@ -38,14 +38,14 @@ class BoardTest {
 
     @Test
     public void addPlayer() {
-        Player player = new RandomBot(0);
+        Player player = new RandomBot("0");
         board.addPlayer(player);
         assertThat(board.getPlayers()).contains(player);
     }
 
     @Test
     public void move1() {
-        Player player = new HumanPlayer(0);
+        Player player = new HumanPlayer("0");
         player.setPosition(new Position(5, 5));
         player.setFacing(Direction.UP);
 
@@ -57,7 +57,7 @@ class BoardTest {
 
     @Test
     public void backup() {
-        Player player = new HumanPlayer(0);
+        Player player = new HumanPlayer("0");
         player.setPosition(new Position(5, 5));
         player.setFacing(Direction.UP);
 
@@ -70,7 +70,7 @@ class BoardTest {
 
     @Test
     public void uturn() {
-        Player player = new HumanPlayer(0);
+        Player player = new HumanPlayer("0");
         player.setPosition(new Position(5, 5));
 
         player.setFacing(Direction.UP);
@@ -96,7 +96,7 @@ class BoardTest {
 
     @Test
     public void resetPlayer_movesPlayerToBeaconPosition() {
-        Player player = new RandomBot(0);
+        Player player = new RandomBot("0");
         board.addPlayer(player);
         player.setPosition(new Position(0, 0));
 
@@ -104,13 +104,13 @@ class BoardTest {
         board.addElement(respawnBeacon, new Position(4, 4));
         player.setBeacon(respawnBeacon);
 
-        board.resetPlayer(player);
+        board.pitKillPlayer(player, new Position(0,0));
         assertThat(player.getPosition()).isEqualTo(new Position(4, 4));
     }
 
     @Test
     public void turnLeft() {
-        Player player = new HumanPlayer(0);
+        Player player = new HumanPlayer("0");
         player.setPosition(new Position(5, 5));
 
         player.setFacing(Direction.UP);
@@ -130,7 +130,7 @@ class BoardTest {
 
     @Test
     public void turnRight() {
-        Player player = new HumanPlayer(0);
+        Player player = new HumanPlayer("0");
         player.setPosition(new Position(5, 5));
 
         player.setFacing(Direction.UP);
@@ -150,18 +150,18 @@ class BoardTest {
 
     @Test
     public void isOverPit_notInSquares_returnsTrue() {
-        assertThat(board.isOverPit(new Position(-1, 5))).isTrue();
+        assertThat(board.isPit(new Position(-1, 5))).isTrue();
     }
 
     @Test
     public void isOverPit_overPit_returnsTrue() {
         board.addElement(new Pit(), new Position(5, 5));
-        assertThat(board.isOverPit(new Position(5, 5))).isTrue();
+        assertThat(board.isPit(new Position(5, 5))).isTrue();
     }
 
     @Test
     public void isOverPit_notOverPut_returnFalse() {
-        assertThat(board.isOverPit(new Position(5, 5))).isFalse();
+        assertThat(board.isPit(new Position(5, 5))).isFalse();
     }
 
 }

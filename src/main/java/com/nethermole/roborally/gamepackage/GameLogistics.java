@@ -7,6 +7,7 @@ import com.nethermole.roborally.exceptions.GameNotStartedException;
 import com.nethermole.roborally.exceptions.InvalidPlayerStateException;
 import com.nethermole.roborally.exceptions.InvalidSubmittedHandException;
 import com.nethermole.roborally.exceptions.ThisShouldntHappenException;
+import com.nethermole.roborally.gameReportStorage.GameReportRepository;
 import com.nethermole.roborally.gamepackage.board.Board;
 import com.nethermole.roborally.gamepackage.board.BoardFactory;
 import com.nethermole.roborally.gamepackage.board.Position;
@@ -18,6 +19,8 @@ import com.nethermole.roborally.gameservice.GameReport;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,9 +32,6 @@ import java.util.stream.Collectors;
 public class GameLogistics {
 
     private static Logger log = LogManager.getLogger(GameLogistics.class);
-
-    @Getter
-    String uuid;
 
     @Getter
     private Game game;
@@ -55,10 +55,7 @@ public class GameLogistics {
 
     public GameLogistics(GameConfig gameConfig) {
         gameLog = new GameLog();        //todo: this line will be removed
-
         this.gameConfig = gameConfig;
-
-        this.uuid = UUID.randomUUID().toString();
 
         connectedPlayerMap = new HashMap<>();
 
@@ -70,14 +67,12 @@ public class GameLogistics {
         }
         gamestateVerifier = new GamestateVerifier();
         rulesFollowedVerifier = new RulesFollowedVerifier();
-
-        log.info("GameLogistics - Game created with UUID=" + uuid);
     }
 
     public String addPlayer() {
         if (connectedPlayerMap.size() < gameConfig.humanPlayers) {
             String connectedPlayerId = UUID.randomUUID().toString();
-            connectedPlayerMap.put(connectedPlayerId, new HumanPlayer(connectedPlayerMap.size()));
+            connectedPlayerMap.put(connectedPlayerId, new HumanPlayer(""+connectedPlayerMap.size()));
             return connectedPlayerId;
         } else {
             return "addPlayer - Unable to connect. Lobby may be full";
@@ -100,13 +95,13 @@ public class GameLogistics {
         gameBuilder.board(board);
         gameBuilder.gameRules(new RulesFollowedVerifier());
 
-        Position startPosition = gameBuilder.generateStartBeacon();
+        gameBuilder.generateStartBeacon();
         gameBuilder.generateCheckpoints(20);
 
         game = gameBuilder.buildGame();
         game.setGameConfig(gameConfig);
 
-        log.info("New game created with startPosition: " + startPosition);
+        log.info("New game created with uuid: " + game.getUuid());
         startInfo = new StartInfo(game.getPlayers().values().stream().map(player -> player.snapshot()).collect(Collectors.toList()), game.getStartPosition());
     }
 
@@ -135,13 +130,13 @@ public class GameLogistics {
             throw new ThisShouldntHappenException("getHand - How would a client have the gameId for a null game?");
         }
 
-        int playerId = connectedPlayerMap.get(connectedPlayerId).getId();
+        String playerId = connectedPlayerMap.get(connectedPlayerId).getId();
         return game.getHand(playerId);
     }
 
-    public void tryProcessTurn() {
+    public void tryProcessTurn(GameReportRepository gameReportRepository) {
         if (gamestateVerifier.isGameReadyToProcessTurn(game)) {
-            game.processTurn();
+            game.processTurn(gameReportRepository);
             game.setupForNextTurn();
         }
     }
@@ -151,7 +146,7 @@ public class GameLogistics {
             throw new ThisShouldntHappenException("submitHand - How would a client have the gameId for a null game?");
         }
 
-        int playerId = connectedPlayerMap.get(connectedPlayerId).getId();
+        String playerId = connectedPlayerMap.get(connectedPlayerId).getId();
 
         if (rulesFollowedVerifier.isValidHand(playerId, movementCardList, game)) {
             game.submitPlayerHand(playerId, movementCardList);

@@ -25,7 +25,7 @@ public class CountingBot extends NPCPlayer {
     private static final Logger log = LogManager.getLogger(CountingBot.class);
     private BotUtils botUtils;
 
-    public CountingBot(int id) {
+    public CountingBot(String id) {
         super(id);
         this.setDisplayName("C-" + id);
         this.botUtils = new BotUtils();

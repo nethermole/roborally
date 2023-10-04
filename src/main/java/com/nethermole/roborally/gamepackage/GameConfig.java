@@ -18,7 +18,7 @@ public class GameConfig {
     //Start Info
     int humanPlayers;
     int botPlayers;
-    Long gameSeed;
+    private Long gameSeed;
 
     //Standard config
     private int maxHandSize;
@@ -26,7 +26,6 @@ public class GameConfig {
     public GameConfig(int humanPlayers, int botPlayers){
         this.humanPlayers = humanPlayers;
         this.botPlayers = botPlayers;
-        this.gameSeed = (new Random()).nextLong();
 
         maxHandSize = 5;
     }
@@ -37,6 +36,13 @@ public class GameConfig {
         this.gameSeed = gameSeed;
 
         maxHandSize = 5;
+    }
+
+    public Long getGameSeed(){
+        if(gameSeed == null){
+            gameSeed = (new Random()).nextLong();
+        }
+        return gameSeed;
     }
 
 

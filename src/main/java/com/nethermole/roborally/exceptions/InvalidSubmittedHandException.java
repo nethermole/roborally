@@ -10,7 +10,7 @@ import java.util.List;
 public class InvalidSubmittedHandException extends Exception {
     List<MovementCard> handDealt;
     List<MovementCard> handSubmitted;
-    Integer playerId;
+    String playerId;
 
     Game game;
 

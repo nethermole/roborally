@@ -8,7 +8,7 @@ class HumanPlayerTest {
 
     @Test
     public void playerHasId() {
-        humanPlayer = new HumanPlayer(1);
+        humanPlayer = new HumanPlayer("1");
     }
 
 }

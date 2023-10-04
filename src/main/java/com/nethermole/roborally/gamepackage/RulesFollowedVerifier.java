@@ -11,14 +11,14 @@ import java.util.Map;
 @Data
 public class RulesFollowedVerifier {
 
-    public boolean isValidHand(int playerId, List<MovementCard> movementCardList, Game game) {
+    public boolean isValidHand(String playerId, List<MovementCard> movementCardList, Game game) {
         return  isPlayerReadyToSubmitHand(playerId, game) &&
                 isHandCorrectSize(movementCardList, game) &&
                 doesHandContainNoDuplicateCards(movementCardList) &&
                 playerWasDealtEveryCard(playerId, movementCardList, game);
     }
 
-    public boolean isPlayerReadyToSubmitHand(int playerId, Game game){
+    public boolean isPlayerReadyToSubmitHand(String playerId, Game game){
         PlayerState playerState = game.getPlayerStatusManager().getPlayerState(playerId);
         if(playerState == PlayerState.CHOOSING_MOVEMENT_CARDS){
             return true;
@@ -43,8 +43,8 @@ public class RulesFollowedVerifier {
         return true;
     }
 
-    public boolean playerWasDealtEveryCard(int playerId, List<MovementCard> movementCardList, Game game){
-        Map<MovementCard, Integer> cardsDealt = game.getCardsDealt();
+    public boolean playerWasDealtEveryCard(String playerId, List<MovementCard> movementCardList, Game game){
+        Map<MovementCard, String> cardsDealt = game.getCardsDealt();
         return movementCardList.stream().noneMatch(
                 card -> cardsDealt.get(card) != playerId
         );
