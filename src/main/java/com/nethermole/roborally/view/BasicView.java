@@ -1,10 +1,7 @@
 package com.nethermole.roborally.view;
 
-import com.nethermole.roborally.gamepackage.Game;
 import com.nethermole.roborally.gamepackage.board.Board;
 import com.nethermole.roborally.gamepackage.board.Position;
-import com.nethermole.roborally.gamepackage.board.element.Checkpoint;
-import com.nethermole.roborally.gamepackage.board.element.Element;
 import com.nethermole.roborally.gamepackage.player.Player;
 import com.nethermole.roborally.gamepackage.player.bot.TurnRateLimiterBot;
 import lombok.Getter;
@@ -18,10 +15,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//todo: update to updateCache then drawCache pattern
 public class BasicView extends AbstractView implements Runnable{
 
     int durationMins;
+
+    int windowWidth = 1000;
+    int windowHeight = 1000;
 
     @Override
     public void run() {
@@ -48,6 +47,9 @@ public class BasicView extends AbstractView implements Runnable{
         private Map<Integer,Map<Integer, Color>> colorCache = new HashMap();
         private List<Player> players;
 
+        int gridSquareWidth;
+        int gridSquareHeight;
+
         public PixelCanvas() {
             players = new java.util.ArrayList<>();
         }
@@ -60,12 +62,16 @@ public class BasicView extends AbstractView implements Runnable{
         @Override
         protected void paintComponent(Graphics graphics) {
             super.paintComponent(graphics);
+
             if(board != null){
+                gridSquareWidth = windowWidth/board.getWidth();
+                gridSquareHeight = windowHeight/board.getHeight();
+
                 drawCheckpoints(graphics);
                 for (Player player : players) {
                     drawPlayer(graphics, player);
                 }
-                //drawCache(graphics);
+                drawCache(graphics);
             }
         }
 
@@ -77,7 +83,7 @@ public class BasicView extends AbstractView implements Runnable{
                     Color color = entryY.getValue();
 
                     graphics.setColor(color);
-                    graphics.fillRect(x-1, y-1, 3, 3);
+                    graphics.fillRect(x*gridSquareWidth, y*gridSquareHeight, gridSquareWidth, gridSquareHeight);
                 }
             }
         }
@@ -91,13 +97,12 @@ public class BasicView extends AbstractView implements Runnable{
                 if(position == null){
                     doneWithCheckpoints = true;
                 } else{
-                    graphics.fillRect(position.getX()-2, position.getY()-2, 5, 5);
+                    graphics.fillRect(position.getX()*gridSquareWidth, position.getY()*gridSquareHeight, gridSquareWidth, gridSquareHeight);
                 }
             }
         }
 
         private void drawPlayer(Graphics graphics, Player player){
-            Position position = player.getPosition();
             Color playerColor = new Color(player.getColor().getRed(), player.getColor().getGreen(), player.getColor().getBlue());
 
             if(player.getPosition() != null){
@@ -105,7 +110,7 @@ public class BasicView extends AbstractView implements Runnable{
                 if(player instanceof TurnRateLimiterBot){
                     graphics.setColor(Color.black);
                 }
-                graphics.fillRect(player.getPosition().getX()-1, player.getPosition().getY()-1, 3, 3);
+                graphics.fillRect(player.getPosition().getX()*gridSquareWidth, player.getPosition().getY()*gridSquareHeight, gridSquareWidth, gridSquareHeight);
             }
 
             Map<Integer, Color> colorRow = colorCache.getOrDefault(player.getPosition().getX(), new HashMap<>());
@@ -116,6 +121,9 @@ public class BasicView extends AbstractView implements Runnable{
 
     public class Window extends JFrame {
 
+        int width = windowWidth;
+        int height = windowHeight;
+
         @Getter
         private PixelCanvas canvas;
 
@@ -125,7 +133,7 @@ public class BasicView extends AbstractView implements Runnable{
 
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setTitle("Game Area");
-            setSize(1600, 1200);
+            setSize(width, height);
             setLocationRelativeTo(null);
             setVisible(true);
         }

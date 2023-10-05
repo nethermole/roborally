@@ -92,7 +92,7 @@ public class GamePoolService {
             Iterator<GameLogistics> gameLogisticsIterator = null;
 
             while (System.currentTimeMillis() < start + MAX_DURATION_MINS * 60 * 1000) {
-                if (System.currentTimeMillis() % 10 == 0) {
+                if (System.currentTimeMillis() % 50 == 0) {
                     if (gameLogisticsIterator == null) {
                         gameLogisticsIterator = gamePool.values().iterator();
                     }

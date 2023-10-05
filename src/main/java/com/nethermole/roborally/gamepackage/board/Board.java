@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -54,6 +55,31 @@ public class Board {
             }
         }
         players = new ArrayList<>();
+    }
+
+    public int getWidth(){
+        int maxX = 0;
+
+        Iterator<Integer> xIter = squares.keySet().iterator();
+        while(xIter.hasNext()){
+            int xVal = xIter.next();
+            if(xVal > maxX){
+                maxX = xVal;
+            }
+        }
+        return maxX;
+    }
+
+    public int getHeight(){
+        int maxWidth = 0;
+        for(Map<Integer, Tile> yCoord : squares.values()){
+            for(Integer y : yCoord.keySet()){
+                if(y > maxWidth){
+                    maxWidth = y;
+                }
+            }
+        }
+        return maxWidth;
     }
 
     public Tile getTileAtPosition(Position position) {
@@ -167,10 +193,10 @@ public class Board {
         boardActions.add(robotMoveAction);
 
         //logic is wrong. Implement a pit-checker for every square the robot moves over
-        if (isPit(endPosition)) {
-            PitKillAction pitKillAction = pitKillPlayer(player, endPosition);
-            boardActions.add(pitKillAction);
-        }
+//        if (isPit(endPosition)) {
+//            PitKillAction pitKillAction = pitKillPlayer(player, endPosition);
+//            boardActions.add(pitKillAction);
+//        }
 
 
         return boardActions;
@@ -186,9 +212,9 @@ public class Board {
             return null;
         } else {
             player.setPosition(endPosition);
-            if (isPit(player.getPosition())) {
-                //viewSteps.add(pitKillPlayer(player));
-            }
+//            if (isPit(player.getPosition())) {
+//                //viewSteps.add(pitKillPlayer(player));
+//            }
 
             viewSteps.add(new RobotMoveViewStep(player, startPosition, endPosition, player.getFacing(), player.getFacing(), MovementMethod.MOVE));
             return viewSteps;
@@ -221,8 +247,10 @@ public class Board {
             int x = random.nextInt(squares.size());
             int y = random.nextInt(squares.get(x).size());
 
-            if (squares.get(x).get(y).getElements().isEmpty()) {
-                return new Position(x, y);
+            if(squares.get(x).containsKey(y)) {
+                if (squares.get(x).get(y).getElements().isEmpty()) {
+                    return new Position(x, y);
+                }
             }
         }
         return null;

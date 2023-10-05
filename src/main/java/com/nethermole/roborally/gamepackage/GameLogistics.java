@@ -93,6 +93,17 @@ public class GameLogistics {
         gameBuilder.players(gameConfig.humanPlayers, gameConfig.botPlayers);
         gameBuilder.gameLog(gameLog);
         gameBuilder.board(board);
+
+        BoardFactory boardFactory = new BoardFactory();
+
+        for(int i = 0; i < 10; i++){
+            for(int j = 0; j < 10; j++){
+                if(i!=0&&j!=0){
+                    board.addBoard(boardFactory.board_exchange(), i, j);
+                }
+            }
+        }
+
         gameBuilder.gameRules(new RulesFollowedVerifier());
 
         gameBuilder.generateStartBeacon();
