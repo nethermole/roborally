@@ -2,7 +2,7 @@ package com.nethermole.roborally.controllers.integrationtest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nethermole.roborally.controllers.requestObjects.APIRequestPlayerSubmitHand;
+import com.nethermole.roborally.controllers.requestObjects.PlayerSubmitHandRequest;
 import com.nethermole.roborally.controllers.responseObjects.GetHandResponse;
 import com.nethermole.roborally.gamepackage.GameConfig;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,7 +68,7 @@ class PlayerControllerTest {
 
         //Submit hand
         String playerSubmitHandUrl = baseUrl + "/game/"+gameId+"/player/"+connectedPlayerId+"/submitHand";
-        APIRequestPlayerSubmitHand submitHand = new APIRequestPlayerSubmitHand(hand.getMovementCards().subList(0,5));
+        PlayerSubmitHandRequest submitHand = new PlayerSubmitHandRequest(hand.getMovementCards().subList(0,5));
         System.out.println("submitting hand: " + submitHand);
         ResponseEntity<String> response = restTemplate.postForEntity(
                 playerSubmitHandUrl,

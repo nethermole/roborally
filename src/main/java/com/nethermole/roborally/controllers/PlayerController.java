@@ -1,7 +1,8 @@
 package com.nethermole.roborally.controllers;
 
-import com.nethermole.roborally.controllers.requestObjects.APIRequestPlayerSubmitHand;
+import com.nethermole.roborally.controllers.requestObjects.PlayerSubmitHandRequest;
 import com.nethermole.roborally.controllers.responseObjects.GetHandResponse;
+import com.nethermole.roborally.controllers.responseObjects.PlayerJoinResponse;
 import com.nethermole.roborally.exceptions.InvalidPlayerStateException;
 import com.nethermole.roborally.exceptions.ThisShouldntHappenException;
 import com.nethermole.roborally.gamepackage.GameLogistics;
@@ -28,16 +29,17 @@ public class PlayerController {
 
 
     @PostMapping("/game/{gameId}/join")
-    public String joinGame(@PathVariable("gameId") String gameId){
+    public PlayerJoinResponse joinGame(@PathVariable("gameId") String gameId){
         String connectedPlayerId = gamePoolService.joinHumanPlayer(gameId);
-        return connectedPlayerId;
+        log.info("Human player joined game " + gameId + " as player " + connectedPlayerId);
+        return new PlayerJoinResponse(connectedPlayerId);
     }
 
     @PostMapping("/game/{gameId}/player/{playerId}/submitHand")
-    public String submitHand(@PathVariable("gameId") String gameId, @PathVariable("playerId") String playerId, @RequestBody APIRequestPlayerSubmitHand apIrequestPlayerSubmitHand) {
+    public String submitHand(@PathVariable("gameId") String gameId, @PathVariable("playerId") String playerId, @RequestBody PlayerSubmitHandRequest playerSubmitHandRequest) {
         try {
             GameLogistics gameLogistics = gamePoolService.getGameLogistics("" + gameId);
-            gameLogistics.submitHand(playerId, apIrequestPlayerSubmitHand.getMovementCards());
+            gameLogistics.submitHand(playerId, playerSubmitHandRequest.getMovementCards());
         } catch (Exception e) {
             return e.getMessage();
         }

@@ -47,7 +47,7 @@ class GameTest {
         GameBuilder gameBuilder = new GameBuilder((new Random()).nextLong());
         gameBuilder.gameLog(null);
         gameBuilder.board((new BoardFactory()).board_empty());
-        gameBuilder.players(1,3);
+        gameBuilder.addBots(3);
         gameBuilder.generateStartBeacon();
         gameBuilder.generateCheckpoints(1);
 

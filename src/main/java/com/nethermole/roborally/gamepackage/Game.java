@@ -30,7 +30,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 public class Game {
@@ -119,11 +121,13 @@ public class Game {
 
         phaseInTurnCycle = PhaseInTurnCycle.STARTING;
         movementDeck = new MovementDeck(random);
+    }
 
-        //is the below necessary?
-        for (Player player : players.values()) {
-            playersHands.put(player.getId(), new ArrayList<>());
-        }
+    public void addPlayer(String connectedPlayerId, Player player){
+        players.put(connectedPlayerId, player);
+        player.setPosition(getStartPosition());
+
+        playerStatusManager.addPlayer(player.getId());
     }
 
     public Position getStartPosition() {
@@ -131,8 +135,11 @@ public class Game {
     }
 
     public void distributeCards() {
+        playersHands = new HashMap<>();
         playerSubmittedHands = new HashMap<>();
-        for (String playerId : playersHands.keySet()) {
+
+        Set<String> playerIds = players.values().stream().map(p->p.getId()).collect(Collectors.toSet());
+        for (String playerId : playerIds) {
             List<MovementCard> hand = new ArrayList<>();
             for (int i = 0; i < players.get(playerId).getHealth(); i++) {
                 MovementCard movementCard = movementDeck.drawCard();

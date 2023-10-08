@@ -10,7 +10,6 @@ import com.nethermole.roborally.exceptions.ThisShouldntHappenException;
 import com.nethermole.roborally.gameReportStorage.GameReportRepository;
 import com.nethermole.roborally.gamepackage.board.Board;
 import com.nethermole.roborally.gamepackage.board.BoardFactory;
-import com.nethermole.roborally.gamepackage.board.Position;
 import com.nethermole.roborally.gamepackage.deck.movement.MovementCard;
 import com.nethermole.roborally.gamepackage.player.HumanPlayer;
 import com.nethermole.roborally.gamepackage.player.Player;
@@ -19,8 +18,6 @@ import com.nethermole.roborally.gameservice.GameReport;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,7 +69,11 @@ public class GameLogistics {
     public String addPlayer() {
         if (connectedPlayerMap.size() < gameConfig.humanPlayers) {
             String connectedPlayerId = UUID.randomUUID().toString();
-            connectedPlayerMap.put(connectedPlayerId, new HumanPlayer(""+connectedPlayerMap.size()));
+            Player humanPlayer = new HumanPlayer(""+connectedPlayerId);
+
+            game.addPlayer(connectedPlayerId, humanPlayer);
+            connectedPlayerMap.put(connectedPlayerId, humanPlayer);
+
             return connectedPlayerId;
         } else {
             return "addPlayer - Unable to connect. Lobby may be full";
@@ -90,7 +91,7 @@ public class GameLogistics {
 
     public void createGame(Long seed, Board board) {
         GameBuilder gameBuilder = new GameBuilder(seed);
-        gameBuilder.players(gameConfig.humanPlayers, gameConfig.botPlayers);
+        gameBuilder.addBots(gameConfig.botPlayers);
         gameBuilder.gameLog(gameLog);
         gameBuilder.board(board);
 

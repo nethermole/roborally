@@ -39,13 +39,9 @@ public class GameBuilder {
         this.random = new Random(seed);
     }
 
-    public void players(int numHumanPlayers, int numBots) {
+    public void addBots(int numBots) {
         this.players = new HashMap<>();
-        while (players.size() < numHumanPlayers) {
-            String playerId = UUID.randomUUID().toString();
-            players.put(playerId, new HumanPlayer(playerId));
-        }
-        while (players.size() < numHumanPlayers + numBots) {
+        while (players.size() < numBots) {
             String playerId = UUID.randomUUID().toString();
             players.put(playerId, new CountingBot(playerId));
         }

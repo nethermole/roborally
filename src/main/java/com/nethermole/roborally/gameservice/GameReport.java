@@ -43,9 +43,9 @@ public class GameReport {
     }
 
     public void dumpToFile() {
-        String uuid = "REPORT-" + UUID.randomUUID().toString().replace("-","_");
+        String uuid = UUID.randomUUID().toString().replace("-","_");
 
-        String filename = (new Timestamp(new Date().getTime())).toString()
+        String filename = "REPORT-" + (new Timestamp(new Date().getTime())).toString()
                 .replace("-","_")
                 .replace(" ","__")
                 .replace(":","_")
