@@ -34,6 +34,7 @@ public class GameController {
     @PostMapping("/game/create")
     public CreateGameResponse create(@RequestBody GameConfig gameConfig) {
         String gameId = gamePoolService.createGame(gameConfig);
+
         return new CreateGameResponse(gameId);
     }
 
@@ -45,7 +46,12 @@ public class GameController {
     @GetMapping("/game/{gameId}/report")
     public GameReport getGameReport(@PathVariable("gameId") String gameId) {
         GameReport gameReport = gameReportRepository.getGameReport(gameId);
-        return gameReport;
+        if(gameReport != null){
+            return gameReport;
+        } else {
+            throw new RuntimeException("make this a 400 or whatever is appropriate");
+        }
+
     }
 
     @Deprecated

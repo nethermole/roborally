@@ -28,7 +28,7 @@ public class OvershootBot extends NPCPlayer {
         Position targetPosition = board.getPositionOfCheckpoint(getMostRecentCheckpointTouched() + 1);
 
         Direction targetDirection = getTargetDirection(currentPosition, targetPosition);
-        Direction currentFacing = getFacing();
+        Direction currentFacing = getDirection();
 
         boolean turnSuccess = turnTowardsTarget(targetDirection, currentFacing, cardsToChooseFrom, cardsToSubmit);
         if (!turnSuccess) {

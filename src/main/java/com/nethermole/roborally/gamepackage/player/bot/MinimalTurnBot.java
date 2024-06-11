@@ -34,10 +34,10 @@ public class MinimalTurnBot extends NPCPlayer {
         List<MovementCard> selectedCards = new ArrayList<>();
 
         boolean correctlyFacing = true;
-        if (this.getFacing() != targetDirection && this.getFacing() != secondaryTargetDirection) {
+        if (this.getDirection() != targetDirection && this.getDirection() != secondaryTargetDirection) {
             correctlyFacing = false;
-            List<MovementCard> shortestTurnToFaceTargetPrimaryDirection = botUtils.getShortestTurnToFaceTargetDirection(getFacing(), targetDirection, cardsToChooseFrom);
-            List<MovementCard> shortestTurnToFaceTargetSecondaryDirection = botUtils.getShortestTurnToFaceTargetDirection(getFacing(), secondaryTargetDirection, cardsToChooseFrom);
+            List<MovementCard> shortestTurnToFaceTargetPrimaryDirection = botUtils.getShortestTurnToFaceTargetDirection(getDirection(), targetDirection, cardsToChooseFrom);
+            List<MovementCard> shortestTurnToFaceTargetSecondaryDirection = botUtils.getShortestTurnToFaceTargetDirection(getDirection(), secondaryTargetDirection, cardsToChooseFrom);
 
             if (shortestTurnToFaceTargetPrimaryDirection != null) {
                 correctlyFacing = true;
@@ -52,14 +52,14 @@ public class MinimalTurnBot extends NPCPlayer {
             }
         }
 
-        if (this.getFacing() == targetDirection || correctlyFacing) {
+        if (this.getDirection() == targetDirection || correctlyFacing) {
             int distance = botUtils.getExactDirectionDistanceToTarget(this.getPosition(), nextCheckpointPosition, targetDirection);
             List<MovementCard> moveCards = botUtils.greedilySelectMoveForwardCardsToGoExactDistance(cardsToChooseFrom, distance, 5 - selectedCards.size());
             if (moveCards != null) {
                 selectedCards.addAll(moveCards);
                 cardsToChooseFrom.removeAll(moveCards);
             }
-        } else if (this.getFacing() == secondaryTargetDirection || correctlyFacing) {
+        } else if (this.getDirection() == secondaryTargetDirection || correctlyFacing) {
             int distance = botUtils.getExactDirectionDistanceToTarget(this.getPosition(), nextCheckpointPosition, secondaryTargetDirection);
             List<MovementCard> moveCards = botUtils.greedilySelectMoveForwardCardsToGoExactDistance(cardsToChooseFrom, distance, 5 - selectedCards.size());
             if (moveCards != null) {

@@ -47,7 +47,7 @@ class BoardTest {
     public void move1() {
         Player player = new HumanPlayer("0");
         player.setPosition(new Position(5, 5));
-        player.setFacing(Direction.UP);
+        player.setDirection(Direction.UP);
 
         board.moveForward(player, 1);
         Position position = player.getPosition();
@@ -59,7 +59,7 @@ class BoardTest {
     public void backup() {
         Player player = new HumanPlayer("0");
         player.setPosition(new Position(5, 5));
-        player.setFacing(Direction.UP);
+        player.setDirection(Direction.UP);
 
         board.backup(player);
 
@@ -73,24 +73,24 @@ class BoardTest {
         Player player = new HumanPlayer("0");
         player.setPosition(new Position(5, 5));
 
-        player.setFacing(Direction.UP);
+        player.setDirection(Direction.UP);
         board.uturn(player);
-        Direction direction = player.getFacing();
+        Direction direction = player.getDirection();
         assertThat(direction).isEqualTo(Direction.DOWN);
 
-        player.setFacing(Direction.RIGHT);
+        player.setDirection(Direction.RIGHT);
         board.uturn(player);
-        direction = player.getFacing();
+        direction = player.getDirection();
         assertThat(direction).isEqualTo(Direction.LEFT);
 
-        player.setFacing(Direction.DOWN);
+        player.setDirection(Direction.DOWN);
         board.uturn(player);
-        direction = player.getFacing();
+        direction = player.getDirection();
         assertThat(direction).isEqualTo(Direction.UP);
 
-        player.setFacing(Direction.LEFT);
+        player.setDirection(Direction.LEFT);
         board.uturn(player);
-        direction = player.getFacing();
+        direction = player.getDirection();
         assertThat(direction).isEqualTo(Direction.RIGHT);
     }
 
@@ -113,19 +113,19 @@ class BoardTest {
         Player player = new HumanPlayer("0");
         player.setPosition(new Position(5, 5));
 
-        player.setFacing(Direction.UP);
+        player.setDirection(Direction.UP);
 
         board.turnLeft(player);
-        assertThat(player.getFacing()).isEqualTo(Direction.LEFT);
+        assertThat(player.getDirection()).isEqualTo(Direction.LEFT);
 
         board.turnLeft(player);
-        assertThat(player.getFacing()).isEqualTo(Direction.DOWN);
+        assertThat(player.getDirection()).isEqualTo(Direction.DOWN);
 
         board.turnLeft(player);
-        assertThat(player.getFacing()).isEqualTo(Direction.RIGHT);
+        assertThat(player.getDirection()).isEqualTo(Direction.RIGHT);
 
         board.turnLeft(player);
-        assertThat(player.getFacing()).isEqualTo(Direction.UP);
+        assertThat(player.getDirection()).isEqualTo(Direction.UP);
     }
 
     @Test
@@ -133,19 +133,19 @@ class BoardTest {
         Player player = new HumanPlayer("0");
         player.setPosition(new Position(5, 5));
 
-        player.setFacing(Direction.UP);
+        player.setDirection(Direction.UP);
 
         board.turnRight(player);
-        assertThat(player.getFacing()).isEqualTo(Direction.RIGHT);
+        assertThat(player.getDirection()).isEqualTo(Direction.RIGHT);
 
         board.turnRight(player);
-        assertThat(player.getFacing()).isEqualTo(Direction.DOWN);
+        assertThat(player.getDirection()).isEqualTo(Direction.DOWN);
 
         board.turnRight(player);
-        assertThat(player.getFacing()).isEqualTo(Direction.LEFT);
+        assertThat(player.getDirection()).isEqualTo(Direction.LEFT);
 
         board.turnRight(player);
-        assertThat(player.getFacing()).isEqualTo(Direction.UP);
+        assertThat(player.getDirection()).isEqualTo(Direction.UP);
     }
 
     @Test

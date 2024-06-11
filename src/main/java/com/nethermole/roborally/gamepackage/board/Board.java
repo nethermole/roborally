@@ -230,11 +230,11 @@ public class Board {
         List<BoardAction> boardActions = new ArrayList<>();
 
         Position startPosition = player.getPosition();
-        Position endPosition = startPosition.moveForward(player.getFacing(), distance);
+        Position endPosition = startPosition.moveForward(player.getDirection(), distance);
         player.setPosition(endPosition);
 
 
-        RobotMoveAction robotMoveAction = new RobotMoveAction(player.getId(), startPosition, endPosition);
+        RobotMoveAction robotMoveAction = new RobotMoveAction(player.getId(), endPosition, player.getDirection());
         boardActions.add(robotMoveAction);
 
         //logic is wrong. Implement a pit-checker for every square the robot moves over
@@ -250,7 +250,7 @@ public class Board {
     public List<ViewStep> backup(Player player) {
         List<ViewStep> viewSteps = new ArrayList<>();
         Position startPosition = player.getPosition();
-        Position endPosition = startPosition.moveBackward1(player.getFacing());
+        Position endPosition = startPosition.moveBackward1(player.getDirection());
 
         if (isWallBetween(startPosition, endPosition)) {
             log.info("Robot belonging to player " + player + " hit a wall instead of move1", player.getId());
@@ -261,29 +261,29 @@ public class Board {
 //                //viewSteps.add(pitKillPlayer(player));
 //            }
 
-            viewSteps.add(new RobotMoveViewStep(player, startPosition, endPosition, player.getFacing(), player.getFacing(), MovementMethod.MOVE));
+            viewSteps.add(new RobotMoveViewStep(player, startPosition, endPosition, player.getDirection(), player.getDirection(), MovementMethod.MOVE));
             return viewSteps;
         }
     }
 
     public ViewStep uturn(Player player) {
-        Direction startFacing = player.getFacing();
-        player.setFacing(Direction.turnLeft(Direction.turnLeft(player.getFacing())));
-        ViewStep viewStep = new RobotMoveViewStep(player, player.getPosition(), player.getPosition(), startFacing, player.getFacing(), MovementMethod.TURN);
+        Direction startFacing = player.getDirection();
+        player.setDirection(Direction.turnLeft(Direction.turnLeft(player.getDirection())));
+        ViewStep viewStep = new RobotMoveViewStep(player, player.getPosition(), player.getPosition(), startFacing, player.getDirection(), MovementMethod.TURN);
         return viewStep;
     }
 
     public ViewStep turnLeft(Player player) {
-        Direction startFacing = player.getFacing();
-        player.setFacing(Direction.turnLeft(player.getFacing()));
-        ViewStep viewStep = new RobotMoveViewStep(player, player.getPosition(), player.getPosition(), startFacing, player.getFacing(), MovementMethod.TURN);
+        Direction startFacing = player.getDirection();
+        player.setDirection(Direction.turnLeft(player.getDirection()));
+        ViewStep viewStep = new RobotMoveViewStep(player, player.getPosition(), player.getPosition(), startFacing, player.getDirection(), MovementMethod.TURN);
         return viewStep;
     }
 
     public ViewStep turnRight(Player player) {
-        Direction startFacing = player.getFacing();
-        player.setFacing(Direction.turnRight(player.getFacing()));
-        ViewStep viewStep = new RobotMoveViewStep(player, player.getPosition(), player.getPosition(), startFacing, player.getFacing(), MovementMethod.TURN);
+        Direction startFacing = player.getDirection();
+        player.setDirection(Direction.turnRight(player.getDirection()));
+        ViewStep viewStep = new RobotMoveViewStep(player, player.getPosition(), player.getPosition(), startFacing, player.getDirection(), MovementMethod.TURN);
         return viewStep;
     }
 

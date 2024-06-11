@@ -1,5 +1,8 @@
 package com.nethermole.roborally.gamepackage.action;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public abstract class BoardAction {
     private String type;
 
@@ -7,7 +10,7 @@ public abstract class BoardAction {
         this.type = type;
     }
 
-    public String getType(){
+    public String getType() {
         return type;
     }
 }

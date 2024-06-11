@@ -1,20 +1,20 @@
 package com.nethermole.roborally.gamepackage.action;
 
+import com.nethermole.roborally.gamepackage.board.Direction;
 import com.nethermole.roborally.gamepackage.board.Position;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-public class RobotMoveAction extends BoardAction{
+public class RobotMoveAction extends BoardAction {
     private String playerId;
-    private Position startPosition;
     private Position endPosition;
+    private Direction endDirection;
 
-    public RobotMoveAction(String playerId, Position startPosition, Position endPosition) {
+    public RobotMoveAction(String playerId, Position endPosition, Direction endDirection) {
         super("RobotMoveAction");
 
         this.playerId = playerId;
-        this.startPosition = startPosition;
         this.endPosition = endPosition;
+        this.endDirection = endDirection;
     }
 }

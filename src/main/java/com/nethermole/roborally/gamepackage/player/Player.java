@@ -16,7 +16,6 @@ import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.awt.Color;
 import java.util.List;
 import java.util.Random;
 
@@ -40,7 +39,7 @@ public abstract class Player {
     @Setter
     @Getter
     @JsonIgnore
-    private Direction facing;
+    private Direction direction;
 
     @Setter
     @Getter
@@ -69,7 +68,7 @@ public abstract class Player {
     public Player(String id) {
         this.id = id;
         this.color = new RGB((new Random()).nextInt(255), (new Random()).nextInt(255), (new Random()).nextInt(255));
-        this.facing = Direction.UP;
+        this.direction = Direction.UP;
         health = STARTING_HEALTH;
         mostRecentCheckpointTouched = 0;
     }

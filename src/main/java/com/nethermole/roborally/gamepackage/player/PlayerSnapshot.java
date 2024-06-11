@@ -8,7 +8,7 @@ public class PlayerSnapshot extends Player {
         super(reference.getId());
         this.setHealth(reference.getHealth());
         this.setBeacon(reference.getBeacon());
-        this.setFacing(reference.getFacing());
+        this.setDirection(reference.getDirection());
         this.setPosition(reference.getPosition());
         this.setDisplayName(reference.getDisplayName());
     }

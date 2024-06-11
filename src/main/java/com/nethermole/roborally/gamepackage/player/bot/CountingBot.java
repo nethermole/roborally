@@ -36,7 +36,7 @@ public class CountingBot extends NPCPlayer {
         List<MovementCard> cardsToSubmit = new ArrayList<>();
 
         Position assumedPosition = new Position(this.getPosition());
-        DirectionObject assumedFacing = new DirectionObject(getFacing());
+        DirectionObject assumedFacing = new DirectionObject(getDirection());
         Position targetPosition = new Position(board.getPositionOfCheckpoint(getMostRecentCheckpointTouched() + 1));
 
         while (cardsToSubmit.size() < 5) {

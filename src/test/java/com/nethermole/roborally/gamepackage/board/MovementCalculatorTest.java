@@ -22,7 +22,7 @@ class MovementCalculatorTest {
     public void move1_noShove_moves1() {
         Player player = new HumanPlayer("0");
         player.setPosition(new Position(5, 5));
-        player.setFacing(Direction.UP);
+        player.setDirection(Direction.UP);
 
         board.moveForward(player, 1);
         Position position = player.getPosition();
