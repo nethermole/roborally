@@ -1,5 +1,6 @@
 package com.nethermole.roborally.gamepackage.board;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.nethermole.roborally.gamepackage.ViewStep;
 import com.nethermole.roborally.gamepackage.action.BoardAction;
@@ -15,17 +16,22 @@ import com.nethermole.roborally.gamepackage.turn.MovementMethod;
 import com.nethermole.roborally.gamepackage.turn.RobotMoveViewStep;
 import com.nethermole.roborally.gameservice.GameLog;
 import com.nethermole.roborally.gameservice.GameReport;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -34,8 +40,47 @@ public class Board {
     @Getter
     private List<Player> players;
 
-    @JsonProperty
+    @JsonIgnore
     private Map<Integer, Map<Integer, Tile>> squares;
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Data
+    private class BoardSquareDTO {
+        int x;
+        int y;
+        Tile tile;
+    }
+
+    @JsonProperty("squares")
+    public List<BoardSquareDTO> getJsonSquares() {
+        Set<ElementEnum> seenWalls = new HashSet<>();
+
+        List<BoardSquareDTO> boardSquareDTOs = new ArrayList<>();
+
+        for (int column = 0; squares.containsKey(column); column++) {
+            for (int row = 0; squares.get(column).containsKey(row); row++) {
+
+                boardSquareDTOs.add(new BoardSquareDTO(column, row, squares.get(column).get(row)));
+
+                //dev purposes
+//                for(Element element : squares.get(column).get(row).getElements()){
+//                    if(!seenElements.contains(element.getElementEnum())){
+//                        seenElements.add(element.getElementEnum());
+//                    }
+//                }
+                //end dev purposes
+            }
+        }
+
+//        System.out.println("Get board Elements:");
+//        for(ElementEnum seenElement : seenElements){
+//            System.out.println(seenElement.name());
+//        }
+//        System.out.println();
+
+        return boardSquareDTOs;
+    }
 
     private Map<Element, Position> elementPositions;
 
@@ -57,24 +102,24 @@ public class Board {
         players = new ArrayList<>();
     }
 
-    public int getWidth(){
+    public int getWidth() {
         int maxX = 0;
 
         Iterator<Integer> xIter = squares.keySet().iterator();
-        while(xIter.hasNext()){
+        while (xIter.hasNext()) {
             int xVal = xIter.next();
-            if(xVal > maxX){
+            if (xVal > maxX) {
                 maxX = xVal;
             }
         }
         return maxX;
     }
 
-    public int getHeight(){
+    public int getHeight() {
         int maxWidth = 0;
-        for(Map<Integer, Tile> yCoord : squares.values()){
-            for(Integer y : yCoord.keySet()){
-                if(y > maxWidth){
+        for (Map<Integer, Tile> yCoord : squares.values()) {
+            for (Integer y : yCoord.keySet()) {
+                if (y > maxWidth) {
                     maxWidth = y;
                 }
             }
@@ -89,13 +134,13 @@ public class Board {
         }
 
         Tile tile = row.get(position.getY());
-        if(tile == null){
+        if (tile == null) {
             return Tile.getOutOfBounds();
         }
         return tile;
     }
 
-    public List<Map.Entry<Element, Position>> getAllElementsOfType(Class clazz){
+    public List<Map.Entry<Element, Position>> getAllElementsOfType(Class clazz) {
         return elementPositions.entrySet().stream().filter(it -> it.getKey().getClass() == clazz).collect(Collectors.toList());
     }
 
@@ -247,7 +292,7 @@ public class Board {
             int x = random.nextInt(squares.size());
             int y = random.nextInt(squares.get(x).size());
 
-            if(squares.get(x).containsKey(y)) {
+            if (squares.get(x).containsKey(y)) {
                 if (squares.get(x).get(y).getElements().isEmpty()) {
                     return new Position(x, y);
                 }
@@ -256,15 +301,15 @@ public class Board {
         return null;
     }
 
-    public Position getPositionOfCheckpoint(int checkpointIndex){
+    public Position getPositionOfCheckpoint(int checkpointIndex) {
         Optional<Map.Entry<Element, Position>> element = elementPositions.entrySet().stream()
                 .filter(entry -> entry.getKey().getClass() == Checkpoint.class)
                 .filter(entry -> ((Checkpoint) entry.getKey()).getBase1index() == checkpointIndex)
                 .findFirst();
-        if(element.isPresent()){
+        if (element.isPresent()) {
             return element.get().getValue();
         } else {
-            log.trace("Position not found for checkpoint"+checkpointIndex);
+            log.trace("Position not found for checkpoint" + checkpointIndex);
             return null;
         }
     }

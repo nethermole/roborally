@@ -26,6 +26,10 @@ public class GameController {
     @Autowired
     GameReportRepository gameReportRepository;
 
+    public void createGameWithId(String id, GameConfig gameconfig) {
+        gamePoolService.createGameWithId(id, gameconfig);
+    }
+
     //todo: wrap ALL api responses in objects
     @PostMapping("/game/create")
     public CreateGameResponse create(@RequestBody GameConfig gameConfig) {

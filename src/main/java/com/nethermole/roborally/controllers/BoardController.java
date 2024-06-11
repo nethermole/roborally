@@ -22,10 +22,10 @@ public class BoardController {
     private static Logger log = LogManager.getLogger(BoardController.class);
 
     @GetMapping("/board/{gameId}")
-    public String getBoard(@PathVariable int gameId) throws Exception {
+    public String getBoard(@PathVariable String gameId) throws Exception {
         log.debug("getBoard() called");
         try {
-            return objectMapper.writeValueAsString(gamePoolService.getGameLogistics("" + gameId).getBoard());
+            return objectMapper.writeValueAsString(gamePoolService.getGameLogistics(gameId).getBoard());
         } catch (GameNotStartedException e) {
             return "GameNotStartedYet";
         } catch (NullPointerException e) {

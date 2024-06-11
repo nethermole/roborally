@@ -1,5 +1,6 @@
 package com.nethermole.roborally.gamepackage.board;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nethermole.roborally.gamepackage.board.element.Element;
 import com.nethermole.roborally.gamepackage.board.element.ElementEnum;
 import com.nethermole.roborally.gamepackage.board.element.Pit;
@@ -32,11 +33,12 @@ public class Tile {
         return false;
     }
 
+    @JsonIgnore
     public boolean isEmpty() {
         return elements.isEmpty();
     }
 
-    public static Tile getOutOfBounds(){
+    public static Tile getOutOfBounds() {
         if (outOfBounds == null) {
             Tile _outOfBounds = new Tile();
             _outOfBounds.addElement(new Pit());

@@ -38,6 +38,13 @@ public class GamePoolService {
         return gamePool.get(gameId);
     }
 
+    public void createGameWithId(String id, GameConfig gameConfig) {
+        GameLogistics gameLogistics = new GameLogistics(gameConfig);
+        gameLogistics.createGameWithDefaultBoard();
+
+        gamePool.put(id, gameLogistics);
+    }
+
     public String createGame(GameConfig gameConfig) {
         GameLogistics gameLogistics = new GameLogistics(gameConfig);
         gameLogistics.createGameWithDefaultBoard();
@@ -72,6 +79,10 @@ public class GamePoolService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public String adminGetFirstGameUUID() {
+        return gamePool.keySet().stream().findFirst().get();
     }
 
     private class GameThread implements Runnable {
